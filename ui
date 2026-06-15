@@ -2561,6 +2561,18 @@
                 Cfg.OpenTab()
             end)
 
+            Items.Outline.MouseEnter:Connect(function()
+                if self.TabInfo ~= Cfg then
+                    Library:Tween(Items.Title, {TextColor3 = themes.preset.text_color}, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut))
+                end
+            end)
+
+            Items.Outline.MouseLeave:Connect(function()
+                if self.TabInfo ~= Cfg then
+                    Library:Tween(Items.Title, {TextColor3 = themes.preset.unselected}, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut))
+                end
+            end)
+
             if not self.TabInfo then
                 Cfg.OpenTab()
             end
