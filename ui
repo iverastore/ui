@@ -1698,11 +1698,7 @@
                 DisplayOrder = 100;
             }); 
 
-            Library.Blur = Library:Create( "BlurEffect" , {
-                Parent = Lighting;
-                Enabled = true;
-                Size = 0
-            });
+            Library.Blur = nil
 
             Library.KeybindList = Library:StatusList({Name = "Keybinds"})
 
@@ -1799,7 +1795,7 @@
                         Color = rgb(15, 15, 20);
                         LineJoinMode = Enum.LineJoinMode.Miter;
                         Parent = Items.InnerOutline;
-                        Thickness = 10000
+                        Thickness = 0
                     }); Library:Themify(Stroke, "outline", "Color");
 
                     Items.Title = Library:Create( "TextLabel" , {
@@ -1957,7 +1953,9 @@
                     return 
                 end     
 
-                Library:Tween(Library.Blur, {Size = bool and (Flags["BlurSize"] or 15) or 0})
+                if Library.Blur then
+                    Library:Tween(Library.Blur, {Size = bool and (Flags["BlurSize"] or 15) or 0})
+                end
 
                 Cfg.Tween(bool)
             end 
@@ -4956,7 +4954,7 @@
                     themes.preset.textsize = int
                 end})
                 Section:Slider({Name = "Blur Intensity", Default = 14, Decimal = 1, Min = 1, Max = 100, Flag = "BlurSize", Callback = function(int)
-                    if Window.Items.Holder.Visible then 
+                    if Library.Blur and Window.Items.Holder.Visible then 
                         Library.Blur.Size = int
                     end 
                 end})
