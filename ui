@@ -4883,7 +4883,29 @@
 
             -- Theming 
                 local Column = Tab:Column({})
-                local Section = Column:Section({Name = "Other"})
+                local Section = Column:Section({Name = "Themes"})
+                
+                local ThemePresets = {
+                    ["ivera"] = {inline = rgb(30, 30, 30), outline = rgb(0, 0, 0), accent = rgb(255, 255, 255), background = rgb(15, 15, 15), misc_1 = rgb(20, 20, 20), text_color = rgb(255, 255, 255), unselected = rgb(130, 130, 130), tooltip = rgb(50, 50, 50), misc_2 = rgb(10, 10, 10)},
+                    ["kitty"] = {inline = rgb(45, 30, 45), outline = rgb(10, 5, 10), accent = rgb(255, 130, 200), background = rgb(20, 12, 20), misc_1 = rgb(30, 18, 30), text_color = rgb(255, 220, 245), unselected = rgb(150, 100, 140), tooltip = rgb(60, 40, 55), misc_2 = rgb(15, 8, 15)},
+                    ["toxic"] = {inline = rgb(25, 40, 25), outline = rgb(5, 10, 5), accent = rgb(0, 255, 100), background = rgb(10, 18, 10), misc_1 = rgb(15, 25, 15), text_color = rgb(200, 255, 200), unselected = rgb(80, 140, 80), tooltip = rgb(30, 55, 30), misc_2 = rgb(8, 14, 8)},
+                    ["blood"] = {inline = rgb(40, 20, 20), outline = rgb(10, 0, 0), accent = rgb(200, 0, 0), background = rgb(18, 8, 8), misc_1 = rgb(28, 12, 12), text_color = rgb(255, 200, 200), unselected = rgb(140, 80, 80), tooltip = rgb(55, 30, 30), misc_2 = rgb(14, 6, 6)},
+                    ["lava"] = {inline = rgb(45, 30, 15), outline = rgb(10, 5, 0), accent = rgb(255, 120, 0), background = rgb(20, 12, 5), misc_1 = rgb(30, 18, 8), text_color = rgb(255, 230, 200), unselected = rgb(150, 110, 70), tooltip = rgb(60, 40, 20), misc_2 = rgb(15, 10, 4)},
+                    ["midnight"] = {inline = rgb(20, 25, 50), outline = rgb(5, 5, 15), accent = rgb(100, 130, 255), background = rgb(10, 12, 30), misc_1 = rgb(15, 18, 40), text_color = rgb(200, 210, 255), unselected = rgb(80, 90, 150), tooltip = rgb(30, 35, 60), misc_2 = rgb(8, 10, 25)},
+                }
+                
+                Section:Dropdown({Name = "Theme Preset", Options = {"ivera", "kitty", "toxic", "blood", "lava", "midnight"}, Default = "ivera", Flag = "ThemePreset", Callback = function(option)
+                    local preset = ThemePresets[option]
+                    if preset then
+                        for key, color in preset do
+                            Library:RefreshTheme(key, color)
+                        end
+                        for _,seq in themes.gradients.elements do
+                            seq.Color = rgbseq{rgbkey(0, themes.preset.misc_1), rgbkey(1, themes.preset.misc_2)}
+                        end
+                    end
+                end})
+                
                 Section:Label({Name = "Inline"}):Colorpicker({Color = themes.preset.inline, Callback = function(color, alpha)
                     Library:RefreshTheme("inline", color)
                 end})
@@ -4957,17 +4979,10 @@
 
                     themes.preset.textsize = int
                 end})
-                Section:Slider({Name = "Blur Intensity", Default = 14, Decimal = 1, Min = 1, Max = 100, Flag = "BlurSize", Callback = function(int)
-                    if Library.Blur and Window.Items.Holder.Visible then 
-                        Library.Blur.Size = int
-                    end 
-                end})
-                Section:Button({Name = "Test", Callback = function()
-                    local Notification = Library:Notification({Name = "Hello there!", Lifetime = 5})
-                    Notification:NotificationButton({Name = "Discard", Callback = function()
+                Section:Button({Name = "Test Notification", Callback = function()
+                    local Notification = Library:Notification({Name = "ivera loaded successfully!", Lifetime = 5})
+                    Notification:NotificationButton({Name = "Dismiss", Callback = function()
                         Notification.DestroyNotif()
-                    end})
-                    Notification:NotificationButton({Name = "Make another", Callback = function()
                     end})
                 end})
             -- 
