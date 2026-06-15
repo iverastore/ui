@@ -2688,6 +2688,7 @@ local Library do
             HasSubtabs = Data.Subtabs or Data.subtabs or false,
 
             Active = false,
+            SubPages = { },
             ColumnsData = { },
             Elements = { }
         }
@@ -2866,55 +2867,48 @@ local Library do
             end
         end
 
-        local Debounce = false
-
         function Page:Turn(Bool)
-            if Debounce then 
-                return 
-            end
-
             Page.Active = Bool
 
-            Debounce = true 
-
-            if Bool then 
+            if Bool then
                 Items["Page"].Instance.Visible = true
 
                 Items["Text"]:Tween(nil, {TextColor3 = Library.Theme.Accent, TextTransparency = 0})
                 Items["Hide"].Instance.Visible = true
-
                 Items["Text"]:ChangeItemTheme({TextColor3 = "Accent"})
+
+                if Page.SubPages and #Page.SubPages > 0 then
+                    local hasActive = false
+                    for _, sp in pairs(Page.SubPages) do
+                        if sp.Active then hasActive = true; break end
+                    end
+                    if not hasActive then
+                        Page.SubPages[1]:Turn(true)
+                    end
+                end
             else
+                Items["Page"].Instance.Visible = false
+
                 Items["Text"]:Tween(nil, {TextColor3 = Library.Theme.Text, TextTransparency = 0.5})
                 Items["Hide"].Instance.Visible = false
-
                 Items["Text"]:ChangeItemTheme({TextColor3 = "Text"})
             end
 
             local Descendants = Items["Page"].Instance:GetDescendants()
             TableInsert(Descendants, Items["Page"].Instance)
 
-            local NewTween
-            for Index, Value in Descendants do 
+            for Index, Value in Descendants do
                 local ValueIndex = Library:GetTransparencyPropertyFromItem(Value)
-
-                if not ValueIndex then 
-                    continue
-                end
+                if not ValueIndex then continue end
 
                 if type(ValueIndex) == "table" then
-                    for _, Property in ValueIndex do 
-                        NewTween = Library:FadeItem(Value, Property, Bool, Page.Window.FadeSpeed or 0.5)
+                    for _, Property in ValueIndex do
+                        Library:FadeItem(Value, Property, Bool, Page.Window.FadeSpeed or 0.5)
                     end
                 else
-                    NewTween = Library:FadeItem(Value, ValueIndex, Bool, Page.Window.FadeSpeed or 0.5)
+                    Library:FadeItem(Value, ValueIndex, Bool, Page.Window.FadeSpeed or 0.5)
                 end
             end
-
-            Library:Connect(NewTween.Tween.Completed, function()
-                Debounce = false
-                Items["Page"].Instance.Visible = Bool
-            end)
         end
 
         Items["Inactive"]:Connect("MouseButton1Down", function()
@@ -3097,30 +3091,21 @@ local Library do
             end
         end
 
-        local Debounce = false
-
         function SubPage:Turn(Bool)
-            if Debounce then 
-                return 
-            end
-
             SubPage.Active = Bool
 
-            Debounce = true 
-
-            if Bool then 
+            if Bool then
                 Items["Subtab"].Instance.Visible = true
 
                 Items["Icon"]:Tween(nil, {TextColor3 = Library.Theme.Accent, TextTransparency = 0})
                 Items["Hide"].Instance.Visible = true
-
                 Items["Icon"]:ChangeItemTheme({TextColor3 = "Accent"})
-
                 Items["Inactive"].Instance.Size = UDim2New(1, 0, 1, 1)
             else
+                Items["Subtab"].Instance.Visible = false
+
                 Items["Icon"]:Tween(nil, {TextColor3 = Library.Theme.Text, TextTransparency = 0.35})
                 Items["Hide"].Instance.Visible = false
-
                 Items["Icon"]:ChangeItemTheme({TextColor3 = "Text"})
                 Items["Inactive"].Instance.Size = UDim2New(1, 0, 1, -2)
             end
@@ -3128,42 +3113,33 @@ local Library do
             local Descendants = Items["Subtab"].Instance:GetDescendants()
             TableInsert(Descendants, Items["Subtab"].Instance)
 
-            local NewTween
-            for Index, Value in Descendants do 
+            for Index, Value in Descendants do
                 local ValueIndex = Library:GetTransparencyPropertyFromItem(Value)
-
-                if not ValueIndex then 
-                    continue
-                end
+                if not ValueIndex then continue end
 
                 if type(ValueIndex) == "table" then
-                    for _, Property in ValueIndex do 
-                        NewTween = Library:FadeItem(Value, Property, Bool, SubPage.Window.FadeSpeed or 0.5)
+                    for _, Property in ValueIndex do
+                        Library:FadeItem(Value, Property, Bool, SubPage.Window.FadeSpeed or 0.5)
                     end
                 else
-                    NewTween = Library:FadeItem(Value, ValueIndex, Bool, SubPage.Window.FadeSpeed or 0.5)
+                    Library:FadeItem(Value, ValueIndex, Bool, SubPage.Window.FadeSpeed or 0.5)
                 end
             end
-
-            Library:Connect(NewTween.Tween.Completed, function()
-                Debounce = false
-                Items["Subtab"].Instance.Visible = Bool
-            end)
         end
 
         Items["Inactive"]:Connect("MouseButton1Down", function()
-            for Index, Value in SubPage.Window.SubPages do
+            for Index, Value in pairs(SubPage.Page.SubPages) do
                 Value:Turn(Value == SubPage)
             end
         end)
 
-        if #SubPage.Window.SubPages == 0 then 
+        if #SubPage.Page.SubPages == 0 then 
             SubPage:Turn(true)
         end
 
         SubPage.Elements = Items
 
-        TableInsert(SubPage.Window.SubPages, SubPage)
+        TableInsert(SubPage.Page.SubPages, SubPage)
         return setmetatable(SubPage, Library.Pages)
     end
 
@@ -5238,14 +5214,14 @@ local Library do
             SettingsSection:Dropdown({Name = "Theme Preset", Flag = "Theme Preset", Default = "Ivera", Items = {"Ivera", "Hello Kitty", "Toxic", "Blood", "Moon"}, Callback = function(Value)
                 local ThemeData = BuiltinThemes[Value]
                 if ThemeData then
-                    for Key, Color in ThemeData do
+                    for Key, Color in pairs(ThemeData) do
                         Library.Theme[Key] = Color
                         Library:ChangeTheme(Key, Color)
                     end
                 end
             end})
 
-            for Index, Value in Library.Theme do 
+            for Index, Value in pairs(Library.Theme) do 
                 SettingsSection:Label({Name = Index, Alignment = "Left"}):Colorpicker({ Name = Index, Default = Value, Flag = "Theme"..Index, Callback = function(Color) 
                     Library.Theme[Index] = Color
                     Library:ChangeTheme(Index, Color)
