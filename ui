@@ -2015,7 +2015,8 @@
                     local Uid = 1
                     local Status = "Developer"
                     local Ping = math.floor(Stats.PerformanceStats.Ping:GetValue())
-                    Cfg.ChangeWatermarkTitle(string.format('%s <font color = "%s">/ UID %s / %s / %s / %sfps / %sms</font>', Cfg.Name, Library:ConvertHex(themes.preset.text_color), Uid, Status, os.date("%x / %X"), Cfg.Fps, Ping))
+                    local GameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name or "Unknown"
+                    Cfg.ChangeWatermarkTitle(string.format('ivera.priv <font color = "%s">/ %s / %s / %sfps / %sms</font>', Library:ConvertHex(themes.preset.text_color), GameName, os.date("%x %X"), Cfg.Fps, Ping))
 
                     Cfg.Fps = 0
                 end 
@@ -2239,7 +2240,7 @@
 
                     Items.TabButtonHolder = Library:Create( "Frame" , {
                         Parent = Items.BackgroundSecond;
-                        Size = dim2(1, -26, 0, 39);
+                        Size = dim2(1, -26, 0, 28);
                         Name = "\0";
                         Position = dim2(0, 13, 0, 13);
                         BorderColor3 = rgb(0, 0, 0);
@@ -2267,9 +2268,9 @@
 
                     Items.PageHolder = Library:Create( "Frame" , {
                         Parent = Items.BackgroundSecond;
-                        Size = dim2(1, -26, 1, -71);
+                        Size = dim2(1, -26, 1, -60);
                         Name = "\0";
-                        Position = dim2(0, 13, 0, 58);
+                        Position = dim2(0, 13, 0, 47);
                         BorderColor3 = rgb(0, 0, 0);
                         ZIndex = 2;
                         BorderSizePixel = 0;
@@ -2573,14 +2574,20 @@
             }
 
             local Items = Cfg.Items; do 
-                Items.Column = Library:Create( "Frame" , {
+                Items.Column = Library:Create( "ScrollingFrame" , {
                     Parent = self.Items.Page;
                     BackgroundTransparency = 1;
                     Name = "\0";
                     BorderColor3 = rgb(0, 0, 0);
                     Size = dim2(0, 100, 0, 100);
                     BorderSizePixel = 0;
-                    BackgroundColor3 = rgb(255, 255, 255)
+                    BackgroundColor3 = rgb(255, 255, 255);
+                    ScrollBarThickness = 2;
+                    ScrollBarImageColor3 = rgb(255, 255, 255);
+                    ScrollBarImageTransparency = 0.5;
+                    CanvasSize = dim2(0, 0, 0, 0);
+                    AutomaticCanvasSize = Enum.AutomaticSize.Y;
+                    ScrollingDirection = Enum.ScrollingDirection.Y;
                 });
 
                 Library:Create( "UIListLayout" , {
@@ -4937,9 +4944,6 @@
                 Section:Toggle({Name = "Toggle Keybind List", Callback = function(bool)
                     Library.KeybindList.Items.Holder.Visible = bool 
                     Library.KeybindList.Items.List.Visible = bool 
-                end})
-                Section:Textbox({Name = "Custom Menu Name", Default = Window.Name, Callback = function(text)
-                    Window.Name = text
                 end})
                 Section:Dropdown({Name = "Font", Options = FontIndexes, Callback = function(option)
                     for _,text in themes.utility.text_color.TextColor3 do 
