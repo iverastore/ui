@@ -38,7 +38,7 @@
         AvailablePanels = {};
 
         EasingStyle = Enum.EasingStyle.Quint;
-        TweeningSpeed = .3;
+        TweeningSpeed = .15;
         DraggingSpeed = .05;
         Tweening = false;
     }
@@ -135,7 +135,9 @@
     Library.__index = Library
 
     for _,path in Library.Folders do 
-        makefolder(Library.Directory .. path)
+        if not isfolder(Library.Directory .. path) then
+            makefolder(Library.Directory .. path)
+        end
     end
 
     local Flags = Library.Flags 
@@ -156,6 +158,7 @@
     local FontIndexes = {"ProggyClean", "Tahoma", "Verdana", "SmallestPixel", "ProggyTiny", "Minecraftia", "Tahoma Bold", "Rubik"}
 
     local Fonts = {}; do
+        -- Load only the default font immediately, rest in background
         local function RegisterFont(Name, Weight, Style, Asset)
             if not isfile(Asset.Id) then
                 writefile(Asset.Id, Asset.Font)
@@ -182,20 +185,48 @@
             return getcustomasset(Name .. ".font");
         end
 
-        for name, suffix in FontNames do 
-            local Weight = 400 
-
-            if name == "Rubik" then -- fuckin stupid 
-                Weight = 900 
-            end 
+        local function LoadFont(name, suffix)
+            local Weight = 400
+            if name == "Rubik" then Weight = 900 end
 
             local RegisteredFont = RegisterFont(name, Weight, "Normal", {
                 Id = suffix,
                 Font = game:HttpGet("https://github.com/i77lhm/storage/raw/refs/heads/main/fonts/" .. suffix),
-            }) 
-            
+            })
             Fonts[name] = Font.new(RegisteredFont, Enum.FontWeight.Regular, Enum.FontStyle.Normal)
         end
+
+        -- Load default font first (blocking)
+        local defaultFont = themes.preset.font
+        local defaultSuffix = FontNames[defaultFont]
+        if defaultSuffix then
+            if isfile(defaultSuffix) then
+                -- Font already cached, just register it
+                local RegisteredFont = RegisterFont(defaultFont, 400, "Normal", {
+                    Id = defaultSuffix,
+                    Font = readfile(defaultSuffix),
+                })
+                Fonts[defaultFont] = Font.new(RegisteredFont, Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+            else
+                LoadFont(defaultFont, defaultSuffix)
+            end
+        end
+
+        -- Load remaining fonts in background
+        task.spawn(function()
+            for name, suffix in FontNames do
+                if name == defaultFont then continue end
+                if isfile(suffix) then
+                    local RegisteredFont = RegisterFont(name, name == "Rubik" and 900 or 400, "Normal", {
+                        Id = suffix,
+                        Font = readfile(suffix),
+                    })
+                    Fonts[name] = Font.new(RegisteredFont, Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+                else
+                    task.spawn(LoadFont, name, suffix)
+                end
+            end
+        end)
     end
 --
 
@@ -2418,7 +2449,7 @@
                         Parent = self.Items.TabButtonHolder;
                         Size = dim2(0, 100, 0, 100);
                         Name = "\0";
-                        Active = false;
+                        Active = true;
                         BorderColor3 = rgb(0, 0, 0);
                         Selectable = false;
                         BorderSizePixel = 0;
@@ -2561,15 +2592,18 @@
                 Cfg.OpenTab()
             end)
 
+            -- Tab hover highlight
             Items.Outline.MouseEnter:Connect(function()
                 if self.TabInfo ~= Cfg then
-                    Library:Tween(Items.Title, {TextColor3 = themes.preset.text_color}, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut))
+                    Library:Tween(Items.Title, {TextColor3 = themes.preset.text_color}, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut))
+                    Library:Tween(Items.Background, {BackgroundTransparency = 0.15}, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut))
                 end
             end)
 
             Items.Outline.MouseLeave:Connect(function()
                 if self.TabInfo ~= Cfg then
-                    Library:Tween(Items.Title, {TextColor3 = themes.preset.unselected}, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut))
+                    Library:Tween(Items.Title, {TextColor3 = themes.preset.unselected}, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut))
+                    Library:Tween(Items.Background, {BackgroundTransparency = 0}, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut))
                 end
             end)
 
@@ -2896,6 +2930,19 @@
             Items.Toggle.MouseButton1Click:Connect(function()
                 Cfg.Enabled = not Cfg.Enabled
                 Cfg.Set(Cfg.Enabled)
+            end)
+
+            -- Toggle hover highlight
+            Items.Toggle.MouseEnter:Connect(function()
+                if not Cfg.Enabled then
+                    Library:Tween(Items.Title, {TextColor3 = themes.preset.text_color}, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut))
+                end
+            end)
+
+            Items.Toggle.MouseLeave:Connect(function()
+                if not Cfg.Enabled then
+                    Library:Tween(Items.Title, {TextColor3 = themes.preset.unselected}, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut))
+                end
             end)
 
             Cfg.Set(Cfg.Enabled)
@@ -4566,6 +4613,15 @@
 
             Items.Outline.MouseButton1Click:Connect(function()
                 Cfg.Callback()
+            end)
+
+            -- Button hover highlight
+            Items.Outline.MouseEnter:Connect(function()
+                Library:Tween(Items.Text, {TextColor3 = themes.preset.text_color}, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut))
+            end)
+
+            Items.Outline.MouseLeave:Connect(function()
+                Library:Tween(Items.Text, {TextColor3 = themes.preset.unselected}, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut))
             end)
             
             return setmetatable(Cfg, Library)
