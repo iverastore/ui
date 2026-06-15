@@ -45,15 +45,15 @@
 
     local themes = {
         preset = {
-            inline = rgb(46, 46, 46),
-            outline = rgb(10, 10, 15),
-            accent = rgb(19, 128, 225),
-            background = rgb(20, 20, 25),              
-            misc_1 = rgb(30, 30, 35),
-            text_color = rgb(245, 245, 245),
-            unselected = rgb(145, 145, 145),
-            tooltip = rgb(73, 73, 73),
-            misc_2 = rgb(23, 23, 28),
+            inline = rgb(30, 30, 30),
+            outline = rgb(0, 0, 0),
+            accent = rgb(255, 255, 255),
+            background = rgb(15, 15, 15),              
+            misc_1 = rgb(20, 20, 20),
+            text_color = rgb(255, 255, 255),
+            unselected = rgb(130, 130, 130),
+            tooltip = rgb(50, 50, 50),
+            misc_2 = rgb(10, 10, 10),
             font = "ProggyClean",
             textsize = 12
         },
