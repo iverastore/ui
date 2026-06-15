@@ -2557,31 +2557,12 @@
                     Items.Page.Parent = self.Items.PageHolder
                 end
 
-                local Children = Items.Page:GetDescendants()
-                table.insert(Children, Items.Page)
-
-                local Tween;
-                for _,obj in Children do
-                    local Index = Library:GetTransparency(obj)
-
-                    if not Index then 
-                        continue 
-                    end
-
-                    if type(Index) == "table" then
-                        for _,prop in Index do
-                            Tween = Library:Fade(obj, prop, bool, Library.TweeningSpeed)
-                        end
-                    else
-                        Tween = Library:Fade(obj, Index, bool, Library.TweeningSpeed)
-                    end
+                if not bool then
+                    Items.Page.Visible = false
+                    Items.Page.Parent = Library.Other
                 end
-                
-                Library:Connection(Tween.Completed, function()
-                    Cfg.Tweening = false
-                    Items.Page.Visible = bool
-                    Items.Page.Parent = bool and self.Items.PageHolder or Library.Other
-                end)
+
+                Cfg.Tweening = false
             end
 
             Items.Outline.MouseButton1Down:Connect(function()
@@ -2612,6 +2593,185 @@
             end
 
             return setmetatable(Cfg, Library)
+        end
+
+        function Library:SubTab(properties)
+            local Cfg = {
+                Name = properties.Name or properties.name or "SubTab";
+                Items = {};
+                SubTabInfo = nil;
+                SubTabs = {};
+            }
+
+            local Items = Cfg.Items; do
+                Items.Container = Library:Create("Frame", {
+                    Parent = self.Items.Page;
+                    BackgroundTransparency = 1;
+                    Name = "\0";
+                    Size = dim2(1, 0, 1, 0);
+                    BorderSizePixel = 0;
+                });
+
+                Items.ButtonHolder = Library:Create("Frame", {
+                    Parent = Items.Container;
+                    BackgroundTransparency = 1;
+                    Name = "\0";
+                    Size = dim2(1, 0, 0, 20);
+                    Position = dim2(0, 0, 0, 0);
+                    BorderSizePixel = 0;
+                });
+
+                Library:Create("UIListLayout", {
+                    FillDirection = Enum.FillDirection.Horizontal;
+                    Parent = Items.ButtonHolder;
+                    Padding = dim(0, 4);
+                    SortOrder = Enum.SortOrder.LayoutOrder;
+                });
+
+                Items.PageArea = Library:Create("Frame", {
+                    Parent = Items.Container;
+                    BackgroundTransparency = 1;
+                    Name = "\0";
+                    Size = dim2(1, 0, 1, -24);
+                    Position = dim2(0, 0, 0, 24);
+                    BorderSizePixel = 0;
+                });
+            end
+
+            function Cfg:AddSubTab(subProperties)
+                local SubCfg = {
+                    Name = subProperties.Name or subProperties.name or "Sub";
+                    Items = {};
+                    Columns = {};
+                }
+
+                local SubItems = SubCfg.Items; do
+                    SubItems.Button = Library:Create("TextButton", {
+                        Parent = Items.ButtonHolder;
+                        Size = dim2(0, 0, 1, 0);
+                        AutomaticSize = Enum.AutomaticSize.X;
+                        Name = "\0";
+                        Active = true;
+                        Selectable = false;
+                        BorderSizePixel = 0;
+                        BackgroundTransparency = 1;
+                        BackgroundColor3 = rgb(255, 255, 255);
+                    });
+
+                    SubItems.ButtonText = Library:Create("TextLabel", {
+                        FontFace = Fonts[themes.preset.font];
+                        Parent = SubItems.Button;
+                        TextColor3 = themes.preset.unselected;
+                        Text = SubCfg.Name;
+                        Name = "\0";
+                        AutomaticSize = Enum.AutomaticSize.XY;
+                        Size = dim2(0, 0, 1, 0);
+                        BorderSizePixel = 0;
+                        BackgroundTransparency = 1;
+                        TextSize = 12;
+                        BackgroundColor3 = rgb(255, 255, 255);
+                    });
+
+                    Library:Create("UIPadding", {
+                        Parent = SubItems.ButtonText;
+                        PaddingRight = dim(0, 6);
+                        PaddingLeft = dim(0, 6);
+                    });
+
+                    Library:Create("UIStroke", {
+                        Parent = SubItems.ButtonText;
+                        LineJoinMode = Enum.LineJoinMode.Miter;
+                    });
+
+                    SubItems.Page = Library:Create("Frame", {
+                        Parent = Items.PageArea;
+                        BackgroundTransparency = 1;
+                        Visible = false;
+                        Name = "\0";
+                        Size = dim2(1, 0, 1, 0);
+                        BorderSizePixel = 0;
+                    });
+
+                    Library:Create("UIListLayout", {
+                        FillDirection = Enum.FillDirection.Horizontal;
+                        HorizontalFlex = Enum.UIFlexAlignment.Fill;
+                        Parent = SubItems.Page;
+                        Padding = dim(0, 6);
+                        SortOrder = Enum.SortOrder.LayoutOrder;
+                        VerticalFlex = Enum.UIFlexAlignment.Fill;
+                    });
+                end
+
+                function SubCfg:Column(colProperties)
+                    local ColCfg = {
+                        Items = {}
+                    }
+
+                    ColCfg.Items.Column = Library:Create("ScrollingFrame", {
+                        Parent = SubItems.Page;
+                        BackgroundTransparency = 1;
+                        Name = "\0";
+                        BorderColor3 = rgb(0, 0, 0);
+                        Size = dim2(0, 100, 0, 100);
+                        BorderSizePixel = 0;
+                        BackgroundColor3 = rgb(255, 255, 255);
+                        ScrollBarThickness = 2;
+                        ScrollBarImageColor3 = rgb(255, 255, 255);
+                        ScrollBarImageTransparency = 0.5;
+                        CanvasSize = dim2(0, 0, 0, 0);
+                        AutomaticCanvasSize = Enum.AutomaticSize.Y;
+                        ScrollingDirection = Enum.ScrollingDirection.Y;
+                    });
+
+                    Library:Create("UIListLayout", {
+                        Parent = ColCfg.Items.Column;
+                        SortOrder = Enum.SortOrder.LayoutOrder;
+                        HorizontalFlex = Enum.UIFlexAlignment.Fill;
+                        Padding = dim(0, 11);
+                    });
+
+                    return setmetatable(ColCfg, Library)
+                end
+
+                function SubCfg.Open()
+                    if Cfg.SubTabInfo == SubCfg then return end
+
+                    if Cfg.SubTabInfo then
+                        Cfg.SubTabInfo.Items.Page.Visible = false
+                        Cfg.SubTabInfo.Items.ButtonText.TextColor3 = themes.preset.unselected
+                    end
+
+                    SubCfg.Items.Page.Visible = true
+                    SubCfg.Items.ButtonText.TextColor3 = themes.preset.text_color
+                    Cfg.SubTabInfo = SubCfg
+                end
+
+                SubItems.Button.MouseButton1Down:Connect(function()
+                    SubCfg.Open()
+                end)
+
+                SubItems.Button.MouseEnter:Connect(function()
+                    if Cfg.SubTabInfo ~= SubCfg then
+                        Library:Tween(SubItems.ButtonText, {TextColor3 = themes.preset.text_color}, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut))
+                    end
+                end)
+
+                SubItems.Button.MouseLeave:Connect(function()
+                    if Cfg.SubTabInfo ~= SubCfg then
+                        Library:Tween(SubItems.ButtonText, {TextColor3 = themes.preset.unselected}, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut))
+                    end
+                end)
+
+                table.insert(Cfg.SubTabs, SubCfg)
+
+                if #Cfg.SubTabs == 1 then
+                    SubCfg.Open()
+                end
+
+                return SubCfg
+            end
+
+            return Cfg
         end
 
         function Library:Column(properties)
