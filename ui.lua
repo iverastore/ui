@@ -193,16 +193,16 @@ local Library = {
 
     local Themes = {
         ["Preset"] = {
-            ["Border"] = Color3.fromRGB(3, 3, 3),
-            ["Outline"] = Color3.fromRGB(51, 51, 51),
-            ["Background"] = Color3.fromRGB(12, 12, 12),
-            ["Inline"] = Color3.fromRGB(19, 19, 19),
-            ["Accent"] = Color3.fromRGB(176, 176, 209),
-            ["Text"] = Color3.fromRGB(208, 207, 227),
-            ["Inactive Text"] = Color3.fromRGB(134, 134, 134),
-            ["Element"] = Color3.fromRGB(39, 39, 39),
-            ["Element 2"] = Color3.fromRGB(56, 56, 56),
-            ["Hovered Element"] = Color3.fromRGB(61, 61, 61)
+            ["Border"] = Color3.fromRGB(0, 0, 0),
+            ["Outline"] = Color3.fromRGB(30, 30, 30),
+            ["Background"] = Color3.fromRGB(5, 5, 5),
+            ["Inline"] = Color3.fromRGB(15, 15, 15),
+            ["Accent"] = Color3.fromRGB(255, 255, 255),
+            ["Text"] = Color3.fromRGB(240, 240, 240),
+            ["Inactive Text"] = Color3.fromRGB(120, 120, 120),
+            ["Element"] = Color3.fromRGB(30, 30, 30),
+            ["Element 2"] = Color3.fromRGB(45, 45, 45),
+            ["Hovered Element"] = Color3.fromRGB(55, 55, 55)
         }
     }
 
@@ -4862,6 +4862,22 @@ local Library = {
                 end
             end
 
+            -- Snow Effect Section
+            local SnowSection = SettingsPage:Section({Name = "Snow Effect", Side = 1}) do
+                SnowSection:Toggle({Name = "Snow Effect", Flag = "SnowEffectEnabled", Default = false, Callback = function(v) end})
+                SnowSection:Slider({Name = "Snowflake Count", Flag = "SnowflakeCount", Min = 5, Max = 100, Default = 30, Decimals = 0, Suffix = "", Callback = function(v) end})
+                SnowSection:Slider({Name = "Snowflake Speed", Flag = "SnowflakeSpeed", Min = 0.5, Max = 10, Default = 2, Decimals = 1, Suffix = "", Callback = function(v) end})
+                SnowSection:Slider({Name = "Snowflake Size", Flag = "SnowflakeSize", Min = 2, Max = 20, Default = 5, Decimals = 1, Suffix = "px", Callback = function(v) end})
+                SnowSection:Slider({Name = "Snowflake Alpha", Flag = "SnowflakeAlpha", Min = 0, Max = 1, Default = 0.6, Decimals = 2, Suffix = "", Callback = function(v) end})
+            end
+
+            -- Notification Settings Section
+            local NotifSection = SettingsPage:Section({Name = "Notifications", Side = 1}) do
+                NotifSection:Dropdown({Name = "Notification Type", Flag = "NotificationType", Items = {"Full", "Text Only"}, Default = "Full", Multi = false, Callback = function(v) end})
+                NotifSection:Dropdown({Name = "Notification Position", Flag = "NotificationPosition", Items = {"Top Right", "Top Left", "Bottom Right", "Bottom Left", "Bottom Center"}, Default = "Top Right", Multi = false, Callback = function(v) end})
+                NotifSection:Slider({Name = "Notification Duration", Flag = "NotificationDuration", Min = 1, Max = 10, Default = 3, Decimals = 1, Suffix = "s", Callback = function(v) end})
+            end
+
             -- Built-in Watermark with stats
             if Self.Watermark then
                 local FpsText = Self.Watermark:Add("FPS: ")
@@ -4897,6 +4913,81 @@ local Library = {
                     UserIdText:SetText("ID: " .. tostring(LocalPlayer.UserId))
                 end)
             end
+
+            -- Snow Effect Implementation
+            local Snowflakes = {}
+            local SnowContainer = Library:Create("Frame", {
+                Name = "\0",
+                Parent = Library.Holder.Instance,
+                BackgroundTransparency = 1,
+                Size = UDim2.new(1, 0, 1, 0),
+                BorderSizePixel = 0,
+                ZIndex = 1
+            })
+
+            local function CreateSnowflake()
+                local snowflake = Library:Create("TextLabel", {
+                    Name = "\0",
+                    Parent = SnowContainer.Instance,
+                    Text = "❄",
+                    TextSize = Library.Flags["SnowflakeSize"] or 5,
+                    TextColor3 = Color3.fromRGB(255, 255, 255),
+                    BackgroundTransparency = 1,
+                    BorderSizePixel = 0,
+                    Size = UDim2.new(0, 10, 0, 10),
+                    Position = UDim2.new(math.random(0, 100) / 100, 0, -0.1, 0),
+                    TextTransparency = (1 - (Library.Flags["SnowflakeAlpha"] or 0.6))
+                })
+
+                local snowData = {
+                    Object = snowflake,
+                    Speed = (Library.Flags["SnowflakeSpeed"] or 2) + math.random(-5, 5) / 10,
+                    XDrift = math.random(-10, 10) / 100,
+                    YPos = -0.1
+                }
+
+                table.insert(Snowflakes, snowData)
+                return snowData
+            end
+
+            -- Spawn initial snowflakes
+            for i = 1, (Library.Flags["SnowflakeCount"] or 30) do
+                CreateSnowflake()
+            end
+
+            Library:Connect(RunService.RenderStepped, function()
+                local SnowEnabled = Library.Flags["SnowEffectEnabled"]
+                SnowContainer.Instance.Visible = SnowEnabled
+
+                if not SnowEnabled then return end
+
+                local Count = Library.Flags["SnowflakeCount"] or 30
+                while #Snowflakes < Count do
+                    CreateSnowflake()
+                end
+
+                for Index, Snowflake in Snowflakes do
+                    Snowflake.Speed = (Library.Flags["SnowflakeSpeed"] or 2) + math.random(-5, 5) / 10
+                    Snowflake.YPos = Snowflake.YPos + (Snowflake.Speed / 1000)
+                    
+                    local XPos = Snowflake.Object.Instance.Position.X.Scale + Snowflake.XDrift
+
+                    if XPos > 1.1 then
+                        XPos = -0.1
+                    elseif XPos < -0.1 then
+                        XPos = 1.1
+                    end
+
+                    if Snowflake.YPos > 1.2 then
+                        Snowflake.YPos = -0.1
+                        XPos = math.random(0, 100) / 100
+                    end
+
+                    Snowflake.Object.Instance.Position = UDim2.new(XPos, 0, Snowflake.YPos, 0)
+                    Snowflake.Object.Instance.TextSize = Library.Flags["SnowflakeSize"] or 5
+                    Snowflake.Object.Instance.TextTransparency = (1 - (Library.Flags["SnowflakeAlpha"] or 0.6))
+                end
+            end)
         end
     end
 end
