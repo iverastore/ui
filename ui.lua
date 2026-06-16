@@ -736,7 +736,7 @@ do
 		["Position"] = menu_position,
 		["Size"] = udim2_new(0, 575, 0, 450),
 		["Color"] = menu["colors"]["background"],
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["Transparency"] = 1,
 		["Visible"] = false,
@@ -746,7 +746,7 @@ do
 		["Position"] = udim2_new(0, 1, 0, 1),
 		["Size"] = udim2_new(1, -2, 1, -2),
 		["Color"] = menu["colors"]["section"],
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["Transparency"] = 1,
 		["Parent"] = frame,
@@ -865,7 +865,7 @@ do
 		["Size"] = udim2_new(0, 78, 0, 20),
 		["Color"] = menu["colors"]["border"],
 		["Transparency"] = 1,
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["Visible"] = false,
 	})
@@ -875,7 +875,7 @@ do
 		["Position"] = udim2_new(0, 1, 0, 1),
 		["Size"] = udim2_new(1, -2, 1, -2),
 		["Color"] = menu["colors"]["background"],
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["Transparency"] = 1,
 		["Visible"] = true,
@@ -887,7 +887,7 @@ do
 		["Size"] = udim2_new(0, 78, 0, 20),
 		["Color"] = menu["colors"]["border"],
 		["Transparency"] = 1,
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["ZIndex"] = 999,
 		["Visible"] = false,
@@ -898,7 +898,7 @@ do
 		["Position"] = udim2_new(0, 1, 0, 1),
 		["Size"] = udim2_new(1, -2, 1, -2),
 		["Color"] = menu["colors"]["background"],
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["Transparency"] = 1,
 		["ZIndex"] = 1000,
@@ -921,7 +921,7 @@ do
 		["Position"] = menu_position,
 		["Size"] = udim2_new(0, 575, 0, 450),
 		["Color"] = menu["colors"]["background"],
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["Transparency"] = 0,
 		["ZIndex"] = 1000,
@@ -932,7 +932,7 @@ do
 		["Position"] = udim2_new(0, 1, 0, 1),
 		["Size"] = udim2_new(1, -2, 1, -2),
 		["Color"] = menu["colors"]["section"],
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["Transparency"] = 1,
 		["Parent"] = drag_frame,
@@ -994,7 +994,7 @@ do
 		["Size"] = udim2_new(0, 74, 0, 20),
 		["Color"] = menu["colors"]["border"],
 		["Transparency"] = 0,
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["ZIndex"] = 10,
 		["Visible"] = false,
@@ -1019,7 +1019,7 @@ do
 		["Size"] = udim2_new(0, 72, 0, 18),
 		["Color"] = color3_fromrgb(15, 15, 15),
 		["Transparency"] = 0,
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["Parent"] = list_frame,
 		["ZIndex"] = 11,
@@ -1256,7 +1256,7 @@ do
 				["Size"] = udim2_new(0, 74, 0, 18),
 				["Color"] = menu["colors"]["border"],
 				["Transparency"] = 0,
-				["Rounding"] = 4,
+				["Rounding"] = 0,
 				["Parent"] = list_frame,
 				["Data"] = pixel_image_data,
 				["Visible"] = false,
@@ -1267,7 +1267,7 @@ do
 				["Size"] = udim2_new(0, 72, 0, 18),
 				["Color"] = menu["colors"]["background"],
 				["Transparency"] = 0,
-				["Rounding"] = 4,
+				["Rounding"] = 0,
 				["Data"] = pixel_image_data,
 				["Parent"] = keybind_frame,
 				["Visible"] = true,
@@ -1329,7 +1329,7 @@ do
 				["Size"] = udim2_new(0, 74, 0, 18),
 				["Color"] = menu["colors"]["border"],
 				["Transparency"] = 0,
-				["Rounding"] = 4,
+				["Rounding"] = 0,
 				["Parent"] = list_frame,
 				["Data"] = pixel_image_data,
 				["Visible"] = false,
@@ -1340,7 +1340,7 @@ do
 				["Size"] = udim2_new(0, 72, 0, 18),
 				["Color"] = menu["colors"]["background"],
 				["Transparency"] = 0,
-				["Rounding"] = 4,
+				["Rounding"] = 0,
 				["Data"] = pixel_image_data,
 				["Parent"] = keybind_frame,
 				["Visible"] = true,
@@ -1413,7 +1413,7 @@ do
 				["Size"] = UDim2.new(0, 74, 0, 18),
 				["Color"] = menu["colors"]["border"],
 				["Transparency"] = 0,
-				["Rounding"] = 4,
+				["Rounding"] = 0,
 				["Parent"] = list_frame,
 				["Data"] = pixel_image_data,
 				["Visible"] = false,
@@ -1424,7 +1424,7 @@ do
 				["Size"] = UDim2.new(0, 72, 0, 18),
 				["Color"] = menu["colors"]["background"],
 				["Transparency"] = 0,
-				["Rounding"] = 4,
+				["Rounding"] = 0,
 				["Data"] = pixel_image_data,
 				["Parent"] = keybind_frame,
 				["Visible"] = true,
@@ -2160,7 +2160,7 @@ do
 		["Size"] = udim2_new(0, 0, 0, 15),
 		["Color"] = menu["colors"]["border"],
 		["Transparency"] = 0,
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["ZIndex"] = 1003,
 		["Visible"] = false,
@@ -2171,7 +2171,7 @@ do
 		["Position"] = udim2_new(0, 1, 0, 1),
 		["Size"] = udim2_new(1, -2, 1, -2),
 		["Color"] = menu["colors"]["background"],
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["Transparency"] = 0,
 		["ZIndex"] = 1004,
@@ -2338,7 +2338,7 @@ do
 		["Size"] = udim2_new(0, 100, 0, 15),
 		["Color"] = menu["colors"]["border"],
 		["Transparency"] = 0,
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["ZIndex"] = 998,
 		["Visible"] = false,
@@ -2349,7 +2349,7 @@ do
 		["Position"] = udim2_new(0, 1, 0, 1),
 		["Size"] = udim2_new(1, -2, 1, -2),
 		["Color"] = menu["colors"]["background"],
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["Transparency"] = 0,
 		["ZIndex"] = 999,
@@ -2361,7 +2361,7 @@ do
 		["Size"] = udim2_new(0, 170, 0, 20),
 		["Color"] = menu["colors"]["border"],
 		["Transparency"] = 0,
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["ZIndex"] = 998,
 		["Visible"] = false,
@@ -2372,7 +2372,7 @@ do
 		["Position"] = udim2_new(0, 1, 0, 1),
 		["Size"] = udim2_new(1, -2, 1, -2),
 		["Color"] = menu["colors"]["background"],
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["Transparency"] = 0,
 		["ZIndex"] = 999,
@@ -2837,7 +2837,7 @@ do
 			["Visible"] = true,
 			["ZIndex"] = 999,
 			["Data"] = pixel_image_data,
-			["Rounding"] = 4,
+			["Rounding"] = 0,
 		})
 
 		local button_text = drawing_proxy["new"]("Text", {
@@ -2976,7 +2976,7 @@ do
 		["Size"] = udim2_new(0, 185, 0, 221),
 		["Color"] = menu["colors"]["border"],
 		["Transparency"] = 0,
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["ZIndex"] = 998,
 		["Visible"] = false,
@@ -2987,7 +2987,7 @@ do
 		["Position"] = udim2_new(0, 1, 0, 1),
 		["Size"] = udim2_new(1, -2, 1, -2),
 		["Color"] = menu["colors"]["background"],
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["Transparency"] = 0,
 		["ZIndex"] = 999,
@@ -3000,7 +3000,7 @@ do
 		["Size"] = udim2_new(0, 163, 0, 163),
 		["Color"] = color3_fromrgb(255, 255, 255),
 		["Transparency"] = 1,
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
 		["ZIndex"] = 1000,
 		["Visible"] = true,
@@ -3012,7 +3012,7 @@ do
 		["Size"] = udim2_new(0, 163, 0, 163),
 		["Color"] = color3_fromrgb(255, 0, 0),
 		["Transparency"] = 1,
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = readfile(file_path .. "/assets/saturation.png"),
 		["ZIndex"] = 1001,
 		["Visible"] = true,
@@ -3035,7 +3035,7 @@ do
 		["Size"] = udim2_new(0, 163, 0, 8),
 		["Color"] = color3_fromrgb(255, 255, 255),
 		["Transparency"] = 1,
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = base64_decode(
 			"iVBORw0KGgoAAAANSUhEUgAAAKAAAAAICAIAAADx4mP5AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCA1LjEuMvu8A7YAAAC2ZVhJZklJKgAIAAAABQAaAQUAAQAAAEoAAAAbAQUAAQAAAFIAAAAoAQMAAQAAAAIAAAAxAQIAEAAAAFoAAABphwQAAQAAAGoAAAAAAAAAYAAAAAEAAABgAAAAAQAAAFBhaW50Lk5FVCA1LjEuMgADAACQBwAEAAAAMDIzMAGgAwABAAAAAQAAAAWgBAABAAAAlAAAAAAAAAACAAEAAgAEAAAAUjk4AAIABwAEAAAAMDEwMAAAAADp1fY4ytpsegAAAEVJREFUWEftkTEKACAQw6r/f7TgrTf0EJeSTA10yyr2pUarzmekzuefOp8XdT4jdT69CqIhcDgEDofA4RA4HAKHQ+BopAN55gMK+LqL+AAAAABJRU5ErkJggg=="
 		),
@@ -3072,7 +3072,7 @@ do
 		["Size"] = udim2_new(0, 163, 0, 8),
 		["Color"] = color3_fromrgb(255, 255, 255),
 		["Transparency"] = 1,
-		["Rounding"] = 4,
+		["Rounding"] = 0,
 		["Data"] = base64_decode(
 			"iVBORw0KGgoAAAANSUhEUgAAAKAAAAAICAIAAADx4mP5AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCA1LjEuMvu8A7YAAAC2ZVhJZklJKgAIAAAABQAaAQUAAQAAAEoAAAAbAQUAAQAAAFIAAAAoAQMAAQAAAAIAAAAxAQIAEAAAAFoAAABphwQAAQAAAGoAAAAAAAAAYAAAAAEAAABgAAAAAQAAAFBhaW50Lk5FVCA1LjEuMgADAACQBwAEAAAAMDIzMAGgAwABAAAAAQAAAAWgBAABAAAAlAAAAAAAAAACAAEAAgAEAAAAUjk4AAIABwAEAAAAMDEwMAAAAADp1fY4ytpsegAAAHJJREFUWEftkW0LgCAMhM9ArP7/b60gSmlGWOILfRz3cIzbhDE54y0wieak5qZ7fjiswIKr5ubHfIOR7U3FI1ra7Wv7Y0q18iTVnenvb6Vt5enTRj/Cy/ZOxVOKGkBUw4CVw4CVw4CVw4CVw4CVw4BVAwRG9lMU6VQQuwAAAABJRU5ErkJggg=="
 		),
@@ -4546,7 +4546,7 @@ do
 			["Size"] = udim2_new(0.5, -5, size, y_position ~= 0 and -10 or 0),
 			["Color"] = menu["colors"]["border"],
 			["Transparency"] = 1,
-			["Rounding"] = 4,
+			["Rounding"] = 0,
 			["Data"] = pixel_image_data,
 			["ZIndex"] = 2,
 			["Visible"] = true,
@@ -4557,7 +4557,7 @@ do
 			["Size"] = udim2_new(1, -2, 1, -1),
 			["Color"] = menu["colors"]["section"],
 			["Transparency"] = 1,
-			["Rounding"] = 4,
+			["Rounding"] = 0,
 			["Data"] = pixel_image_data,
 			["ZIndex"] = 3,
 			["Visible"] = true,
@@ -4644,7 +4644,7 @@ do
 			["Size"] = udim2_new(0.5, -5, 1, 0),
 			["Color"] = menu["colors"]["border"],
 			["Transparency"] = 1,
-			["Rounding"] = 4,
+			["Rounding"] = 0,
 			["Data"] = pixel_image_data,
 			["Visible"] = true,
 		})
@@ -4654,7 +4654,7 @@ do
 			["Size"] = udim2_new(1, -2, 1, -1),
 			["Color"] = menu["colors"]["section"],
 			["Transparency"] = 1,
-			["Rounding"] = 4,
+			["Rounding"] = 0,
 			["Data"] = pixel_image_data,
 			["Visible"] = true,
 		})
@@ -4701,7 +4701,7 @@ do
 			["Size"] = udim2_new(1, 0, 0, 20),
 			["Color"] = menu["colors"]["border"],
 			["Transparency"] = 1,
-			["Rounding"] = 4,
+			["Rounding"] = 0,
 			["Data"] = pixel_image_data,
 			["ZIndex"] = zindex,
 			["Visible"] = true,
@@ -4712,7 +4712,7 @@ do
 			["Size"] = udim2_new(1, -2, 1, -2),
 			["Color"] = menu["colors"]["background"],
 			["Transparency"] = 1,
-			["Rounding"] = 4,
+			["Rounding"] = 0,
 			["Data"] = pixel_image_data,
 			["ZIndex"] = zindex,
 			["Visible"] = true,
@@ -4794,7 +4794,7 @@ do
 			["Size"] = udim2_new(1, 0, 0, 20),
 			["Color"] = menu["colors"]["border"],
 			["Transparency"] = 1,
-			["Rounding"] = 4,
+			["Rounding"] = 0,
 			["Data"] = pixel_image_data,
 			["Visible"] = false,
 		})
@@ -4804,7 +4804,7 @@ do
 			["Size"] = udim2_new(1, -2, 1, -2),
 			["Color"] = menu["colors"]["background"],
 			["Transparency"] = 1,
-			["Rounding"] = 4,
+			["Rounding"] = 0,
 			["Data"] = pixel_image_data,
 			["ZIndex"] = 2,
 			["Visible"] = true,
@@ -5210,7 +5210,7 @@ do
 					["Size"] = udim2_new(0, 12, 0, 12),
 					["Color"] = menu["colors"]["border"],
 					["Transparency"] = 1,
-					["Rounding"] = 4,
+					["Rounding"] = 0,
 					["Data"] = pixel_image_data,
 					["ZIndex"] = zindex + 1,
 					["Visible"] = true,
@@ -5221,7 +5221,7 @@ do
 					["Size"] = udim2_new(1, -2, 1, -2),
 					["Color"] = menu["colors"]["background"],
 					["Transparency"] = 1,
-					["Rounding"] = 4,
+					["Rounding"] = 0,
 					["Data"] = pixel_image_data,
 					["ZIndex"] = zindex + 2,
 					["Visible"] = true,
@@ -5249,56 +5249,6 @@ do
 				new_element["drawings"]["toggle_inside"] = toggle_inside
 				new_element["drawings"]["checkmark"] = checkmark
 
-				local keybind_border = drawing_proxy["new"]("Image", {
-					["Parent"] = frame,
-					["Position"] = udim2_new(1, -32, 0, 0),
-					["Size"] = udim2_new(0, 32, 0, 12),
-					["Color"] = menu["colors"]["border"],
-					["Transparency"] = 1,
-					["Rounding"] = 4,
-					["Data"] = pixel_image_data,
-					["ZIndex"] = zindex + 6,
-					["Visible"] = true,
-				})
-				local keybind_inside = drawing_proxy["new"]("Image", {
-					["Parent"] = keybind_border,
-					["Position"] = udim2_new(0, 1, 0, 1),
-					["Size"] = udim2_new(1, -2, 1, -2),
-					["Color"] = menu["colors"]["background"],
-					["Transparency"] = 1,
-					["Rounding"] = 4,
-					["Data"] = pixel_image_data,
-					["ZIndex"] = zindex + 7,
-					["Visible"] = true,
-				})
-				local keybind_text = drawing_proxy["new"]("Text", {
-					["Color"] = menu["colors"]["dark_text"],
-					["Text"] = "none",
-					["Size"] = 12,
-					["Font"] = 1,
-					["Transparency"] = 1,
-					["Visible"] = true,
-					["Parent"] = keybind_inside,
-					["Center"] = true,
-					["ZIndex"] = zindex + 8,
-					["Position"] = udim2_new(0.5, 0, 0, -1),
-				})
-
-				new_element["drawings"]["keybind_border"] = keybind_border
-				new_element["drawings"]["keybind_inside"] = keybind_inside
-				new_element["drawings"]["keybind_text"] = keybind_text
-				new_element["on_key_change"] = signal["new"]()
-
-				create_hover_connection(parent, keybind_border, function()
-					tween(keybind_border, { Color = menu["colors"]["highlighted"] }, circular, out, 0.17)
-				end, function()
-					tween(keybind_border, { Color = menu["colors"]["border"] }, circular, out, 0.17)
-				end)
-
-				create_click_connection(parent, keybind_border, function()
-					start_binding(new_element)
-				end)
-
 				create_hover_connection(parent, toggle_click, function()
 					tween(toggle_border, { Color = menu["colors"]["highlighted"] }, circular, out, 0.17)
 				end, function()
@@ -5317,46 +5267,6 @@ do
 				create_click_connection(parent, toggle_click, function()
 					new_element:set_toggle(not flags[properties["flag"]])
 				end)
-
-				if not info["fake"] then
-					local toggle_kb_data = nil
-					create_connection(new_element["on_key_change"], function(key)
-						if key then
-							if not toggle_kb_data then
-								toggle_kb_data = setmetatable({
-									["key"] = key,
-									["method"] = 1,
-									["original_value"] = flags[properties["flag"]],
-									["value"] = flags[properties["flag"]],
-									["type"] = 3,
-									["element"] = new_element,
-									["set_activated"] = function(self, val)
-										self["activated"] = val
-										if not val then
-											new_element:set_toggle(self["original_value"], true)
-										end
-									end,
-									["activated"] = false,
-								}, {__index = function() end})
-								keybind_data[new_element] = toggle_kb_data
-								on_keybind_created:Fire(toggle_kb_data, new_element)
-							else
-								toggle_kb_data["key"] = key
-								on_keybind_updated:Fire(toggle_kb_data, new_element)
-							end
-						else
-							if toggle_kb_data then
-								keybind_data[new_element] = nil
-								on_keybind_deleted:Fire(toggle_kb_data, new_element)
-								toggle_kb_data = nil
-							end
-						end
-					end)
-
-					create_right_click_connection(parent, keybind_border, function(position)
-						open_context(keybind_data[new_element] and { 2, 1 } or { 1 }, new_element, position)
-					end)
-				end
 			elseif element == "slider" then
 				total_y_size += 14
 
@@ -5366,7 +5276,7 @@ do
 					["Size"] = udim2_new(1, 0, 0, 12),
 					["Color"] = menu["colors"]["border"],
 					["Transparency"] = 1,
-					["Rounding"] = 4,
+					["Rounding"] = 0,
 					["Data"] = pixel_image_data,
 					["ZIndex"] = zindex + 1,
 					["Visible"] = true,
@@ -5376,7 +5286,7 @@ do
 					["Position"] = udim2_new(0, 1, 0, 1),
 					["Size"] = udim2_new(1, -2, 1, -2),
 					["Color"] = menu["colors"]["background"],
-					["Rounding"] = 4,
+					["Rounding"] = 0,
 					["Data"] = pixel_image_data,
 					["Transparency"] = 1,
 					["ZIndex"] = zindex + 2,
@@ -5387,7 +5297,7 @@ do
 					["Position"] = udim2_new(0, 1, 0, 1),
 					["Size"] = udim2_new(0, 0, 1, -2),
 					["Color"] = menu["colors"]["accent"],
-					["Rounding"] = 4,
+					["Rounding"] = 0,
 					["Data"] = pixel_image_data,
 					["Transparency"] = 0.5,
 					["ZIndex"] = zindex + 3,
@@ -5492,7 +5402,7 @@ do
 					["Size"] = udim2_new(1, 0, 0, 16),
 					["Color"] = menu["colors"]["border"],
 					["Transparency"] = 1,
-					["Rounding"] = 4,
+					["Rounding"] = 0,
 					["Data"] = pixel_image_data,
 					["Visible"] = true,
 					["ZIndex"] = zindex + 1,
@@ -5502,7 +5412,7 @@ do
 					["Position"] = udim2_new(0, 1, 0, 1),
 					["Size"] = udim2_new(1, -2, 1, -2),
 					["Color"] = menu["colors"]["background"],
-					["Rounding"] = 4,
+					["Rounding"] = 0,
 					["Data"] = pixel_image_data,
 					["Transparency"] = 1,
 					["ZIndex"] = zindex + 2,
@@ -5549,7 +5459,7 @@ do
 					["Size"] = udim2_new(1, 0, 0, 16),
 					["Color"] = menu["colors"]["border"],
 					["Transparency"] = 1,
-					["Rounding"] = 4,
+					["Rounding"] = 0,
 					["Data"] = pixel_image_data,
 					["Visible"] = true,
 					["ZIndex"] = zindex + 1,
@@ -5559,7 +5469,7 @@ do
 					["Position"] = udim2_new(0, 1, 0, 1),
 					["Size"] = udim2_new(1, -2, 1, -2),
 					["Color"] = menu["colors"]["background"],
-					["Rounding"] = 4,
+					["Rounding"] = 0,
 					["Data"] = pixel_image_data,
 					["Transparency"] = 1,
 					["ZIndex"] = zindex + 2,
@@ -5699,7 +5609,7 @@ do
 					["Size"] = udim2_new(0, 40, 0, 12),
 					["Color"] = menu["colors"]["border"],
 					["Transparency"] = 1,
-					["Rounding"] = 4,
+					["Rounding"] = 0,
 					["Data"] = pixel_image_data,
 					["ZIndex"] = zindex + 1,
 					["Visible"] = true,
@@ -5710,7 +5620,7 @@ do
 					["Size"] = udim2_new(1, -2, 1, -2),
 					["Color"] = menu["colors"]["background"],
 					["Transparency"] = 1,
-					["Rounding"] = 4,
+					["Rounding"] = 0,
 					["Data"] = pixel_image_data,
 					["ZIndex"] = zindex + 2,
 					["Visible"] = true,
@@ -5777,7 +5687,7 @@ do
 					["Size"] = udim2_new(0, 25, 0, 12),
 					["Color"] = menu["colors"]["border"],
 					["Transparency"] = 1,
-					["Rounding"] = 4,
+					["Rounding"] = 0,
 					["Data"] = pixel_image_data,
 					["ZIndex"] = zindex + 1,
 					["Visible"] = true,
@@ -5788,7 +5698,7 @@ do
 					["Size"] = udim2_new(1, -2, 1, -2),
 					["Color"] = menu["colors"]["background"],
 					["Transparency"] = 1,
-					["Rounding"] = 4,
+					["Rounding"] = 0,
 					["Data"] = pixel_image_data,
 					["ZIndex"] = zindex + 2,
 					["Visible"] = true,
@@ -5799,7 +5709,7 @@ do
 					["Size"] = udim2_new(1, -2, 1, -2),
 					["Color"] = color3_fromrgb(255, 255, 255),
 					["Transparency"] = -transparency + 1,
-					["Rounding"] = 4,
+					["Rounding"] = 0,
 					["Data"] = transparency_image_data,
 					["ZIndex"] = zindex + 3,
 					["Visible"] = true,
@@ -5862,7 +5772,7 @@ do
 					["Size"] = udim2_new(1, 0, 0, 16),
 					["Color"] = menu["colors"]["border"],
 					["Transparency"] = 1,
-					["Rounding"] = 4,
+					["Rounding"] = 0,
 					["Data"] = pixel_image_data,
 					["Visible"] = true,
 					["ZIndex"] = zindex + 1,
@@ -5872,7 +5782,7 @@ do
 					["Position"] = udim2_new(0, 1, 0, 1),
 					["Size"] = udim2_new(1, -2, 1, -2),
 					["Color"] = menu["colors"]["background"],
-					["Rounding"] = 4,
+					["Rounding"] = 0,
 					["Data"] = pixel_image_data,
 					["Transparency"] = 1,
 					["ZIndex"] = zindex + 2,
@@ -5883,7 +5793,7 @@ do
 					["Position"] = udim2_new(1, -14, 0, 3),
 					["Size"] = udim2_new(0, 10, 0, 10),
 					["Color"] = menu["colors"]["dark_text"],
-					["Rounding"] = 4,
+					["Rounding"] = 0,
 					["Data"] = button_image_data,
 					["Transparency"] = 1,
 					["ZIndex"] = zindex + 3,
@@ -6275,7 +6185,7 @@ do
 			["Size"] = udim2_new(0, 170, 0, 10),
 			["Color"] = menu["colors"]["border"],
 			["Transparency"] = 1,
-			["Rounding"] = 4,
+			["Rounding"] = 0,
 			["Data"] = pixel_image_data,
 			["ZIndex"] = 500,
 			["Visible"] = false,
@@ -6286,7 +6196,7 @@ do
 			["Size"] = udim2_new(1, -2, 1, -2),
 			["Color"] = menu["colors"]["section"],
 			["Transparency"] = 1,
-			["Rounding"] = 4,
+			["Rounding"] = 0,
 			["Data"] = pixel_image_data,
 			["ZIndex"] = 501,
 			["Visible"] = true,
@@ -6406,6 +6316,9 @@ do
 		if not self["side"] then
 			self["border"]["Size"] = udim2_new(0, 170, 0, self["total_y_size"] + 7)
 			self["inside"]["Size"] = udim2_new(1, -2, 1, -2)
+		else
+			self["border"]["Size"] = udim2_new(0.5, -5, 0, self["total_y_size"] + 15)
+			self["inside"]["Size"] = udim2_new(1, -2, 1, -1)
 		end
 
 		return new_element
@@ -6426,6 +6339,9 @@ do
 		if not self["side"] then
 			self["border"]["Size"] = udim2_new(0, 170, 0, total_size + 7)
 			self["inside"]["Size"] = udim2_new(1, -2, 1, -2)
+		else
+			self["border"]["Size"] = udim2_new(0.5, -5, 0, total_size + 15)
+			self["inside"]["Size"] = udim2_new(1, -2, 1, -1)
 		end
 
 		self["total_y_size"] = total_size
@@ -6523,7 +6439,7 @@ do
 					["Color"] = color,
 					["Transparency"] = 0,
 					["Data"] = data or notification_types[type][2],
-					["Rounding"] = 4,
+					["Rounding"] = 0,
 					["ZIndex"] = 1102,
 					["Visible"] = true,
 				})
@@ -7408,7 +7324,7 @@ do
 			["Size"] = udim2_new(0, 170, 0, 10),
 			["Color"] = menu["colors"]["border"],
 			["Transparency"] = 0,
-			["Rounding"] = 4,
+			["Rounding"] = 0,
 			["Data"] = pixel_image_data,
 			["ZIndex"] = 500,
 			["Visible"] = false,
@@ -7419,7 +7335,7 @@ do
 			["Size"] = udim2_new(1, -2, 1, -2),
 			["Color"] = menu["colors"]["background"],
 			["Transparency"] = 1,
-			["Rounding"] = 4,
+			["Rounding"] = 0,
 			["Data"] = pixel_image_data,
 			["ZIndex"] = 501,
 			["Visible"] = true,
@@ -7549,7 +7465,7 @@ do
 				["Size"] = udim2_new(0, 170, 0, 10),
 				["Color"] = menu["colors"]["border"],
 				["Transparency"] = 0,
-				["Rounding"] = 4,
+				["Rounding"] = 0,
 				["Data"] = pixel_image_data,
 				["ZIndex"] = 500,
 				["Visible"] = false,
@@ -7560,7 +7476,7 @@ do
 				["Size"] = udim2_new(1, -2, 1, -2),
 				["Color"] = menu["colors"]["background"],
 				["Transparency"] = 1,
-				["Rounding"] = 4,
+				["Rounding"] = 0,
 				["Data"] = pixel_image_data,
 				["ZIndex"] = 501,
 				["Visible"] = true,
