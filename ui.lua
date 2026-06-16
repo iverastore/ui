@@ -1987,7 +1987,6 @@ local Library = {
 
             local Watermark = {
                 Name = Params.Name or Params.name or "Watermark",
-
                 Items = { }
             }
 
@@ -2053,24 +2052,6 @@ local Library = {
                     PaddingRight = UDim.new(0, 8),
                     PaddingLeft = UDim.new(0, 8)
                 })
-                
-                Items["Title"] = Library:Create("TextLabel", {
-                    Name = "\0",
-                    FontFace = Library.Font,
-                    TextSize = Library.FontSize,
-                    Parent = Items["Holder"].Instance,
-                    TextColor3 = Library.Theme["Accent"],
-                    Text = Watermark.Name,
-                    BackgroundTransparency = 1,
-                    BorderSizePixel = 0,
-                    AutomaticSize = Enum.AutomaticSize.XY
-                }):AddToTheme({TextColor3 = 'Accent'})
-                
-                Library:Create("UIPadding", {
-                    Name = "\0",
-                    Parent = Items["Title"].Instance,
-                    PaddingBottom = UDim.new(0, 2)
-                })
 
                 Watermark.Items = Items 
             end
@@ -2080,18 +2061,10 @@ local Library = {
             end
 
             function Watermark:SetText(Text)
-                Items["Title"].Instance.Text = tostring(Text)
+                Items["Holder"].Instance.Parent.Name = tostring(Text)
             end
             
             function Watermark:Add(Text)
-                Library:Create("Frame", {
-                    Name = "\0",
-                    Parent = Items["Holder"].Instance,
-                    Size = UDim2.new(0, 1, 1, -10),
-                    BorderSizePixel = 0,
-                    BackgroundColor3 = Library.Theme["Outline"]
-                }):AddToTheme({BackgroundColor3 = 'Outline'})
-                
                 local NewItem = Library:Create("TextLabel", {
                     Name = "\0",
                     FontFace = Library.Font,
@@ -4884,6 +4857,42 @@ local Library = {
                 if AutoloadContent ~= "" then 
                     Library:LoadConfig(AutoloadContent)
                 end
+            end
+
+            -- Built-in Watermark with stats
+            if Self.Watermark then
+                local FpsText = Self.Watermark:Add("FPS: ")
+                local V2Text = Self.Watermark:Add("V2")
+                local PingText = Self.Watermark:Add("Ping: ")
+                local GameText = Self.Watermark:Add("Game: ")
+                local UserIdText = Self.Watermark:Add("ID: ")
+
+                local FPS = 0
+                local FrameCount = 0
+                local Elapsed = 0
+                local LocalPlayer = Players.LocalPlayer
+
+                Library:Connect(RunService.RenderStepped, function(DeltaT)
+                    FrameCount += 1
+                    Elapsed += DeltaT
+
+                    if Elapsed >= 1 then
+                        FPS = math.floor(FrameCount / Elapsed)
+                        FpsText:SetText("FPS: " .. FPS)
+                        FrameCount = 0
+                        Elapsed = 0
+                    end
+
+                    pcall(function()
+                        local ping = game:GetService("Stats").Network.ServerStatsItem("Data Ping"):GetValue()
+                        PingText:SetText("Ping: " .. math.floor(ping))
+                    end)
+                    
+                    local gameName = game.PlaceId
+                    GameText:SetText("Game: " .. tostring(gameName))
+                    
+                    UserIdText:SetText("ID: " .. tostring(LocalPlayer.UserId))
+                end)
             end
         end
     end
