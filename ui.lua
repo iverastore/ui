@@ -5212,3 +5212,8 @@ return Library
     end
     
     Library.PageMeta = PageMeta
+
+end
+
+getgenv().Library = Library
+return Library
