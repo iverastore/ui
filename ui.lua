@@ -5249,6 +5249,56 @@ do
 				new_element["drawings"]["toggle_inside"] = toggle_inside
 				new_element["drawings"]["checkmark"] = checkmark
 
+				local keybind_border = drawing_proxy["new"]("Image", {
+					["Parent"] = frame,
+					["Position"] = udim2_new(1, -30, 0, 0),
+					["Size"] = udim2_new(0, 30, 0, 12),
+					["Color"] = menu["colors"]["border"],
+					["Transparency"] = 1,
+					["Rounding"] = 4,
+					["Data"] = pixel_image_data,
+					["ZIndex"] = zindex + 4,
+					["Visible"] = true,
+				})
+				local keybind_inside = drawing_proxy["new"]("Image", {
+					["Parent"] = keybind_border,
+					["Position"] = udim2_new(0, 1, 0, 1),
+					["Size"] = udim2_new(1, -2, 1, -2),
+					["Color"] = menu["colors"]["background"],
+					["Transparency"] = 1,
+					["Rounding"] = 4,
+					["Data"] = pixel_image_data,
+					["ZIndex"] = zindex + 5,
+					["Visible"] = true,
+				})
+				local keybind_text = drawing_proxy["new"]("Text", {
+					["Color"] = menu["colors"]["dark_text"],
+					["Text"] = "none",
+					["Size"] = 12,
+					["Font"] = 1,
+					["Transparency"] = 1,
+					["Visible"] = true,
+					["Parent"] = keybind_inside,
+					["Center"] = true,
+					["ZIndex"] = zindex + 6,
+					["Position"] = udim2_new(0.5, 0, 0, -1),
+				})
+
+				new_element["drawings"]["keybind_border"] = keybind_border
+				new_element["drawings"]["keybind_inside"] = keybind_inside
+				new_element["drawings"]["keybind_text"] = keybind_text
+				new_element["on_key_change"] = signal["new"]()
+
+				create_hover_connection(parent, keybind_border, function()
+					tween(keybind_border, { Color = menu["colors"]["highlighted"] }, circular, out, 0.17)
+				end, function()
+					tween(keybind_border, { Color = menu["colors"]["border"] }, circular, out, 0.17)
+				end)
+
+				create_click_connection(parent, keybind_border, function()
+					start_binding(new_element)
+				end)
+
 				create_hover_connection(parent, toggle_click, function()
 					tween(toggle_border, { Color = menu["colors"]["highlighted"] }, circular, out, 0.17)
 				end, function()
@@ -5269,7 +5319,41 @@ do
 				end)
 
 				if not info["fake"] then
-					create_right_click_connection(parent, toggle_click, function(position)
+					local toggle_kb_data = nil
+					create_connection(new_element["on_key_change"], function(key)
+						if key then
+							if not toggle_kb_data then
+								toggle_kb_data = setmetatable({
+									["key"] = key,
+									["method"] = 1,
+									["original_value"] = flags[properties["flag"]],
+									["value"] = flags[properties["flag"]],
+									["type"] = 3,
+									["element"] = new_element,
+									["set_activated"] = function(self, val)
+										self["activated"] = val
+										if not val then
+											new_element:set_toggle(self["original_value"], true)
+										end
+									end,
+									["activated"] = false,
+								}, {__index = function() end})
+								keybind_data[new_element] = toggle_kb_data
+								on_keybind_created:Fire(toggle_kb_data, new_element)
+							else
+								toggle_kb_data["key"] = key
+								on_keybind_updated:Fire(toggle_kb_data, new_element)
+							end
+						else
+							if toggle_kb_data then
+								keybind_data[new_element] = nil
+								on_keybind_deleted:Fire(toggle_kb_data, new_element)
+								toggle_kb_data = nil
+							end
+						end
+					end)
+
+					create_right_click_connection(parent, keybind_border, function(position)
 						open_context(keybind_data[new_element] and { 2, 1 } or { 1 }, new_element, position)
 					end)
 				end
