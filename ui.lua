@@ -4530,7 +4530,6 @@ do
 			["size"] = size,
 			["total_y_size"] = 10,
 			["elements"] = {},
-			["_y_position"] = y_position or 0,
 		}, section)
 
 		local tab_frame = tab["frame"]
@@ -6317,16 +6316,6 @@ do
 		if not self["side"] then
 			self["border"]["Size"] = udim2_new(0, 170, 0, self["total_y_size"] + 7)
 			self["inside"]["Size"] = udim2_new(1, -2, 1, -2)
-		else
-			-- Clamp section height to allocated vertical space in tab frame
-			local tab_frame = self["tab"]["frame"]
-			local tab_h = tab_frame and tab_frame["real_size"] and tab_frame["real_size"]["Y"] or 400
-			local y_off = self["_y_position"] or 0
-			local max_h = tab_h * self["size"] - (y_off > 0 and 10 or 0)
-			local content_h = self["total_y_size"] + 15
-			local final_h = max_h > 0 and math.min(content_h, max_h) or content_h
-			self["border"]["Size"] = udim2_new(0.5, -5, 0, final_h)
-			self["inside"]["Size"] = udim2_new(1, -2, 1, -1)
 		end
 
 		return new_element
@@ -6347,15 +6336,6 @@ do
 		if not self["side"] then
 			self["border"]["Size"] = udim2_new(0, 170, 0, total_size + 7)
 			self["inside"]["Size"] = udim2_new(1, -2, 1, -2)
-		else
-			local tab_frame = self["tab"]["frame"]
-			local tab_h = tab_frame and tab_frame["real_size"] and tab_frame["real_size"]["Y"] or 400
-			local y_off = self["_y_position"] or 0
-			local max_h = tab_h * self["size"] - (y_off > 0 and 10 or 0)
-			local content_h = total_size + 15
-			local final_h = max_h > 0 and math.min(content_h, max_h) or content_h
-			self["border"]["Size"] = udim2_new(0.5, -5, 0, final_h)
-			self["inside"]["Size"] = udim2_new(1, -2, 1, -1)
 		end
 
 		self["total_y_size"] = total_size
@@ -8804,6 +8784,162 @@ connections[#connections + 1] = _wm_conn
 -- > ( special circle - removed )
 
 menu["set_special_circle"] = function() end
+
+-- > ( target hud — themed, managed by uilib )
+
+local thud_frame = drawing_proxy["new"]("Image", {
+	["Position"] = udim2_new(0, 0, 0, 0),
+	["Size"] = udim2_new(0, 180, 0, 70),
+	["Color"] = menu["colors"]["border"],
+	["Transparency"] = 0,
+	["Rounding"] = 3,
+	["Data"] = pixel_image_data,
+	["ZIndex"] = 80,
+	["Visible"] = false,
+})
+local thud_inside = drawing_proxy["new"]("Image", {
+	["Parent"] = thud_frame,
+	["Position"] = udim2_new(0, 1, 0, 1),
+	["Size"] = udim2_new(1, -2, 1, -2),
+	["Color"] = menu["colors"]["section"],
+	["Transparency"] = 0,
+	["Rounding"] = 3,
+	["Data"] = pixel_image_data,
+	["ZIndex"] = 81,
+	["Visible"] = true,
+})
+local thud_accent = drawing_proxy["new"]("Square", {
+	["Parent"] = thud_inside,
+	["Position"] = udim2_new(0, 0, 0, 0),
+	["Size"] = udim2_new(1, 0, 0, 1),
+	["Color"] = menu["colors"]["accent"],
+	["Transparency"] = 0,
+	["Filled"] = true,
+	["ZIndex"] = 82,
+	["Visible"] = true,
+})
+local thud_shadow = drawing_proxy["new"]("Image", {
+	["Parent"] = thud_frame,
+	["Data"] = shadow_image_data,
+	["Rounding"] = 7,
+	["Color"] = menu["colors"]["shadow"],
+	["Transparency"] = 0,
+	["Size"] = udim2_new(1, 6, 1, 4),
+	["ZIndex"] = 79,
+	["Visible"] = true,
+	["Position"] = udim2_new(0, -3, 0, -2),
+})
+local thud_name = drawing_proxy["new"]("Text", {
+	["Parent"] = thud_inside,
+	["Position"] = udim2_new(0, 8, 0, 5),
+	["Color"] = menu["colors"]["active_text"],
+	["Text"] = "",
+	["Size"] = 13,
+	["Font"] = 1,
+	["Transparency"] = 0,
+	["ZIndex"] = 83,
+	["Visible"] = true,
+})
+local thud_username = drawing_proxy["new"]("Text", {
+	["Parent"] = thud_inside,
+	["Position"] = udim2_new(0, 8, 0, 19),
+	["Color"] = menu["colors"]["inactive_text"],
+	["Text"] = "",
+	["Size"] = 11,
+	["Font"] = 1,
+	["Transparency"] = 0,
+	["ZIndex"] = 83,
+	["Visible"] = true,
+})
+local thud_hp_bg = drawing_proxy["new"]("Image", {
+	["Parent"] = thud_inside,
+	["Position"] = udim2_new(0, 8, 0, 35),
+	["Size"] = udim2_new(1, -16, 0, 4),
+	["Color"] = menu["colors"]["background"],
+	["Rounding"] = 2,
+	["Data"] = pixel_image_data,
+	["Transparency"] = 0,
+	["ZIndex"] = 83,
+	["Visible"] = true,
+})
+local thud_hp_bar = drawing_proxy["new"]("Image", {
+	["Parent"] = thud_hp_bg,
+	["Position"] = udim2_new(0, 0, 0, 0),
+	["Size"] = udim2_new(1, 0, 1, 0),
+	["Color"] = menu["colors"]["accent"],
+	["Rounding"] = 2,
+	["Data"] = pixel_image_data,
+	["Transparency"] = 0,
+	["ZIndex"] = 84,
+	["Visible"] = true,
+})
+local thud_hp_text = drawing_proxy["new"]("Text", {
+	["Parent"] = thud_inside,
+	["Position"] = udim2_new(1, -8, 0, 41),
+	["Color"] = menu["colors"]["dark_text"],
+	["Text"] = "",
+	["Size"] = 11,
+	["Font"] = 1,
+	["Transparency"] = 0,
+	["ZIndex"] = 83,
+	["Visible"] = true,
+})
+local thud_dist = drawing_proxy["new"]("Text", {
+	["Parent"] = thud_inside,
+	["Position"] = udim2_new(0, 8, 0, 41),
+	["Color"] = menu["colors"]["dark_text"],
+	["Text"] = "",
+	["Size"] = 11,
+	["Font"] = 1,
+	["Transparency"] = 0,
+	["ZIndex"] = 83,
+	["Visible"] = true,
+})
+local thud_weapon = drawing_proxy["new"]("Text", {
+	["Parent"] = thud_inside,
+	["Position"] = udim2_new(0, 8, 0, 53),
+	["Color"] = menu["colors"]["inactive_text"],
+	["Text"] = "",
+	["Size"] = 11,
+	["Font"] = 1,
+	["Transparency"] = 0,
+	["ZIndex"] = 83,
+	["Visible"] = true,
+})
+
+hud_frames["target_hud"] = thud_frame
+
+menu["update_target_hud"] = function(data)
+	if not data then
+		thud_frame["Visible"] = false
+		return
+	end
+	thud_frame["Visible"] = true
+	local vp = camera["ViewportSize"]
+	local px = data.pos_x or (vp["X"] / 2 - 90)
+	local py = data.pos_y or (vp["Y"] * 0.08)
+	thud_frame["Position"] = udim2_new(0, px, 0, py)
+
+	thud_name["Text"] = data.display_name or ""
+	thud_username["Text"] = data.username or ""
+
+	local pct = data.health_pct or 0
+	thud_hp_bar["Size"] = udim2_new(pct, 0, 1, 0)
+	thud_hp_text["Text"] = data.health_text or ""
+	-- Right-align hp text
+	local hp_bounds = thud_hp_text["TextBounds"]
+	if hp_bounds then
+		thud_hp_text["Position"] = udim2_new(1, -8 - (hp_bounds["X"] or 0), 0, 41)
+	end
+
+	thud_dist["Text"] = data.dist_text or ""
+	thud_weapon["Text"] = data.weapon or ""
+
+	-- Auto-resize height
+	local h = 57
+	if data.weapon and #data.weapon > 0 then h = 68 end
+	thud_frame["Size"] = udim2_new(0, 180, 0, h)
+end
 
 -- > ( theming setup in uilib )
 
