@@ -994,7 +994,7 @@ do
 		["Size"] = udim2_new(0, 140, 0, 26),
 		["Color"] = menu["colors"]["border"],
 		["Transparency"] = 0,
-		["Rounding"] = 0,
+		["Rounding"] = 3,
 		["Data"] = pixel_image_data,
 		["ZIndex"] = 10,
 		["Visible"] = false,
@@ -1019,7 +1019,7 @@ do
 		["Size"] = udim2_new(0, 138, 0, 24),
 		["Color"] = color3_fromrgb(10, 10, 10),
 		["Transparency"] = 0,
-		["Rounding"] = 0,
+		["Rounding"] = 3,
 		["Data"] = pixel_image_data,
 		["Parent"] = list_frame,
 		["ZIndex"] = 11,
@@ -4530,6 +4530,7 @@ do
 			["size"] = size,
 			["total_y_size"] = 10,
 			["elements"] = {},
+			["_y_position"] = y_position or 0,
 		}, section)
 
 		local tab_frame = tab["frame"]
@@ -4546,7 +4547,7 @@ do
 			["Size"] = udim2_new(0.5, -5, size, y_position ~= 0 and -10 or 0),
 			["Color"] = menu["colors"]["border"],
 			["Transparency"] = 1,
-			["Rounding"] = 0,
+			["Rounding"] = 3,
 			["Data"] = pixel_image_data,
 			["ZIndex"] = 2,
 			["Visible"] = true,
@@ -4557,7 +4558,7 @@ do
 			["Size"] = udim2_new(1, -2, 1, -1),
 			["Color"] = menu["colors"]["section"],
 			["Transparency"] = 1,
-			["Rounding"] = 0,
+			["Rounding"] = 3,
 			["Data"] = pixel_image_data,
 			["ZIndex"] = 3,
 			["Visible"] = true,
@@ -4644,7 +4645,7 @@ do
 			["Size"] = udim2_new(0.5, -5, 1, 0),
 			["Color"] = menu["colors"]["border"],
 			["Transparency"] = 1,
-			["Rounding"] = 0,
+			["Rounding"] = 3,
 			["Data"] = pixel_image_data,
 			["Visible"] = true,
 		})
@@ -4654,7 +4655,7 @@ do
 			["Size"] = udim2_new(1, -2, 1, -1),
 			["Color"] = menu["colors"]["section"],
 			["Transparency"] = 1,
-			["Rounding"] = 0,
+			["Rounding"] = 3,
 			["Data"] = pixel_image_data,
 			["Visible"] = true,
 		})
@@ -6317,7 +6318,14 @@ do
 			self["border"]["Size"] = udim2_new(0, 170, 0, self["total_y_size"] + 7)
 			self["inside"]["Size"] = udim2_new(1, -2, 1, -2)
 		else
-			self["border"]["Size"] = udim2_new(0.5, -5, 0, self["total_y_size"] + 15)
+			-- Clamp section height to allocated vertical space in tab frame
+			local tab_frame = self["tab"]["frame"]
+			local tab_h = tab_frame and tab_frame["real_size"] and tab_frame["real_size"]["Y"] or 400
+			local y_off = self["_y_position"] or 0
+			local max_h = tab_h * self["size"] - (y_off > 0 and 10 or 0)
+			local content_h = self["total_y_size"] + 15
+			local final_h = max_h > 0 and math.min(content_h, max_h) or content_h
+			self["border"]["Size"] = udim2_new(0.5, -5, 0, final_h)
 			self["inside"]["Size"] = udim2_new(1, -2, 1, -1)
 		end
 
@@ -6340,7 +6348,13 @@ do
 			self["border"]["Size"] = udim2_new(0, 170, 0, total_size + 7)
 			self["inside"]["Size"] = udim2_new(1, -2, 1, -2)
 		else
-			self["border"]["Size"] = udim2_new(0.5, -5, 0, total_size + 15)
+			local tab_frame = self["tab"]["frame"]
+			local tab_h = tab_frame and tab_frame["real_size"] and tab_frame["real_size"]["Y"] or 400
+			local y_off = self["_y_position"] or 0
+			local max_h = tab_h * self["size"] - (y_off > 0 and 10 or 0)
+			local content_h = total_size + 15
+			local final_h = max_h > 0 and math.min(content_h, max_h) or content_h
+			self["border"]["Size"] = udim2_new(0.5, -5, 0, final_h)
 			self["inside"]["Size"] = udim2_new(1, -2, 1, -1)
 		end
 
@@ -8703,35 +8717,61 @@ do
 	end
 end
 
--- > ( watermark )
+-- > ( watermark — styled like main UI )
 
-local watermark_bg = Drawing.new("Square")
-watermark_bg.Visible = false
-watermark_bg.Filled = true
-watermark_bg.Color = Color3.fromRGB(10, 10, 10)
-watermark_bg.Transparency = 0.85
-watermark_bg.ZIndex = 100
-watermark_bg.Size = Vector2.new(200, 22)
-watermark_bg.Position = Vector2.new(8, 8)
-
-local watermark_border = Drawing.new("Line")
-watermark_border.Visible = false
-watermark_border.Color = Color3.fromRGB(255, 255, 255)
-watermark_border.Thickness = 1
-watermark_border.Transparency = 0.6
-watermark_border.ZIndex = 101
-watermark_border.From = Vector2.new(8, 30)
-watermark_border.To = Vector2.new(208, 30)
-
-local watermark_text = Drawing.new("Text")
-watermark_text.Visible = false
-watermark_text.Font = 2
-watermark_text.Size = 13
-watermark_text.Color = Color3.fromRGB(255, 255, 255)
-watermark_text.Outline = true
-watermark_text.OutlineColor = Color3.fromRGB(0, 0, 0)
-watermark_text.ZIndex = 102
-watermark_text.Position = Vector2.new(12, 11)
+local wm_border = drawing_proxy["new"]("Image", {
+	["Position"] = udim2_new(0, 10, 0, 10),
+	["Size"] = udim2_new(0, 180, 0, 24),
+	["Color"] = menu["colors"]["border"],
+	["Transparency"] = 0,
+	["Rounding"] = 3,
+	["Data"] = pixel_image_data,
+	["ZIndex"] = 100,
+	["Visible"] = false,
+})
+local wm_inside = drawing_proxy["new"]("Image", {
+	["Parent"] = wm_border,
+	["Position"] = udim2_new(0, 1, 0, 1),
+	["Size"] = udim2_new(1, -2, 1, -2),
+	["Color"] = menu["colors"]["section"],
+	["Transparency"] = 0,
+	["Rounding"] = 3,
+	["Data"] = pixel_image_data,
+	["ZIndex"] = 101,
+	["Visible"] = true,
+})
+local wm_accent_line = drawing_proxy["new"]("Square", {
+	["Parent"] = wm_inside,
+	["Position"] = udim2_new(0, 0, 0, 0),
+	["Size"] = udim2_new(1, 0, 0, 1),
+	["Color"] = menu["colors"]["accent"],
+	["Transparency"] = 0,
+	["Filled"] = true,
+	["ZIndex"] = 102,
+	["Visible"] = true,
+})
+local wm_text = drawing_proxy["new"]("Text", {
+	["Parent"] = wm_inside,
+	["Position"] = udim2_new(0, 6, 0, 3),
+	["Color"] = menu["colors"]["active_text"],
+	["Text"] = "",
+	["Size"] = 12,
+	["Font"] = 1,
+	["Transparency"] = 0,
+	["ZIndex"] = 103,
+	["Visible"] = true,
+})
+local wm_shadow = drawing_proxy["new"]("Image", {
+	["Parent"] = wm_border,
+	["Data"] = shadow_image_data,
+	["Rounding"] = 7,
+	["Color"] = menu["colors"]["shadow"],
+	["Transparency"] = 0,
+	["Size"] = udim2_new(1, 6, 1, 4),
+	["ZIndex"] = 99,
+	["Visible"] = true,
+	["Position"] = udim2_new(0, -3, 0, -2),
+})
 
 local watermark_enabled = false
 local watermark_fps_tick = 0
@@ -8740,9 +8780,7 @@ local watermark_fps_display = 0
 
 menu["set_watermark"] = function(enabled)
 	watermark_enabled = enabled
-	watermark_bg.Visible = enabled
-	watermark_border.Visible = enabled
-	watermark_text.Visible = enabled
+	wm_border["Visible"] = enabled
 end
 
 local _wm_conn = run_service["RenderStepped"]:Connect(function(dt)
@@ -8756,11 +8794,10 @@ local _wm_conn = run_service["RenderStepped"]:Connect(function(dt)
 	end
 	local name = getgenv().script_name or "ivera"
 	local txt = name .. " | " .. tostring(watermark_fps_display) .. " fps"
-	watermark_text.Text = txt
-	local bounds = watermark_text.TextBounds
-	watermark_bg.Size = Vector2.new(bounds.X + 16, 22)
-	watermark_border.From = Vector2.new(8, 30)
-	watermark_border.To = Vector2.new(8 + bounds.X + 16, 30)
+	wm_text["Text"] = txt
+	local bounds = wm_text["TextBounds"]
+	local w = bounds and bounds["X"] or 80
+	wm_border["Size"] = udim2_new(0, w + 18, 0, 24)
 end)
 connections[#connections + 1] = _wm_conn
 
