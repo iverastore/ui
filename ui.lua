@@ -4612,6 +4612,16 @@ do
 
 		tab["sections"][name] = new_section
 
+		-- Scroll support for regular sections
+		create_scroll_connection(section_border, section_border, function(is_up)
+			if not new_section["_scroll_offset"] then new_section["_scroll_offset"] = 0 end
+			local max_scroll = math.max(0, new_section["total_y_size"] + 15 - (section_border["real_size"] and section_border["real_size"]["Y"] or 999))
+			if max_scroll > 0 then
+				new_section["_scroll_offset"] = clamp(new_section["_scroll_offset"] + (is_up and -17 or 17), 0, max_scroll)
+				new_section:_apply_scroll()
+			end
+		end)
+
 		return new_section
 	end
 
@@ -6318,7 +6328,33 @@ do
 			self["inside"]["Size"] = udim2_new(1, -2, 1, -2)
 		end
 
+		-- Auto-scroll: hide elements that overflow the section frame
+		if self["side"] then
+			self:_apply_scroll()
+		end
+
 		return new_element
+	end
+
+	function section:_apply_scroll()
+		if not self["_scroll_offset"] then self["_scroll_offset"] = 0 end
+		local frame_h = self["border"]["real_size"] and self["border"]["real_size"]["Y"] or 999
+		local elements = self["elements"]
+		local y = 10
+		local offset = self["_scroll_offset"]
+		for i = 1, #elements do
+			local el = elements[i]
+			if el["visible"] ~= false and el["old_visible"] ~= false then
+				local el_y = y - offset
+				el["frame"]["Position"] = udim2_new(0, 10, 0, el_y)
+				if el_y < 5 or el_y + (el["total_y_size"] or 17) > frame_h - 5 then
+					el["frame"]["Visible"] = false
+				else
+					el["frame"]["Visible"] = true
+				end
+				y = y + (el["total_y_size"] or 17)
+			end
+		end
 	end
 
 	function section:recalculate_size()
@@ -6328,7 +6364,6 @@ do
 		for i = 1, #elements do
 			local element = elements[i]
 			if element["visible"] then
-				element["frame"]["Position"] = udim2_new(0, 10, 0, total_size)
 				total_size += element["total_y_size"]
 			end
 		end
@@ -6339,6 +6374,10 @@ do
 		end
 
 		self["total_y_size"] = total_size
+
+		if self["side"] then
+			self:_apply_scroll()
+		end
 	end
 
 	function section:destroy()
