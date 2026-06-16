@@ -830,28 +830,23 @@ do
 		["Visible"] = true,
 	})
 
+	-- themes_image and settings_image are hidden (managed via settings/theming tabs instead)
 	local themes_image = drawing_proxy["new"]("Image", {
 		["Color"] = menu["colors"]["image"],
-		["Data"] = base64_decode(
-			"iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADdYAAA3WAZBveZwAAAAYdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCA1LjEuMvu8A7YAAAC2ZVhJZklJKgAIAAAABQAaAQUAAQAAAEoAAAAbAQUAAQAAAFIAAAAoAQMAAQAAAAIAAAAxAQIAEAAAAFoAAABphwQAAQAAAGoAAAAAAAAAiF8BAOgDAACIXwEA6AMAAFBhaW50Lk5FVCA1LjEuMgADAACQBwAEAAAAMDIzMAGgAwABAAAAAQAAAAWgBAABAAAAlAAAAAAAAAACAAEAAgAEAAAAUjk4AAIABwAEAAAAMDEwMAAAAAC1cWHl18YwawAAAH5JREFUKFOFkAsOgCAMQwE5lIfx/qeA4Do7ZCL6ErOWtHwMb7TWinyN1pE4Owxul5uJnAp2ljGFo0B5F1Zhw0p6JVxDfIZegQymtroRTK9wj0bYjl5QtTCGPkqHLGcXpFRQGtYqwhDuDU9YKhYGaQwjAGix0S7W/z0UAO0PIZyip02b2JexIAAAAABJRU5ErkJggg=="
-		),
-		["Position"] = udim2_new(0, 44, 1, -27),
-		["Parent"] = inside,
-		["Size"] = udim2_new(0, 12, 0, 12),
-		["Transparency"] = 1,
-		["Visible"] = true,
+		["Data"] = pixel_image_data,
+		["Position"] = udim2_new(0, -9999, 0, -9999),
+		["Size"] = udim2_new(0, 1, 0, 1),
+		["Transparency"] = 0,
+		["Visible"] = false,
 	})
 
 	local settings_image = drawing_proxy["new"]("Image", {
 		["Color"] = menu["colors"]["image"],
-		["Data"] = base64_decode(
-			"iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAGUExURf///wAAAFXC034AAAACdFJOU/8A5bcwSgAAAAlwSFlzAAALEwAACxMBAJqcGAAAABh0RVh0U29mdHdhcmUAUGFpbnQuTkVUIDUuMS4y+7wDtgAAALZlWElmSUkqAAgAAAAFABoBBQABAAAASgAAABsBBQABAAAAUgAAACgBAwABAAAAAgAAADEBAgAQAAAAWgAAAGmHBAABAAAAagAAAAAAAABJGQEA6AMAAEkZAQDoAwAAUGFpbnQuTkVUIDUuMS4yAAMAAJAHAAQAAAAwMjMwAaADAAEAAAABAAAABaAEAAEAAACUAAAAAAAAAAIAAQACAAQAAABSOTgAAgAHAAQAAAAwMTAwAAAAAC/Sb/YZ+v7JAAAAMklEQVQYV1WLARIAQAQC9f9Pn65oNAZpFajyUHn0MtJZWkbdt+QxBwtA47X1kzDk9QY8FowASc0mZqAAAAAASUVORK5CYII="
-		),
-		["Position"] = udim2_new(0, 61, 1, -27),
-		["Parent"] = inside,
-		["Size"] = udim2_new(0, 12, 0, 12),
-		["Transparency"] = 1,
-		["Visible"] = true,
+		["Data"] = pixel_image_data,
+		["Position"] = udim2_new(0, -9999, 0, -9999),
+		["Size"] = udim2_new(0, 1, 0, 1),
+		["Transparency"] = 0,
+		["Visible"] = false,
 	})
 
 	local tab_line = drawing_proxy["new"]("Square", {
@@ -4027,9 +4022,7 @@ do
 		tween(right_side, transparency, exponential, out, 0.18)
 		tween(right_side_divider, transparency, exponential, out, 0.18)
 		tween(search_image, transparency, exponential, out, 0.18)
-		tween(themes_image, transparency, exponential, out, 0.18)
 
-		tween(settings_image, transparency, exponential, out, 0.18)
 		tween(tab_line, half_transparency, exponential, out, 0.18)
 		tween(search_border, transparency, exponential, out, 0.18)
 		tween(search_inside, transparency, exponential, out, 0.18)
@@ -7335,11 +7328,11 @@ do
 		}, section)
 
 		settings_section["border"] = drawing_proxy["new"]("Image", {
-			["Parent"] = settings_image,
-			["Position"] = udim2_new(1, 5, 0, -5),
+			["Parent"] = inside,
+			["Position"] = udim2_new(0, -9999, 0, -9999),
 			["Size"] = udim2_new(0, 170, 0, 10),
 			["Color"] = menu["colors"]["border"],
-			["Transparency"] = 1,
+			["Transparency"] = 0,
 			["Rounding"] = 4,
 			["Data"] = pixel_image_data,
 			["ZIndex"] = 500,
@@ -7476,11 +7469,11 @@ do
 			}, section)
 
 			theme_section["border"] = drawing_proxy["new"]("Image", {
-				["Parent"] = themes_image,
-				["Position"] = udim2_new(1, 5, 0, -5),
+				["Parent"] = inside,
+				["Position"] = udim2_new(0, -9999, 0, -9999),
 				["Size"] = udim2_new(0, 170, 0, 10),
 				["Color"] = menu["colors"]["border"],
-				["Transparency"] = 1,
+				["Transparency"] = 0,
 				["Rounding"] = 4,
 				["Data"] = pixel_image_data,
 				["ZIndex"] = 500,
@@ -8339,37 +8332,9 @@ do
 					end
 				end
 			)
-
-			create_click_connection(frame, themes_image, function()
-				if actives["settings"] == theme_section then
-					close_settings(theme_section)
-				else
-					open_settings(theme_section)
-				end
-			end)
-
-			create_hover_connection(frame, themes_image, function()
-				tween(themes_image, { Color = menu["colors"]["highlighted"] }, circular, out, 0.15)
-			end, function()
-				tween(themes_image, { Color = menu["colors"]["image"] }, circular, out, 0.15)
-			end)
 		end
 
 		-- >> ( buttons )
-
-		create_click_connection(frame, settings_image, function()
-			if actives["settings"] == theme_section then
-				close_settings(settings_section)
-			else
-				open_settings(settings_section)
-			end
-		end)
-
-		create_hover_connection(frame, settings_image, function()
-			tween(settings_image, { Color = menu["colors"]["highlighted"] }, circular, out, 0.15)
-		end, function()
-			tween(settings_image, { Color = menu["colors"]["image"] }, circular, out, 0.15)
-		end)
 
 		create_hover_connection(frame, search_image, function()
 			if not searching then
@@ -8762,4 +8727,6 @@ return {
 	["heartbeat"] = heartbeat,
 	["addon_data"] = addon_data,
 	["menu_references"] = menu_references,
+	["settings_section"] = settings_section,
+	["theme_section"] = theme_section,
 }
