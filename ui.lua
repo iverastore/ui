@@ -8697,7 +8697,7 @@ do
 	end
 end
 
--- > ( watermark — styled like main UI )
+-- > ( watermark — inside do block scope )
 
 local wm_border = drawing_proxy["new"]("Image", {
 	["Position"] = udim2_new(0, 10, 0, 10),
@@ -8781,11 +8781,7 @@ local _wm_conn = run_service["RenderStepped"]:Connect(function(dt)
 end)
 connections[#connections + 1] = _wm_conn
 
--- > ( special circle - removed )
-
-menu["set_special_circle"] = function() end
-
--- > ( target hud — themed, managed by uilib )
+-- > ( target hud — themed )
 
 local thud_frame = drawing_proxy["new"]("Image", {
 	["Position"] = udim2_new(0, 0, 0, 0),
@@ -8833,192 +8829,120 @@ local thud_name = drawing_proxy["new"]("Text", {
 	["Parent"] = thud_inside,
 	["Position"] = udim2_new(0, 8, 0, 5),
 	["Color"] = menu["colors"]["active_text"],
-	["Text"] = "",
-	["Size"] = 13,
-	["Font"] = 1,
-	["Transparency"] = 0,
-	["ZIndex"] = 83,
-	["Visible"] = true,
+	["Text"] = "", ["Size"] = 13, ["Font"] = 1,
+	["Transparency"] = 0, ["ZIndex"] = 83, ["Visible"] = true,
 })
 local thud_username = drawing_proxy["new"]("Text", {
 	["Parent"] = thud_inside,
 	["Position"] = udim2_new(0, 8, 0, 19),
 	["Color"] = menu["colors"]["inactive_text"],
-	["Text"] = "",
-	["Size"] = 11,
-	["Font"] = 1,
-	["Transparency"] = 0,
-	["ZIndex"] = 83,
-	["Visible"] = true,
+	["Text"] = "", ["Size"] = 11, ["Font"] = 1,
+	["Transparency"] = 0, ["ZIndex"] = 83, ["Visible"] = true,
 })
 local thud_hp_bg = drawing_proxy["new"]("Image", {
 	["Parent"] = thud_inside,
 	["Position"] = udim2_new(0, 8, 0, 35),
 	["Size"] = udim2_new(1, -16, 0, 4),
 	["Color"] = menu["colors"]["background"],
-	["Rounding"] = 2,
-	["Data"] = pixel_image_data,
-	["Transparency"] = 0,
-	["ZIndex"] = 83,
-	["Visible"] = true,
+	["Rounding"] = 2, ["Data"] = pixel_image_data,
+	["Transparency"] = 0, ["ZIndex"] = 83, ["Visible"] = true,
 })
 local thud_hp_bar = drawing_proxy["new"]("Image", {
 	["Parent"] = thud_hp_bg,
 	["Position"] = udim2_new(0, 0, 0, 0),
 	["Size"] = udim2_new(1, 0, 1, 0),
 	["Color"] = menu["colors"]["accent"],
-	["Rounding"] = 2,
-	["Data"] = pixel_image_data,
-	["Transparency"] = 0,
-	["ZIndex"] = 84,
-	["Visible"] = true,
+	["Rounding"] = 2, ["Data"] = pixel_image_data,
+	["Transparency"] = 0, ["ZIndex"] = 84, ["Visible"] = true,
 })
 local thud_hp_text = drawing_proxy["new"]("Text", {
 	["Parent"] = thud_inside,
 	["Position"] = udim2_new(1, -8, 0, 41),
 	["Color"] = menu["colors"]["dark_text"],
-	["Text"] = "",
-	["Size"] = 11,
-	["Font"] = 1,
-	["Transparency"] = 0,
-	["ZIndex"] = 83,
-	["Visible"] = true,
+	["Text"] = "", ["Size"] = 11, ["Font"] = 1,
+	["Transparency"] = 0, ["ZIndex"] = 83, ["Visible"] = true,
 })
 local thud_dist = drawing_proxy["new"]("Text", {
 	["Parent"] = thud_inside,
 	["Position"] = udim2_new(0, 8, 0, 41),
 	["Color"] = menu["colors"]["dark_text"],
-	["Text"] = "",
-	["Size"] = 11,
-	["Font"] = 1,
-	["Transparency"] = 0,
-	["ZIndex"] = 83,
-	["Visible"] = true,
+	["Text"] = "", ["Size"] = 11, ["Font"] = 1,
+	["Transparency"] = 0, ["ZIndex"] = 83, ["Visible"] = true,
 })
 local thud_weapon = drawing_proxy["new"]("Text", {
 	["Parent"] = thud_inside,
 	["Position"] = udim2_new(0, 8, 0, 53),
 	["Color"] = menu["colors"]["inactive_text"],
-	["Text"] = "",
-	["Size"] = 11,
-	["Font"] = 1,
-	["Transparency"] = 0,
-	["ZIndex"] = 83,
-	["Visible"] = true,
+	["Text"] = "", ["Size"] = 11, ["Font"] = 1,
+	["Transparency"] = 0, ["ZIndex"] = 83, ["Visible"] = true,
 })
 
 hud_frames["target_hud"] = thud_frame
 
 menu["update_target_hud"] = function(data)
-	if not data then
-		thud_frame["Visible"] = false
-		return
-	end
+	if not data then thud_frame["Visible"] = false; return end
 	thud_frame["Visible"] = true
 	local vp = camera["ViewportSize"]
 	local px = data.pos_x or (vp["X"] / 2 - 90)
 	local py = data.pos_y or (vp["Y"] * 0.08)
 	thud_frame["Position"] = udim2_new(0, px, 0, py)
-
 	thud_name["Text"] = data.display_name or ""
 	thud_username["Text"] = data.username or ""
-
 	local pct = data.health_pct or 0
 	thud_hp_bar["Size"] = udim2_new(pct, 0, 1, 0)
 	thud_hp_text["Text"] = data.health_text or ""
-	-- Right-align hp text
 	local hp_bounds = thud_hp_text["TextBounds"]
-	if hp_bounds then
-		thud_hp_text["Position"] = udim2_new(1, -8 - (hp_bounds["X"] or 0), 0, 41)
-	end
-
+	if hp_bounds then thud_hp_text["Position"] = udim2_new(1, -8 - (hp_bounds["X"] or 0), 0, 41) end
 	thud_dist["Text"] = data.dist_text or ""
 	thud_weapon["Text"] = data.weapon or ""
-
-	-- Auto-resize height
 	local h = 57
 	if data.weapon and #data.weapon > 0 then h = 68 end
 	thud_frame["Size"] = udim2_new(0, 180, 0, h)
 end
 
--- > ( theming setup in uilib )
+menu["set_special_circle"] = function() end
+
+-- > ( theming setup )
 
 function menu:setup_theming(group_obj)
 	group_obj:create_tab("theming")
 	group_obj:create_tab("menu")
-
 	local sec_colors = group_obj:create_section("theming", "colors", 1, 0.5, 0)
-
-	local function make_color_picker_th(sec, name, color_key, flag_c, flag_t, on_change)
-		create_connection(
-			sec:create_element({["name"] = name}, {
-				["colorpicker"] = {["color_flag"] = flag_c, ["transparency_flag"] = flag_t, ["default_color"] = menu["colors"][color_key], ["default_transparency"] = 0},
-			})["on_color_change"],
-			function(color)
-				menu["colors"][color_key] = color
-				if on_change then on_change(color) end
-			end
-		)
+	local function mcp(sec, n, ck, fc, ft, cb)
+		create_connection(sec:create_element({["name"]=n},{["colorpicker"]={["color_flag"]=fc,["transparency_flag"]=ft,["default_color"]=menu["colors"][ck],["default_transparency"]=0}})["on_color_change"],function(c) menu["colors"][ck]=c; if cb then cb(c) end end)
 	end
-
-	make_color_picker_th(sec_colors, "accent color", "accent", "!th_accent", "!th_accent_t", function(c) if menu.set_accent_color then menu.set_accent_color(c) end end)
-	make_color_picker_th(sec_colors, "background color", "background", "!th_bg", "!th_bg_t")
-	make_color_picker_th(sec_colors, "section color", "section", "!th_section", "!th_section_t")
-	make_color_picker_th(sec_colors, "border color", "border", "!th_border", "!th_border_t")
-	make_color_picker_th(sec_colors, "active text", "active_text", "!th_active_txt", "!th_active_txt_t")
-	make_color_picker_th(sec_colors, "inactive text", "inactive_text", "!th_inactive_txt", "!th_inactive_txt_t")
-	make_color_picker_th(sec_colors, "highlighted color", "highlighted", "!th_highlighted", "!th_highlighted_t")
-	make_color_picker_th(sec_colors, "dark text", "dark_text", "!th_dark_txt", "!th_dark_txt_t")
-	make_color_picker_th(sec_colors, "shadow color", "shadow", "!th_shadow", "!th_shadow_t")
-	make_color_picker_th(sec_colors, "cursor color", "cursor", "!th_cursor", "!th_cursor_t")
-
-	local sec_colors_r = group_obj:create_section("theming", "extras", 1, 0.5, 0.5)
-	make_color_picker_th(sec_colors_r, "logo color", "logo", "!th_logo", "!th_logo_t")
-	make_color_picker_th(sec_colors_r, "title text color", "juju", "!th_juju", "!th_juju_t")
-	make_color_picker_th(sec_colors_r, "version text color", "build", "!th_build", "!th_build_t")
-	make_color_picker_th(sec_colors_r, "success color", "success", "!th_success", "!th_success_t")
-	make_color_picker_th(sec_colors_r, "error color", "error", "!th_error", "!th_error_t")
-
-	local sec_themes = group_obj:create_section("theming", "save & load", 2, 0.5, 0)
-	local theme_dd = sec_themes:create_element({["name"] = "theme"}, {["dropdown"] = {["flag"] = "!themes_tab_2", ["options"] = menu.get_theme_list(), ["default"] = {}}})
-	create_connection(sec_themes:create_element({["name"] = "load theme"}, {["button"] = {["fake"] = true}})["on_clicked"], function()
-		local sel = flags["!themes_tab_2"]
-		if sel and #sel > 0 then menu:load_theme(sel[1]) end
-	end)
-	sec_themes:create_element({["name"] = "theme name"}, {["textbox"] = {["flag"] = "!theme_save_name_2"}})
-	create_connection(sec_themes:create_element({["name"] = "save theme"}, {["button"] = {}})["on_clicked"], function()
-		local name = flags["!theme_save_name_2"]
-		if name and #name > 0 then
-			local data = {}
-			for key, color in menu["colors"] do
-				if typeof(color) == "Color3" then
-					data[key .. "_color"] = {math.floor(color.R * 255), math.floor(color.G * 255), math.floor(color.B * 255)}
-				end
-			end
-			writefile(file_path .. "/themes/" .. name .. ".th", http_service:JSONEncode(data))
-			menu["new_notification"]("saved theme: " .. name, 1)
-			theme_dd:set_options(menu.get_theme_list())
+	mcp(sec_colors,"accent color","accent","!th_accent","!th_accent_t",function(c) if menu.set_accent_color then menu.set_accent_color(c) end end)
+	mcp(sec_colors,"background color","background","!th_bg","!th_bg_t")
+	mcp(sec_colors,"section color","section","!th_section","!th_section_t")
+	mcp(sec_colors,"border color","border","!th_border","!th_border_t")
+	mcp(sec_colors,"active text","active_text","!th_active_txt","!th_active_txt_t")
+	mcp(sec_colors,"inactive text","inactive_text","!th_inactive_txt","!th_inactive_txt_t")
+	mcp(sec_colors,"highlighted","highlighted","!th_highlighted","!th_highlighted_t")
+	mcp(sec_colors,"dark text","dark_text","!th_dark_txt","!th_dark_txt_t")
+	mcp(sec_colors,"shadow","shadow","!th_shadow","!th_shadow_t")
+	mcp(sec_colors,"cursor","cursor","!th_cursor","!th_cursor_t")
+	local sec_r = group_obj:create_section("theming", "extras", 1, 0.5, 0.5)
+	mcp(sec_r,"logo","logo","!th_logo","!th_logo_t")
+	mcp(sec_r,"title text","juju","!th_juju","!th_juju_t")
+	mcp(sec_r,"version text","build","!th_build","!th_build_t")
+	mcp(sec_r,"success","success","!th_success","!th_success_t")
+	mcp(sec_r,"error","error","!th_error","!th_error_t")
+	local sec_th = group_obj:create_section("theming", "save & load", 2, 0.5, 0)
+	local tdd = sec_th:create_element({["name"]="theme"},{["dropdown"]={["flag"]="!themes_tab_2",["options"]=menu.get_theme_list(),["default"]={}}})
+	create_connection(sec_th:create_element({["name"]="load theme"},{["button"]={["fake"]=true}})["on_clicked"],function() local s=flags["!themes_tab_2"]; if s and #s>0 then menu:load_theme(s[1]) end end)
+	sec_th:create_element({["name"]="theme name"},{["textbox"]={["flag"]="!theme_save_name_2"}})
+	create_connection(sec_th:create_element({["name"]="save theme"},{["button"]={}})["on_clicked"],function()
+		local n=flags["!theme_save_name_2"]; if n and #n>0 then
+			local d={}; for k,c in menu["colors"] do if typeof(c)=="Color3" then d[k.."_color"]={floor(c.R*255),floor(c.G*255),floor(c.B*255)} end end
+			writefile(file_path.."/themes/"..n..".th",http_service:JSONEncode(d)); menu["new_notification"]("saved: "..n,1); tdd:set_options(menu.get_theme_list())
 		end
 	end)
-	create_connection(sec_themes:create_element({["name"] = "refresh list"}, {["button"] = {["fake"] = true}})["on_clicked"], function()
-		theme_dd:set_options(menu.get_theme_list())
-	end)
-
-	local sec_menu = group_obj:create_section("menu", "menu", 1, 0.5, 0)
-	create_connection(sec_menu:create_element({["name"] = "notifications"}, {["toggle"] = {["flag"] = "!notifications_th", ["default"] = true}})["on_toggle_change"], function(bool)
-		if menu_references["notifications"] then
-			menu_references["notifications"]:set_toggle(bool)
-		end
-	end)
-	create_connection(sec_menu:create_element({["name"] = "watermark"}, {["toggle"] = {["flag"] = "!watermark", ["default"] = false}})["on_toggle_change"], function(bool)
-		menu["set_watermark"](bool)
-	end)
-	create_connection(sec_menu:create_element({["name"] = "hide on load"}, {["toggle"] = {["flag"] = "!hide_on_load_th", ["default"] = false}})["on_toggle_change"], function(bool)
-		menu["hide_on_load"] = bool
-	end)
-	create_connection(sec_menu:create_element({["name"] = "unload script"}, {["button"] = {["confirmation"] = true}})["on_clicked"], function()
-		if getgenv()["_JUJU"] then getgenv()["_JUJU"]() end
-	end)
+	create_connection(sec_th:create_element({["name"]="refresh"},{["button"]={["fake"]=true}})["on_clicked"],function() tdd:set_options(menu.get_theme_list()) end)
+	local sec_m = group_obj:create_section("menu", "menu", 1, 0.5, 0)
+	create_connection(sec_m:create_element({["name"]="notifications"},{["toggle"]={["flag"]="!notifications_th",["default"]=true}})["on_toggle_change"],function(b) if menu_references["notifications"] then menu_references["notifications"]:set_toggle(b) end end)
+	create_connection(sec_m:create_element({["name"]="watermark"},{["toggle"]={["flag"]="!watermark",["default"]=false}})["on_toggle_change"],function(b) menu["set_watermark"](b) end)
+	create_connection(sec_m:create_element({["name"]="hide on load"},{["toggle"]={["flag"]="!hide_on_load_th",["default"]=false}})["on_toggle_change"],function(b) menu["hide_on_load"]=b end)
+	create_connection(sec_m:create_element({["name"]="unload script"},{["button"]={["confirmation"]=true}})["on_clicked"],function() if getgenv()["_JUJU"] then getgenv()["_JUJU"]() end end)
 end
 
 return {
@@ -9039,3 +8963,4 @@ return {
 	["settings_section"] = settings_section,
 	["theme_section"] = theme_section,
 }
+
