@@ -5251,13 +5251,13 @@ do
 
 				local keybind_border = drawing_proxy["new"]("Image", {
 					["Parent"] = frame,
-					["Position"] = udim2_new(1, -30, 0, 0),
-					["Size"] = udim2_new(0, 30, 0, 12),
+					["Position"] = udim2_new(1, -32, 0, 0),
+					["Size"] = udim2_new(0, 32, 0, 12),
 					["Color"] = menu["colors"]["border"],
 					["Transparency"] = 1,
 					["Rounding"] = 4,
 					["Data"] = pixel_image_data,
-					["ZIndex"] = zindex + 4,
+					["ZIndex"] = zindex + 6,
 					["Visible"] = true,
 				})
 				local keybind_inside = drawing_proxy["new"]("Image", {
@@ -5268,7 +5268,7 @@ do
 					["Transparency"] = 1,
 					["Rounding"] = 4,
 					["Data"] = pixel_image_data,
-					["ZIndex"] = zindex + 5,
+					["ZIndex"] = zindex + 7,
 					["Visible"] = true,
 				})
 				local keybind_text = drawing_proxy["new"]("Text", {
@@ -5280,7 +5280,7 @@ do
 					["Visible"] = true,
 					["Parent"] = keybind_inside,
 					["Center"] = true,
-					["ZIndex"] = zindex + 6,
+					["ZIndex"] = zindex + 8,
 					["Position"] = udim2_new(0.5, 0, 0, -1),
 				})
 
@@ -5480,9 +5480,6 @@ do
 				end)
 
 				if not info["fake"] then
-					create_right_click_connection(parent, slider_border, function(position)
-						open_context(keybind_data[new_element] and { 2, 1 } or { 1 }, new_element, position)
-					end)
 				end
 
 				new_element:set_slider(properties["default"] or properties["min"])
@@ -5686,9 +5683,6 @@ do
 				end
 
 				if not info["fake"] then
-					create_right_click_connection(parent, dropdown_border, function(position)
-						open_context(keybind_data[new_element] and { 2, 1 } or { 1 }, new_element, position)
-					end)
 				end
 
 				local default = properties["default"]
@@ -5989,9 +5983,6 @@ do
 					end)
 
 					if not info["fake"] then
-						create_right_click_connection(parent, button_border, function(position)
-							open_context(keybind_data[new_element] and { 2, 1 } or { 1 }, new_element, position)
-						end)
 					end
 				end
 			end
