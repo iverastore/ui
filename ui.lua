@@ -279,26 +279,26 @@ end
 
 local menu = {
 	on_config_loaded = signal["new"](),
-	accent = color3_fromrgb(255, 213, 253),
+	accent = color3_fromrgb(255, 255, 255),
 	colors = {
-		["shadow"] = color3_fromrgb(154, 213, 222),
-		["accent"] = color3_fromrgb(154, 213, 222),
-		["active_text"] = color3_fromrgb(197, 197, 197),
-		["keybind_text"] = color3_fromrgb(197, 197, 197),
-		["border"] = color3_fromrgb(24, 25, 24),
-		["inactive_text"] = color3_fromrgb(75, 72, 72),
-		["highlighted"] = color3_fromrgb(51, 65, 70),
-		["dark_text"] = color3_fromrgb(70, 85, 87),
-		["image"] = color3_fromrgb(89, 89, 89),
-		["section"] = color3_fromrgb(6, 6, 6),
+		["shadow"] = color3_fromrgb(30, 30, 30),
+		["accent"] = color3_fromrgb(255, 255, 255),
+		["active_text"] = color3_fromrgb(220, 220, 220),
+		["keybind_text"] = color3_fromrgb(200, 200, 200),
+		["border"] = color3_fromrgb(40, 40, 40),
+		["inactive_text"] = color3_fromrgb(100, 100, 100),
+		["highlighted"] = color3_fromrgb(60, 60, 60),
+		["dark_text"] = color3_fromrgb(140, 140, 140),
+		["image"] = color3_fromrgb(180, 180, 180),
+		["section"] = color3_fromrgb(10, 10, 10),
 		["background"] = color3_fromrgb(0, 0, 0),
-		["success"] = color3_fromrgb(154, 213, 222),
-		["error"] = color3_fromrgb(39, 60, 96),
-		["alert"] = color3_fromrgb(30, 51, 61),
-		["logo"] = color3_fromrgb(154, 213, 222),
-		["juju"] = color3_fromrgb(154, 213, 222),
-		["build"] = color3_fromrgb(154, 213, 222),
-		["cursor"] = color3_fromrgb(154, 213, 222),
+		["success"] = color3_fromrgb(200, 255, 200),
+		["error"] = color3_fromrgb(255, 80, 80),
+		["alert"] = color3_fromrgb(255, 200, 50),
+		["logo"] = color3_fromrgb(255, 255, 255),
+		["juju"] = color3_fromrgb(255, 255, 255),
+		["build"] = color3_fromrgb(180, 180, 180),
+		["cursor"] = color3_fromrgb(255, 255, 255),
 	},
 	settings = {},
 	notifications = {},
@@ -991,7 +991,7 @@ do
 
 	local list_frame = drawing_proxy["new"]("Image", {
 		["Position"] = udim2_new(0, 15, 0, camera["ViewportSize"]["Y"] / 2 - 10),
-		["Size"] = udim2_new(0, 74, 0, 20),
+		["Size"] = udim2_new(0, 140, 0, 26),
 		["Color"] = menu["colors"]["border"],
 		["Transparency"] = 0,
 		["Rounding"] = 0,
@@ -1016,8 +1016,8 @@ do
 
 	local list_inside = drawing_proxy["new"]("Image", {
 		["Position"] = udim2_new(0, 1, 0, 1),
-		["Size"] = udim2_new(0, 72, 0, 18),
-		["Color"] = color3_fromrgb(15, 15, 15),
+		["Size"] = udim2_new(0, 138, 0, 24),
+		["Color"] = color3_fromrgb(10, 10, 10),
 		["Transparency"] = 0,
 		["Rounding"] = 0,
 		["Data"] = pixel_image_data,
@@ -4612,6 +4612,16 @@ do
 
 		tab["sections"][name] = new_section
 
+		-- Section scroll connection: scroll content if overflowing
+		create_scroll_connection(section_border, section_border, function(is_up)
+			if new_section["overflowing"] then
+				local off = new_section["scroll_offset"] or 0
+				local max_scroll = math.max(0, new_section["total_y_size"] + 15 - (tab_frame["real_size"] and tab_frame["real_size"]["Y"] or 400) * size)
+				new_section["scroll_offset"] = clamp(off + (is_up and -18 or 18), 0, max_scroll)
+				new_section:recalculate_size()
+			end
+		end)
+
 		return new_section
 	end
 
@@ -6317,8 +6327,21 @@ do
 			self["border"]["Size"] = udim2_new(0, 170, 0, self["total_y_size"] + 7)
 			self["inside"]["Size"] = udim2_new(1, -2, 1, -2)
 		else
-			self["border"]["Size"] = udim2_new(0.5, -5, 0, self["total_y_size"] + 15)
+			-- Cap section height to its allocated space within the tab frame
+			local tab_frame = self["tab"]["frame"]
+			local tab_height = tab_frame["real_size"] and tab_frame["real_size"]["Y"] or 400
+			local alloc_height = tab_height * self["size"]
+			local content_height = self["total_y_size"] + 15
+			local capped = math.min(content_height, alloc_height)
+			self["border"]["Size"] = udim2_new(0.5, -5, 0, capped)
 			self["inside"]["Size"] = udim2_new(1, -2, 1, -1)
+			-- Enable scroll offset on section content if overflowing
+			if content_height > alloc_height then
+				if not self["scroll_offset"] then self["scroll_offset"] = 0 end
+				self["overflowing"] = true
+			else
+				self["overflowing"] = false
+			end
 		end
 
 		return new_element
@@ -6327,12 +6350,23 @@ do
 	function section:recalculate_size()
 		local elements = self["elements"]
 		local total_size = 10
+		local scroll_off = self["scroll_offset"] or 0
 
 		for i = 1, #elements do
 			local element = elements[i]
 			if element["visible"] then
-				element["frame"]["Position"] = udim2_new(0, 10, 0, total_size)
+				element["frame"]["Position"] = udim2_new(0, 10, 0, total_size - scroll_off)
 				total_size += element["total_y_size"]
+				-- Hide elements scrolled out of view
+				local tab_frame = self["tab"]["frame"]
+				local tab_height = tab_frame["real_size"] and tab_frame["real_size"]["Y"] or 400
+				local alloc_height = tab_height * (self["size"] or 0.5)
+				local elem_y = total_size - scroll_off
+				if elem_y < 0 or elem_y > alloc_height - 15 then
+					element["frame"]["Visible"] = false
+				else
+					element["frame"]["Visible"] = true
+				end
 			end
 		end
 
@@ -6340,8 +6374,19 @@ do
 			self["border"]["Size"] = udim2_new(0, 170, 0, total_size + 7)
 			self["inside"]["Size"] = udim2_new(1, -2, 1, -2)
 		else
-			self["border"]["Size"] = udim2_new(0.5, -5, 0, total_size + 15)
+			local tab_frame = self["tab"]["frame"]
+			local tab_height = tab_frame["real_size"] and tab_frame["real_size"]["Y"] or 400
+			local alloc_height = tab_height * (self["size"] or 0.5)
+			local content_height = total_size + 15
+			local capped = math.min(content_height, alloc_height)
+			self["border"]["Size"] = udim2_new(0.5, -5, 0, capped)
 			self["inside"]["Size"] = udim2_new(1, -2, 1, -1)
+			if content_height > alloc_height then
+				self["overflowing"] = true
+				if not self["scroll_offset"] then self["scroll_offset"] = 0 end
+			else
+				self["overflowing"] = false
+			end
 		end
 
 		self["total_y_size"] = total_size
@@ -8701,6 +8746,225 @@ do
 			)
 		end
 	end
+end
+
+-- > ( watermark )
+
+local watermark_bg = Drawing.new("Square")
+watermark_bg.Visible = false
+watermark_bg.Filled = true
+watermark_bg.Color = Color3.fromRGB(10, 10, 10)
+watermark_bg.Transparency = 0.85
+watermark_bg.ZIndex = 100
+watermark_bg.Size = Vector2.new(200, 22)
+watermark_bg.Position = Vector2.new(8, 8)
+
+local watermark_border = Drawing.new("Line")
+watermark_border.Visible = false
+watermark_border.Color = Color3.fromRGB(255, 255, 255)
+watermark_border.Thickness = 1
+watermark_border.Transparency = 0.6
+watermark_border.ZIndex = 101
+watermark_border.From = Vector2.new(8, 30)
+watermark_border.To = Vector2.new(208, 30)
+
+local watermark_text = Drawing.new("Text")
+watermark_text.Visible = false
+watermark_text.Font = 2
+watermark_text.Size = 13
+watermark_text.Color = Color3.fromRGB(255, 255, 255)
+watermark_text.Outline = true
+watermark_text.OutlineColor = Color3.fromRGB(0, 0, 0)
+watermark_text.ZIndex = 102
+watermark_text.Position = Vector2.new(12, 11)
+
+local watermark_enabled = false
+local watermark_fps_tick = 0
+local watermark_fps_count = 0
+local watermark_fps_display = 0
+
+menu["set_watermark"] = function(enabled)
+	watermark_enabled = enabled
+	watermark_bg.Visible = enabled
+	watermark_border.Visible = enabled
+	watermark_text.Visible = enabled
+end
+
+local _wm_conn = run_service["RenderStepped"]:Connect(function(dt)
+	if not watermark_enabled then return end
+	watermark_fps_count = watermark_fps_count + 1
+	watermark_fps_tick = watermark_fps_tick + dt
+	if watermark_fps_tick >= 1 then
+		watermark_fps_display = watermark_fps_count
+		watermark_fps_count = 0
+		watermark_fps_tick = 0
+	end
+	local name = getgenv().script_name or "ivera"
+	local txt = name .. " | " .. tostring(watermark_fps_display) .. " fps"
+	watermark_text.Text = txt
+	local bounds = watermark_text.TextBounds
+	watermark_bg.Size = Vector2.new(bounds.X + 16, 22)
+	watermark_border.From = Vector2.new(8, 30)
+	watermark_border.To = Vector2.new(8 + bounds.X + 16, 30)
+end)
+connections[#connections + 1] = _wm_conn
+
+-- > ( special circle )
+
+local special_circle_drawings = {}
+for i = 1, 3 do
+	local c = Drawing.new("Circle")
+	c.Visible = false
+	c.Filled = false
+	c.NumSides = 64
+	c.Thickness = 2
+	c.Color = Color3.fromRGB(255, 255, 255)
+	c.Transparency = 1
+	c.ZIndex = 60 + i
+	special_circle_drawings[i] = c
+end
+
+local special_circle_enabled = false
+local special_circle_mode = "crosshair" -- "crosshair" or "target"
+local special_circle_color = Color3.fromRGB(255, 255, 255)
+local special_circle_speed = 3
+local special_circle_base_radius = 20
+local special_circle_time = 0
+
+menu["set_special_circle"] = function(enabled, mode, color, speed, radius)
+	special_circle_enabled = enabled
+	if mode then special_circle_mode = mode end
+	if color then special_circle_color = color end
+	if speed then special_circle_speed = speed end
+	if radius then special_circle_base_radius = radius end
+	if not enabled then
+		for i = 1, 3 do special_circle_drawings[i].Visible = false end
+	end
+end
+
+local _sc_conn = run_service["RenderStepped"]:Connect(function(dt)
+	if not special_circle_enabled then return end
+	special_circle_time = special_circle_time + dt * special_circle_speed
+	local center
+	if special_circle_mode == "target" and getgenv()._ivera_target_screen then
+		center = getgenv()._ivera_target_screen
+	else
+		local mp = user_input_service:GetMouseLocation()
+		center = Vector2.new(mp.X, mp.Y)
+	end
+	for i = 1, 3 do
+		local c = special_circle_drawings[i]
+		local phase = special_circle_time + (i - 1) * (math.pi * 2 / 3)
+		local pulse = math.sin(phase) * 0.5 + 0.5
+		c.Position = center
+		c.Radius = special_circle_base_radius + pulse * 15 + (i - 1) * 8
+		c.Color = special_circle_color
+		c.Transparency = 1 - pulse * 0.6
+		c.Visible = true
+	end
+end)
+connections[#connections + 1] = _sc_conn
+
+-- > ( theming setup in uilib )
+
+function menu:setup_theming(group_obj)
+	group_obj:create_tab("theming")
+	group_obj:create_tab("menu")
+
+	local sec_colors = group_obj:create_section("theming", "colors", 1, 0.5, 0)
+
+	local function make_color_picker_th(sec, name, color_key, flag_c, flag_t, on_change)
+		create_connection(
+			sec:create_element({["name"] = name}, {
+				["colorpicker"] = {["color_flag"] = flag_c, ["transparency_flag"] = flag_t, ["default_color"] = menu["colors"][color_key], ["default_transparency"] = 0},
+			})["on_color_change"],
+			function(color)
+				menu["colors"][color_key] = color
+				if on_change then on_change(color) end
+			end
+		)
+	end
+
+	make_color_picker_th(sec_colors, "accent color", "accent", "!th_accent", "!th_accent_t", function(c) if menu.set_accent_color then menu.set_accent_color(c) end end)
+	make_color_picker_th(sec_colors, "background color", "background", "!th_bg", "!th_bg_t")
+	make_color_picker_th(sec_colors, "section color", "section", "!th_section", "!th_section_t")
+	make_color_picker_th(sec_colors, "border color", "border", "!th_border", "!th_border_t")
+	make_color_picker_th(sec_colors, "active text", "active_text", "!th_active_txt", "!th_active_txt_t")
+	make_color_picker_th(sec_colors, "inactive text", "inactive_text", "!th_inactive_txt", "!th_inactive_txt_t")
+	make_color_picker_th(sec_colors, "highlighted color", "highlighted", "!th_highlighted", "!th_highlighted_t")
+	make_color_picker_th(sec_colors, "dark text", "dark_text", "!th_dark_txt", "!th_dark_txt_t")
+	make_color_picker_th(sec_colors, "shadow color", "shadow", "!th_shadow", "!th_shadow_t")
+	make_color_picker_th(sec_colors, "cursor color", "cursor", "!th_cursor", "!th_cursor_t")
+
+	local sec_colors_r = group_obj:create_section("theming", "extras", 1, 0.5, 0.5)
+	make_color_picker_th(sec_colors_r, "logo color", "logo", "!th_logo", "!th_logo_t")
+	make_color_picker_th(sec_colors_r, "title text color", "juju", "!th_juju", "!th_juju_t")
+	make_color_picker_th(sec_colors_r, "version text color", "build", "!th_build", "!th_build_t")
+	make_color_picker_th(sec_colors_r, "success color", "success", "!th_success", "!th_success_t")
+	make_color_picker_th(sec_colors_r, "error color", "error", "!th_error", "!th_error_t")
+
+	local sec_themes = group_obj:create_section("theming", "save & load", 2, 0.5, 0)
+	local theme_dd = sec_themes:create_element({["name"] = "theme"}, {["dropdown"] = {["flag"] = "!themes_tab_2", ["options"] = menu.get_theme_list(), ["default"] = {}}})
+	create_connection(sec_themes:create_element({["name"] = "load theme"}, {["button"] = {["fake"] = true}})["on_clicked"], function()
+		local sel = flags["!themes_tab_2"]
+		if sel and #sel > 0 then menu:load_theme(sel[1]) end
+	end)
+	sec_themes:create_element({["name"] = "theme name"}, {["textbox"] = {["flag"] = "!theme_save_name_2"}})
+	create_connection(sec_themes:create_element({["name"] = "save theme"}, {["button"] = {}})["on_clicked"], function()
+		local name = flags["!theme_save_name_2"]
+		if name and #name > 0 then
+			local data = {}
+			for key, color in menu["colors"] do
+				if typeof(color) == "Color3" then
+					data[key .. "_color"] = {math.floor(color.R * 255), math.floor(color.G * 255), math.floor(color.B * 255)}
+				end
+			end
+			writefile(file_path .. "/themes/" .. name .. ".th", http_service:JSONEncode(data))
+			menu["new_notification"]("saved theme: " .. name, 1)
+			theme_dd:set_options(menu.get_theme_list())
+		end
+	end)
+	create_connection(sec_themes:create_element({["name"] = "refresh list"}, {["button"] = {["fake"] = true}})["on_clicked"], function()
+		theme_dd:set_options(menu.get_theme_list())
+	end)
+
+	local sec_menu = group_obj:create_section("menu", "menu", 1, 0.5, 0)
+	create_connection(sec_menu:create_element({["name"] = "notifications"}, {["toggle"] = {["flag"] = "!notifications_th", ["default"] = true}})["on_toggle_change"], function(bool)
+		if menu_references["notifications"] then
+			menu_references["notifications"]:set_toggle(bool)
+		end
+	end)
+	create_connection(sec_menu:create_element({["name"] = "watermark"}, {["toggle"] = {["flag"] = "!watermark", ["default"] = false}})["on_toggle_change"], function(bool)
+		menu["set_watermark"](bool)
+	end)
+	create_connection(sec_menu:create_element({["name"] = "special circle"}, {["toggle"] = {["flag"] = "!special_circle", ["default"] = false}})["on_toggle_change"], function(bool)
+		menu["set_special_circle"](bool)
+	end)
+	sec_menu:create_element({["name"] = "circle mode"}, {["dropdown"] = {["flag"] = "!sc_mode", ["options"] = {"crosshair","target"}, ["default"] = {"crosshair"}, ["requires_one"] = true}})
+	create_connection(sec_menu:create_element({["name"] = "circle color"}, {["colorpicker"] = {["color_flag"] = "!sc_color", ["default_color"] = Color3.fromRGB(255,255,255), ["transparency_flag"] = "!sc_color_t", ["default_transparency"] = 0}})["on_color_change"], function(color)
+		special_circle_color = color
+	end)
+	sec_menu:create_element({["name"] = "circle speed"}, {["slider"] = {["flag"] = "!sc_speed", ["min"] = 1, ["max"] = 20, ["default"] = 3}})
+	sec_menu:create_element({["name"] = "circle radius"}, {["slider"] = {["flag"] = "!sc_radius", ["min"] = 5, ["max"] = 80, ["default"] = 20}})
+	create_connection(sec_menu:create_element({["name"] = "hide on load"}, {["toggle"] = {["flag"] = "!hide_on_load_th", ["default"] = false}})["on_toggle_change"], function(bool)
+		menu["hide_on_load"] = bool
+	end)
+	create_connection(sec_menu:create_element({["name"] = "unload script"}, {["button"] = {["confirmation"] = true}})["on_clicked"], function()
+		if getgenv()["_JUJU"] then getgenv()["_JUJU"]() end
+	end)
+
+	-- Update special circle settings on flag changes
+	create_connection(run_service["Heartbeat"], function()
+		if flags["!sc_mode"] then
+			special_circle_mode = flags["!sc_mode"][1] or "crosshair"
+		end
+		if flags["!sc_speed"] then
+			special_circle_speed = flags["!sc_speed"]
+		end
+		if flags["!sc_radius"] then
+			special_circle_base_radius = flags["!sc_radius"]
+		end
+	end)
 end
 
 return {
