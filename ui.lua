@@ -2005,23 +2005,6 @@ local Library = {
 
                 Items["Watermark"]:MakeDraggable()
                 
-                Library:Create("UIStroke", {
-                    Name = "\0",
-                    Parent = Items["Watermark"].Instance,
-                    ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-                    LineJoinMode = Enum.LineJoinMode.Miter,
-                    Color = Library.Theme["Border"],
-                    BorderOffset = UDim.new(0, 1)
-                }):AddToTheme({Color = 'Border'})
-                
-                Library:Create("UIStroke", {
-                    Name = "\0",
-                    Parent = Items["Watermark"].Instance,
-                    ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-                    LineJoinMode = Enum.LineJoinMode.Miter,
-                    Color = Library.Theme["Outline"]
-                }):AddToTheme({Color = 'Outline'})
-                
                 Library:Create("UIPadding", {
                     Name = "\0",
                     Parent = Items["Watermark"].Instance,
@@ -2194,21 +2177,6 @@ local Library = {
                 }):AddToTheme({BackgroundColor3 = "Background"})
 
                 Items["KeybindList"]:MakeDraggable()
-        
-                Library:Create("UIStroke", {
-                    Parent = Items["KeybindList"].Instance, 
-                    ApplyStrokeMode = Enum.ApplyStrokeMode.Border, 
-                    LineJoinMode = Enum.LineJoinMode.Miter, 
-                    Color = Library.Theme["Border"], 
-                    BorderOffset = UDim.new(0, 1)
-                }):AddToTheme({Color = "Border"})
-
-                Library:Create("UIStroke", {
-                    Parent = Items["KeybindList"].Instance, 
-                    ApplyStrokeMode = Enum.ApplyStrokeMode.Border, 
-                    LineJoinMode = Enum.LineJoinMode.Miter, 
-                    Color = Library.Theme["Outline"]
-                }):AddToTheme({Color = "Outline"})
         
                 Library:Create("UIPadding", {
                     Parent = Items["KeybindList"].Instance, 
@@ -2664,9 +2632,9 @@ local Library = {
                 Items["Pages"] = Library:Create("Frame", {
                     Name = "\0",
                     Parent = Items["Background"].Instance,
-                    AnchorPoint = Vector2.new(1, 0),
+                    AnchorPoint = Vector2.new(0.5, 0),
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(1, 0, 0, 0),
+                    Position = UDim2.new(0.5, 0, 0, 0),
                     Size = UDim2.new(0, 0, 0, 30),
                     BorderSizePixel = 0,
                     AutomaticSize = Enum.AutomaticSize.X
@@ -2744,48 +2712,7 @@ local Library = {
                 end
             end)
 
-            -- the title animation logic below
-            local OffsetX = 8
-            local OffsetY = 12
-            local Width = 7 -- this would be the gap between each letter
-
-            local WaveHeight = 4
-            local WaveSpeed =  2.5
-            local WaveSpacing = 0.25
-
-            local Letters = { } -- try not to make the title too long since every letter is created individually for the animation
-
-            for Index = 1, #Window.Name do 
-                local Letter = Window.Name:sub(Index, Index)
-
-                local NewLetter = Library:Create("TextLabel",{
-                    Name = "\0",
-                    Size = UDim2.new(0, Width, 0, 0),
-                    Position = UDim2.new(0, OffsetX + ((Index - 1) * Width), 0, OffsetY),
-                    BackgroundTransparency = 1,
-                    BorderSizePixel = 0,
-                    Text = Letter,
-                    FontFace = Library.Font,
-                    TextSize = Library.FontSize,
-                    Parent = Items["Background"].Instance
-                }):AddToTheme({TextColor3 = 'Accent'})
-
-                Letters[Index] = {
-                    LetterInstance = NewLetter,
-                    X = OffsetX + ((Index - 1) * Width),
-                    Y = OffsetY
-                }
-            end
-
-            Library:Connect(RunService.RenderStepped, function()
-                local Tick = tick()
-
-                for Index, Value in Letters do 
-                    local OffsetY = math.sin((Tick * WaveSpeed) - (Index * WaveSpacing)) * WaveHeight
-
-                    Value.LetterInstance.Instance.Position = UDim2.new(0, Value.X, 0, Value.Y + OffsetY)
-                end
-            end)            
+            
 
             Window:Center()
             return setmetatable(Window, Library)
