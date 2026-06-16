@@ -2217,13 +2217,11 @@ local Library = {
             function KeybindList:UpdateSize()
                 local Height = 0
                 local MaxWidth = 0
-                local Count = 0
 
                 for Index, Value in KeybindList.Keys do
-                    if Value.Showing and Value.Object.Instance.Visible then
+                    if Value.Object.Instance.Visible then
                         Height = Height + 14 + 2
                         MaxWidth = math.max(MaxWidth, Value.Object.Instance.TextBounds.X)
-                        Count = Count + 1
                     end
                 end
 
@@ -2247,8 +2245,8 @@ local Library = {
                     BorderSizePixel = 0, 
                     Size = UDim2.new(0, 0, 0, 14), 
                     Position = UDim2.new(0, 0, 0, 0), 
-                    TextTransparency = 1, 
-                    Visible = false, 
+                    TextTransparency = 0, 
+                    Visible = true, 
                     TextYAlignment = Enum.TextYAlignment.Center, 
                     TextXAlignment = Enum.TextXAlignment.Left,
                     AutomaticSize = Enum.AutomaticSize.X
@@ -2287,22 +2285,16 @@ local Library = {
                     NewKey.Showing = Bool
         
                     if Bool then
+                        -- Active keybind - highlight it
                         NewKeyText.Instance.Visible = true
-                        NewKeyText.Instance.TextTransparency = 1
-                        NewKeyText:Tween({TextTransparency = 0}, KeybindTweenInfo)
-        
-                        KeybindList:UpdateSize()
+                        NewKeyText.Instance.TextTransparency = 0
+                        NewKeyText:Tween({TextColor3 = Color3.fromRGB(255, 255, 0)}, KeybindTweenInfo)
                     else
-                        NewKeyText:Tween({TextTransparency = 1}, KeybindTweenInfo)
-        
-                        task.delay(KeybindTweenInfo.Time, function()
-                            if not NewKey.Showing then
-                                NewKeyText.Instance.Visible = false
-                            end
-                        end)
-                        
-                        KeybindList:UpdateSize()
+                        -- Inactive keybind - dim it
+                        NewKeyText:Tween({TextColor3 = Library.Theme["Text"]}, KeybindTweenInfo)
                     end
+                    
+                    KeybindList:UpdateSize()
                 end
         
                 return NewKey
