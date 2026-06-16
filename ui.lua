@@ -1997,61 +1997,17 @@ local Library = {
                     Parent = Library.Holder.Instance,
                     AnchorPoint = Vector2.new(0, 0),
                     Position = UDim2.new(0, 10, 0, GuiInset + 10),
-                    Size = UDim2.new(0, 0, 0, 53),
-                    BorderSizePixel = 0,
-                    AutomaticSize = Enum.AutomaticSize.X,
-                    BackgroundColor3 = Library.Theme["Background"]
-                }):AddToTheme({BackgroundColor3 = 'Background'})
-
-                Items["Watermark"]:MakeDraggable()
-                
-                Library:Create("UIPadding", {
-                    Name = "\0",
-                    Parent = Items["Watermark"].Instance,
-                    PaddingTop = UDim.new(0, 10),
-                    PaddingBottom = UDim.new(0, 10),
-                    PaddingRight = UDim.new(0, 10),
-                    PaddingLeft = UDim.new(0, 10)
-                })
-                
-                Items["Liner"] = Library:Create("Frame", {
-                    Name = "\0",
-                    Parent = Items["Watermark"].Instance,
-                    AnchorPoint = Vector2.new(1, 0),
-                    Position = UDim2.new(1, 1, 0, 0),
-                    Size = UDim2.new(1, 2, 0, 2),
-                    BorderSizePixel = 0,
-                    BackgroundColor3 = Library.Theme["Accent"]
-                }):AddToTheme({BackgroundColor3 = 'Accent'})
-                
-                Items["Glow"] = Library:Create("ImageLabel", {
-                    Name = "\0",
-                    Parent = Items["Liner"].Instance,
-                    ImageColor3 = Library.Theme["Accent"],
-                    ScaleType = Enum.ScaleType.Slice,
-                    ImageTransparency = 0.800000011920929,
-                    Size = UDim2.new(1, 25, 1, 25),
-                    AnchorPoint = Vector2.new(0.5, 0.5),
-                    Image = "http://www.roblox.com/asset/?id=18245826428",
-                    BackgroundTransparency = 1,
-                    Position = UDim2.new(0.5, 0, 0.5, 0),
-                    BorderSizePixel = 0,
-                    SliceCenter = Rect.new(Vector2.new(21, 21), Vector2.new(79, 79))
-                }):AddToTheme({ImageColor3 = 'Accent'})
-                
-                Items["Inline"] = Library:Create("Frame", {
-                    Name = "\0",
-                    Parent = Items["Watermark"].Instance,
                     Size = UDim2.new(0, 0, 0, 25),
-                    Position = UDim2.new(0, 0, 0, 6),
                     BorderSizePixel = 0,
                     AutomaticSize = Enum.AutomaticSize.X,
                     BackgroundColor3 = Library.Theme["Inline"]
                 }):AddToTheme({BackgroundColor3 = 'Inline'})
+
+                Items["Watermark"]:MakeDraggable()
                 
                 Library:Create("UIStroke", {
                     Name = "\0",
-                    Parent = Items["Inline"].Instance,
+                    Parent = Items["Watermark"].Instance,
                     ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
                     LineJoinMode = Enum.LineJoinMode.Miter,
                     Color = Library.Theme["Outline"]
@@ -2059,16 +2015,23 @@ local Library = {
                 
                 Library:Create("UIStroke", {
                     Name = "\0",
-                    Parent = Items["Inline"].Instance,
+                    Parent = Items["Watermark"].Instance,
                     ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
                     LineJoinMode = Enum.LineJoinMode.Miter,
                     Color = Library.Theme["Border"],
                     BorderOffset = UDim.new(0, 1)
                 }):AddToTheme({Color = 'Border'})
                 
+                Library:Create("UIPadding", {
+                    Name = "\0",
+                    Parent = Items["Watermark"].Instance,
+                    PaddingRight = UDim.new(0, 8),
+                    PaddingLeft = UDim.new(0, 8)
+                })
+                
                 Items["Holder"] = Library:Create("Frame", {
                     Name = "\0",
-                    Parent = Items["Inline"].Instance,
+                    Parent = Items["Watermark"].Instance,
                     BackgroundTransparency = 1,
                     Size = UDim2.new(0, 0, 1, 0),
                     BorderSizePixel = 0,
