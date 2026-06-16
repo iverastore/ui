@@ -2155,34 +2155,36 @@ local Library = {
                     BorderOffset = UDim.new(0, 1)
                 }):AddToTheme({Color = "Border"})
         
-                Items["Inline"] = Library:Create("Frame", {
-                    Parent = Items["KeybindList"].Instance, 
-                    Size = UDim2.new(0, 8, 0, 25), 
-                    Position = UDim2.new(0, 0, 0, 6), 
-                    ClipsDescendants = true,
-                    BorderSizePixel = 0, 
-                    BackgroundColor3 = Library.Theme["Inline"]
-                }):AddToTheme({BackgroundColor3 = "Inline"})
-        
-                Library:Create("UIStroke", {
-                    Parent = Items["Inline"].Instance,
-                    ApplyStrokeMode = Enum.ApplyStrokeMode.Border, 
-                    LineJoinMode = Enum.LineJoinMode.Miter, 
-                    Color = Library.Theme["Outline"]
-                }):AddToTheme({Color = "Outline"})
-
-                Library:Create("UIStroke", {
-                    Parent = Items["Inline"].Instance, 
-                    ApplyStrokeMode = Enum.ApplyStrokeMode.Border, 
-                    LineJoinMode = Enum.LineJoinMode.Miter, 
-                    Color = Library.Theme["Border"], 
-                    BorderOffset = UDim.new(0, 1)
-                }):AddToTheme({Color = "Border"})
+                -- Red Glow Bar
+                Items["Liner"] = Library:Create("Frame", {
+                    Name = "\0",
+                    Parent = Items["KeybindList"].Instance,
+                    AnchorPoint = Vector2.new(1, 0),
+                    Position = UDim2.new(1, 1, 0, 0),
+                    Size = UDim2.new(1, 2, 0, 2),
+                    BorderSizePixel = 0,
+                    BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+                })
+                
+                Items["Glow"] = Library:Create("ImageLabel", {
+                    Name = "\0",
+                    Parent = Items["Liner"].Instance,
+                    ImageColor3 = Color3.fromRGB(255, 0, 0),
+                    ScaleType = Enum.ScaleType.Slice,
+                    ImageTransparency = 0.800000011920929,
+                    Size = UDim2.new(1, 25, 1, 25),
+                    AnchorPoint = Vector2.new(0.5, 0.5),
+                    Image = "http://www.roblox.com/asset/?id=18245826428",
+                    BackgroundTransparency = 1,
+                    Position = UDim2.new(0.5, 0, 0.5, 0),
+                    BorderSizePixel = 0,
+                    SliceCenter = Rect.new(Vector2.new(21, 21), Vector2.new(79, 79))
+                })
         
                 Items["Content"] = Library:Create("Frame", {
-                    Parent = Items["Inline"].Instance, 
+                    Parent = Items["KeybindList"].Instance, 
                     BackgroundTransparency = 1, 
-                    Position = UDim2.new(0, 0, 0, 0), 
+                    Position = UDim2.new(0, 8, 0, 6), 
                     Size = UDim2.new(0, 0, 0, 25), 
                     BorderSizePixel = 0
                 })
@@ -2209,8 +2211,7 @@ local Library = {
                 end
 
                 Items["Content"].Instance.Size = UDim2.new(0, MaxWidth + 8, 0, Height)
-                Items["Inline"].Instance.Size = UDim2.new(0, MaxWidth + 16, 0, Height)
-                Items["KeybindList"].Instance.Size = UDim2.new(0, MaxWidth + 28, 0, Height + 20)
+                Items["KeybindList"].Instance.Size = UDim2.new(0, MaxWidth + 24, 0, Height + 12)
 
                 if Count == 0 then 
                     Items["KeybindList"].Instance.Visible = false
