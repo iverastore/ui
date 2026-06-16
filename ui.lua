@@ -1999,8 +1999,8 @@ local Library = {
                     Size = UDim2.new(0, 0, 0, 25),
                     BorderSizePixel = 0,
                     AutomaticSize = Enum.AutomaticSize.X,
-                    BackgroundColor3 = Library.Theme["Inline"]
-                }):AddToTheme({BackgroundColor3 = 'Inline'})
+                    BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                })
 
                 Items["Watermark"]:MakeDraggable()
                 
@@ -2009,19 +2009,19 @@ local Library = {
                     Parent = Items["Watermark"].Instance,
                     ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
                     LineJoinMode = Enum.LineJoinMode.Miter,
-                    Color = Library.Theme["Outline"]
-                }):AddToTheme({Color = 'Outline'})
+                    Color = Color3.fromRGB(255, 255, 255)
+                })
                 
                 Library:Create("UIStroke", {
                     Name = "\0",
                     Parent = Items["Watermark"].Instance,
                     ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
                     LineJoinMode = Enum.LineJoinMode.Miter,
-                    Color = Library.Theme["Border"],
+                    Color = Color3.fromRGB(0, 0, 0),
                     BorderOffset = UDim.new(0, 1)
-                }):AddToTheme({Color = 'Border'})
+                })
                 
-                -- Red Glow Bar
+                -- White Glow Bar
                 Items["Liner"] = Library:Create("Frame", {
                     Name = "\0",
                     Parent = Items["Watermark"].Instance,
@@ -2029,13 +2029,13 @@ local Library = {
                     Position = UDim2.new(1, 1, 0, 0),
                     Size = UDim2.new(1, 2, 0, 2),
                     BorderSizePixel = 0,
-                    BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+                    BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 })
                 
                 Items["Glow"] = Library:Create("ImageLabel", {
                     Name = "\0",
                     Parent = Items["Liner"].Instance,
-                    ImageColor3 = Color3.fromRGB(255, 0, 0),
+                    ImageColor3 = Color3.fromRGB(255, 255, 255),
                     ScaleType = Enum.ScaleType.Slice,
                     ImageTransparency = 0.800000011920929,
                     Size = UDim2.new(1, 25, 1, 25),
@@ -2096,12 +2096,12 @@ local Library = {
                     FontFace = Library.Font,
                     TextSize = Library.FontSize,
                     Parent = Items["Holder"].Instance,
-                    TextColor3 = Library.Theme["Text"],
+                    TextColor3 = Color3.fromRGB(255, 255, 255),
                     Text = Text,
                     BackgroundTransparency = 1,
                     BorderSizePixel = 0,
                     AutomaticSize = Enum.AutomaticSize.XY
-                }):AddToTheme({TextColor3 = 'Text'})
+                })
 
                 function NewItem:SetText(Text)
                     NewItem.Instance.Text = tostring(Text)
@@ -2135,8 +2135,8 @@ local Library = {
                     Size = UDim2.new(0, 34, 0, 53), 
                     ClipsDescendants = true, 
                     BorderSizePixel = 0, 
-                    BackgroundColor3 = Library.Theme["Inline"]
-                }):AddToTheme({BackgroundColor3 = "Inline"})
+                    BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                })
                 
                 Items["Content"] = Library:Create("Frame", {
                     Parent = Items["KeybindList"].Instance, 
@@ -2153,18 +2153,18 @@ local Library = {
                     Parent = Items["KeybindList"].Instance, 
                     ApplyStrokeMode = Enum.ApplyStrokeMode.Border, 
                     LineJoinMode = Enum.LineJoinMode.Miter, 
-                    Color = Library.Theme["Outline"]
-                }):AddToTheme({Color = "Outline"})
+                    Color = Color3.fromRGB(255, 255, 255)
+                })
 
                 Library:Create("UIStroke", {
                     Parent = Items["KeybindList"].Instance, 
                     ApplyStrokeMode = Enum.ApplyStrokeMode.Border, 
                     LineJoinMode = Enum.LineJoinMode.Miter, 
-                    Color = Library.Theme["Border"], 
+                    Color = Color3.fromRGB(0, 0, 0), 
                     BorderOffset = UDim.new(0, 1)
-                }):AddToTheme({Color = "Border"})
+                })
         
-                -- Red Glow Bar
+                -- White Glow Bar
                 Items["Liner"] = Library:Create("Frame", {
                     Name = "\0",
                     Parent = Items["KeybindList"].Instance,
@@ -2172,13 +2172,13 @@ local Library = {
                     Position = UDim2.new(1, 1, 0, 0),
                     Size = UDim2.new(1, 2, 0, 2),
                     BorderSizePixel = 0,
-                    BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+                    BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 })
                 
                 Items["Glow"] = Library:Create("ImageLabel", {
                     Name = "\0",
                     Parent = Items["Liner"].Instance,
-                    ImageColor3 = Color3.fromRGB(255, 0, 0),
+                    ImageColor3 = Color3.fromRGB(255, 255, 255),
                     ScaleType = Enum.ScaleType.Slice,
                     ImageTransparency = 0.800000011920929,
                     Size = UDim2.new(1, 25, 1, 25),
@@ -2239,7 +2239,7 @@ local Library = {
                     Parent = Items["Content"].Instance, 
                     FontFace = Library.Font, 
                     TextSize = Library.FontSize, 
-                    TextColor3 = Library.Theme["Text"], 
+                    TextColor3 = Color3.fromRGB(255, 255, 255), 
                     Text = Name .. " - " .. Mode .. " [" .. Key .. "]", 
                     BackgroundTransparency = 1, 
                     BorderSizePixel = 0, 
@@ -2250,7 +2250,7 @@ local Library = {
                     TextYAlignment = Enum.TextYAlignment.Center, 
                     TextXAlignment = Enum.TextXAlignment.Left,
                     AutomaticSize = Enum.AutomaticSize.X
-                }):AddToTheme({TextColor3 = "Text"})
+                })
         
                 local CanShow = true
         
