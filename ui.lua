@@ -2137,6 +2137,15 @@ local Library = {
                     BorderSizePixel = 0, 
                     BackgroundColor3 = Library.Theme["Inline"]
                 }):AddToTheme({BackgroundColor3 = "Inline"})
+                
+                Items["Content"] = Library:Create("Frame", {
+                    Parent = Items["KeybindList"].Instance, 
+                    BackgroundTransparency = 1, 
+                    Position = UDim2.new(0, 8, 0, 6), 
+                    Size = UDim2.new(0, 0, 0, 25), 
+                    BorderSizePixel = 0,
+                    AutomaticSize = Enum.AutomaticSize.XY
+                })
 
                 Items["KeybindList"]:MakeDraggable()
         
@@ -2185,8 +2194,16 @@ local Library = {
                     Parent = Items["KeybindList"].Instance, 
                     BackgroundTransparency = 1, 
                     Position = UDim2.new(0, 8, 0, 6), 
-                    Size = UDim2.new(0, 0, 0, 25), 
-                    BorderSizePixel = 0
+                    Size = UDim2.new(0, 0, 0, 0), 
+                    BorderSizePixel = 0,
+                    AutomaticSize = Enum.AutomaticSize.XY
+                })
+                
+                Library:Create("UIListLayout", {
+                    Name = "\0",
+                    Parent = Items["Content"].Instance,
+                    Padding = UDim.new(0, 2),
+                    SortOrder = Enum.SortOrder.LayoutOrder
                 })
             end
         
@@ -2198,7 +2215,7 @@ local Library = {
             end
         
             function KeybindList:UpdateSize()
-                local Height = 12
+                local Height = 0
                 local MaxWidth = 0
                 local Count = 0
 
@@ -2210,7 +2227,6 @@ local Library = {
                     end
                 end
 
-                Items["Content"].Instance.Size = UDim2.new(0, MaxWidth + 8, 0, Height)
                 Items["KeybindList"].Instance.Size = UDim2.new(0, MaxWidth + 24, 0, Height + 12)
 
                 if Count == 0 then 
@@ -2230,11 +2246,12 @@ local Library = {
                     BackgroundTransparency = 1, 
                     BorderSizePixel = 0, 
                     Size = UDim2.new(0, 0, 0, 14), 
-                    Position = UDim2.new(0, -8, 0, 6), 
+                    Position = UDim2.new(0, 0, 0, 0), 
                     TextTransparency = 1, 
                     Visible = false, 
                     TextYAlignment = Enum.TextYAlignment.Center, 
-                    TextXAlignment = Enum.TextXAlignment.Left
+                    TextXAlignment = Enum.TextXAlignment.Left,
+                    AutomaticSize = Enum.AutomaticSize.X
                 }):AddToTheme({TextColor3 = "Text"})
         
                 local CanShow = true
@@ -2271,20 +2288,20 @@ local Library = {
         
                     if Bool then
                         NewKeyText.Instance.Visible = true
-                        NewKeyText.Instance.Position = UDim2.new(0, 0, 0, NewKeyText.Instance.Position.Y.Offset)
                         NewKeyText.Instance.TextTransparency = 1
+                        NewKeyText:Tween({TextTransparency = 0}, KeybindTweenInfo)
         
                         KeybindList:UpdateSize()
                     else
-                        NewKeyText:Tween({Position = UDim2.new(0, 0, 0, NewKeyText.Instance.Position.Y.Offset), TextTransparency = 1}, KeybindTweenInfo)
-        
-                        KeybindList:UpdateSize()
+                        NewKeyText:Tween({TextTransparency = 1}, KeybindTweenInfo)
         
                         task.delay(KeybindTweenInfo.Time, function()
                             if not NewKey.Showing then
                                 NewKeyText.Instance.Visible = false
                             end
                         end)
+                        
+                        KeybindList:UpdateSize()
                     end
                 end
         
