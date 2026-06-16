@@ -2021,6 +2021,32 @@ local Library = {
                     BorderOffset = UDim.new(0, 1)
                 }):AddToTheme({Color = 'Border'})
                 
+                -- Red Glow Bar
+                Items["Liner"] = Library:Create("Frame", {
+                    Name = "\0",
+                    Parent = Items["Watermark"].Instance,
+                    AnchorPoint = Vector2.new(1, 0),
+                    Position = UDim2.new(1, 1, 0, 0),
+                    Size = UDim2.new(1, 2, 0, 2),
+                    BorderSizePixel = 0,
+                    BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+                })
+                
+                Items["Glow"] = Library:Create("ImageLabel", {
+                    Name = "\0",
+                    Parent = Items["Liner"].Instance,
+                    ImageColor3 = Color3.fromRGB(255, 0, 0),
+                    ScaleType = Enum.ScaleType.Slice,
+                    ImageTransparency = 0.800000011920929,
+                    Size = UDim2.new(1, 25, 1, 25),
+                    AnchorPoint = Vector2.new(0.5, 0.5),
+                    Image = "http://www.roblox.com/asset/?id=18245826428",
+                    BackgroundTransparency = 1,
+                    Position = UDim2.new(0.5, 0, 0.5, 0),
+                    BorderSizePixel = 0,
+                    SliceCenter = Rect.new(Vector2.new(21, 21), Vector2.new(79, 79))
+                })
+                
                 Library:Create("UIPadding", {
                     Name = "\0",
                     Parent = Items["Watermark"].Instance,
@@ -2109,41 +2135,25 @@ local Library = {
                     Size = UDim2.new(0, 34, 0, 53), 
                     ClipsDescendants = true, 
                     BorderSizePixel = 0, 
-                    BackgroundColor3 = Library.Theme["Background"]
-                }):AddToTheme({BackgroundColor3 = "Background"})
+                    BackgroundColor3 = Library.Theme["Inline"]
+                }):AddToTheme({BackgroundColor3 = "Inline"})
 
                 Items["KeybindList"]:MakeDraggable()
         
-                Library:Create("UIPadding", {
+                Library:Create("UIStroke", {
                     Parent = Items["KeybindList"].Instance, 
-                    PaddingTop = UDim.new(0, 10), 
-                    PaddingBottom = UDim.new(0, 12), 
-                    PaddingRight = UDim.new(0, 10), 
-                    PaddingLeft = UDim.new(0, 10)
-                })
-        
-                Items["Liner"] = Library:Create("Frame", {
+                    ApplyStrokeMode = Enum.ApplyStrokeMode.Border, 
+                    LineJoinMode = Enum.LineJoinMode.Miter, 
+                    Color = Library.Theme["Outline"]
+                }):AddToTheme({Color = "Outline"})
+
+                Library:Create("UIStroke", {
                     Parent = Items["KeybindList"].Instance, 
-                    AnchorPoint = Vector2.new(1, 0), 
-                    Position = UDim2.new(1, 1, 0, 0), 
-                    Size = UDim2.new(1, 2, 0, 2), 
-                    BorderSizePixel = 0, 
-                    BackgroundColor3 = Library.Theme["Accent"]
-                }):AddToTheme({BackgroundColor3 = "Accent"})
-        
-                Items["Glow"] = Library:Create("ImageLabel", {
-                    Parent = Items["Liner"].Instance, 
-                    ImageColor3 = Library.Theme["Accent"], 
-                    ScaleType = Enum.ScaleType.Slice, 
-                    ImageTransparency = 0.8, 
-                    Size = UDim2.new(1, 25, 1, 25), 
-                    AnchorPoint = Vector2.new(0.5, 0.5), 
-                    Image = "http://www.roblox.com/asset/?id=18245826428", 
-                    BackgroundTransparency = 1, 
-                    Position = UDim2.new(0.5, 0, 0.5, 0), 
-                    BorderSizePixel = 0, 
-                    SliceCenter = Rect.new(Vector2.new(21, 21), Vector2.new(79, 79))
-                }):AddToTheme({ImageColor3 = "Accent"})
+                    ApplyStrokeMode = Enum.ApplyStrokeMode.Border, 
+                    LineJoinMode = Enum.LineJoinMode.Miter, 
+                    Color = Library.Theme["Border"], 
+                    BorderOffset = UDim.new(0, 1)
+                }):AddToTheme({Color = "Border"})
         
                 Items["Inline"] = Library:Create("Frame", {
                     Parent = Items["KeybindList"].Instance, 
@@ -2186,40 +2196,23 @@ local Library = {
             end
         
             function KeybindList:UpdateSize()
-                local Width = 0
-                local Y = 6
+                local Height = 12
+                local MaxWidth = 0
                 local Count = 0
-        
-                for Index, Value in KeybindList.Keys do
-                    if Value.Showing then
-                        local RowHeight = 14
-        
-                        Value.Object.Instance.Visible = true
-                        Width = math.max(Width, Value.Object.Instance.TextBounds.X)
-        
-                        Value.Object:Tween({Position = UDim2.new(0, 8, 0, Y), Size = UDim2.new(0, Value.Object.Instance.TextBounds.X, 0, RowHeight), TextTransparency = 0}, KeybindTweenInfo)
-        
-                        Y += RowHeight + 4
-                        Count += 1
-                    end
-                end
-        
-                local TargetHeight = Count > 0 and math.max(25, Y + 5) or 25
-        
-                Items["Content"].Instance.Size = UDim2.new(0, Width, 0, TargetHeight)
-        
-                Items["Inline"]:Tween({Size = UDim2.new(0, Width + 14, 0, TargetHeight)}, KeybindTweenInfo)
-                Items["KeybindList"]:Tween({Size = UDim2.new(0, Width + 34, 0, TargetHeight + 28)}, KeybindTweenInfo)
-
-                local ActiveKeys = { }
 
                 for Index, Value in KeybindList.Keys do
-                    if Value.Showing then
-                        table.insert(ActiveKeys, Value.Object.Instance.Text)
+                    if Value.Showing and Value.Object.Instance.Visible then
+                        Height = Height + 14 + 2
+                        MaxWidth = math.max(MaxWidth, Value.Object.Instance.TextBounds.X)
+                        Count = Count + 1
                     end
                 end
-        
-                if #ActiveKeys == 0 then 
+
+                Items["Content"].Instance.Size = UDim2.new(0, MaxWidth + 8, 0, Height)
+                Items["Inline"].Instance.Size = UDim2.new(0, MaxWidth + 16, 0, Height)
+                Items["KeybindList"].Instance.Size = UDim2.new(0, MaxWidth + 28, 0, Height + 20)
+
+                if Count == 0 then 
                     Items["KeybindList"].Instance.Visible = false
                 else
                     Items["KeybindList"].Instance.Visible = true
