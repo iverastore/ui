@@ -162,17 +162,17 @@ do --// UI Source
 
         local Themes = {
             ["Preset"] = {
-                ["Background"] = Color3.fromRGB(23, 23, 23),
-                ["Inline"] = Color3.fromRGB(22, 22, 22),
-                ["Content"] = Color3.fromRGB(21, 21, 21),
-                ["Text"] = Color3.fromRGB(200, 200, 200),
-                ["Outline 1"] = Color3.fromRGB(35, 35, 35),
-                ["Outline 2"] = Color3.fromRGB(30, 30, 30),
-                ["Outline 3"] = Color3.fromRGB(15, 15, 15),
-                ["Outline 4"] = Color3.fromRGB(10, 10, 10),
-                ["Inactive Text"] = Color3.fromRGB(135, 135, 135),
-                ["Accent"] = Color3.fromRGB(126, 192, 255), -- 126, 192, 255
-                ["Hovered Element"] = Color3.fromRGB(35, 35, 35),
+                ["Background"] = Color3.fromRGB(12, 12, 12),
+                ["Inline"] = Color3.fromRGB(16, 16, 16),
+                ["Content"] = Color3.fromRGB(10, 10, 10),
+                ["Text"] = Color3.fromRGB(230, 230, 230),
+                ["Outline 1"] = Color3.fromRGB(40, 40, 40),
+                ["Outline 2"] = Color3.fromRGB(25, 25, 25),
+                ["Outline 3"] = Color3.fromRGB(8, 8, 8),
+                ["Outline 4"] = Color3.fromRGB(5, 5, 5),
+                ["Inactive Text"] = Color3.fromRGB(100, 100, 100),
+                ["Accent"] = Color3.fromRGB(255, 255, 255),
+                ["Hovered Element"] = Color3.fromRGB(30, 30, 30),
             }
         }
 
@@ -1977,11 +1977,11 @@ do --// UI Source
                     Items["KeybindList"] = Library:Create("Frame", {
                         Name = "\0",
                         Parent = Library.Holder.Instance,
-                        AnchorPoint = Vector2.new(0, 0.5),
-                        Position = UDim2.new(0, 20, 0.5, 0),
-                        Size = UDim2.new(0, 156, 0, 0),
+                        AnchorPoint = Vector2.new(0.5, 0),
+                        Position = UDim2.new(0.5, 0, 1, 8),
+                        Size = UDim2.new(1, 0, 0, 0),
                         BorderSizePixel = 0,
-                        AutomaticSize = Enum.AutomaticSize.XY,
+                        AutomaticSize = Enum.AutomaticSize.Y,
                         BackgroundColor3 = Library.Theme["Background"]
                     }):AddToTheme({BackgroundColor3 = 'Background'})
 
@@ -3123,6 +3123,27 @@ do --// UI Source
                         Color = Library.Theme["Outline 4"],
                         BorderOffset = UDim.new(0, 3)
                     }):AddToTheme({Color = 'Outline 4'})
+
+                    -- Gradient glow bar at top
+                    local GlowBar = Library:Create("Frame", {
+                        Name = "\0",
+                        Parent = Items["MainFrame"].Instance,
+                        Position = UDim2.new(0, 0, 0, 0),
+                        Size = UDim2.new(1, 0, 0, 2),
+                        BorderSizePixel = 0,
+                        ZIndex = 5,
+                        BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    })
+
+                    Library:Create("UIGradient", {
+                        Name = "\0",
+                        Parent = GlowBar.Instance,
+                        Color = ColorSequence.new({
+                            ColorSequenceKeypoint.new(0, Color3.fromRGB(60, 60, 60)),
+                            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+                            ColorSequenceKeypoint.new(1, Color3.fromRGB(60, 60, 60))
+                        })
+                    })
 
                     Items["Pages"] = Library:Create("Frame", {
                         Name = "\0",
