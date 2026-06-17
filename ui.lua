@@ -35,7 +35,7 @@ do --// UI Source
             Configs = "/Configs"
         },
 
-        FontSize = 12,
+        FontSize = 16,
 
         Animation = {
             Time = 0.3,
@@ -202,8 +202,15 @@ do --// UI Source
                 return Font.new(getcustomasset(FontPath))
             end
 
-            Library.Font = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Regular)
-            Library.BoldFont = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold)
+            Library.Font = CustomFont:New("SmallestPixel7", 400, "Regular", {
+                Id = "SmallestPixel7",
+                Url = "https://github.com/sametexe001/luas/raw/refs/heads/main/smallest_pixel-7.ttf"
+            })
+
+            Library.BoldFont = CustomFont:New("SmallestPixel7Bold", 400, "Regular", {
+                Id = "SmallestPixel7",
+                Url = "https://github.com/sametexe001/luas/raw/refs/heads/main/smallest_pixel-7.ttf"
+            })
         end
 
         Library.Exit = function(Self)
