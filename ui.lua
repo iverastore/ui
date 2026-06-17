@@ -1977,9 +1977,9 @@ do --// UI Source
                     Items["KeybindList"] = Library:Create("Frame", {
                         Name = "\0",
                         Parent = Library.Holder.Instance,
-                        AnchorPoint = Vector2.new(0.5, 0),
-                        Position = UDim2.new(0.5, 0, 1, 8),
-                        Size = UDim2.new(1, 0, 0, 0),
+                        AnchorPoint = Vector2.new(0, 0),
+                        Position = UDim2.new(1, 8, 0, 0),
+                        Size = UDim2.new(0, 156, 0, 0),
                         BorderSizePixel = 0,
                         AutomaticSize = Enum.AutomaticSize.Y,
                         BackgroundColor3 = Library.Theme["Background"]
