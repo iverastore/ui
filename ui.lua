@@ -5426,6 +5426,119 @@ do --// UI Source
             end
         end
     end
+
+-- ============================================================
+-- Feature 1: Watermark (Dynamic FPS/Ping/Time)
+-- ============================================================
+Library.Watermark = function(Self, Params)
+    Params = Params or {}
+    local Watermark = { Name = Params.Name or "ivera", Visible = false, Items = {} }
+    local Items = {} do
+        Items["Main"] = Library:Create("Frame", { Name = "\0", Parent = Library.Holder.Instance, Position = UDim2.new(0, 10, 0, 10), Size = UDim2.new(0, 0, 0, 22), BorderSizePixel = 0, Visible = false, AutomaticSize = Enum.AutomaticSize.X, BackgroundColor3 = Library.Theme["Background"] }):AddToTheme({BackgroundColor3 = 'Background'})
+        Items["Main"]:MakeDraggable()
+        Library:Create("UIStroke", { Name = "\0", Parent = Items["Main"].Instance, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, LineJoinMode = Enum.LineJoinMode.Miter, Color = Library.Theme["Outline 1"] }):AddToTheme({Color = 'Outline 1'})
+        Library:Create("Frame", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,0,0,0), Size = UDim2.new(1,0,0,2), BorderSizePixel = 0, BackgroundColor3 = Library.Theme["Accent"] }):AddToTheme({BackgroundColor3 = 'Accent'})
+        Library:Create("UIPadding", { Name = "\0", Parent = Items["Main"].Instance, PaddingTop = UDim.new(0,4), PaddingRight = UDim.new(0,8), PaddingLeft = UDim.new(0,8) })
+        Items["Text"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = Library.FontSize, Parent = Items["Main"].Instance, TextColor3 = Library.Theme["Text"], Text = Watermark.Name, Size = UDim2.new(0,0,0,15), BackgroundTransparency = 1, Position = UDim2.new(0,0,0,2), AutomaticSize = Enum.AutomaticSize.X }):AddToTheme({TextColor3 = 'Text'})
+        Library:Create("UIStroke", { Name = "\0", Parent = Items["Text"].Instance })
+        Watermark.Items = Items
+    end
+    function Watermark:SetVisibility(Bool) Items["Main"].Instance.Visible = Bool; Watermark.Visible = Bool end
+    local LastFPS, FrameCount, LastTime = 0, 0, tick()
+    Library:Connect(RunService.RenderStepped, function()
+        if not Watermark.Visible then return end
+        FrameCount = FrameCount + 1
+        if tick() - LastTime >= 1 then LastFPS = FrameCount; FrameCount = 0; LastTime = tick() end
+        local Ping = 0; pcall(function() Ping = math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()) end)
+        Items["Text"].Instance.Text = Watermark.Name .. " | " .. LocalPlayer.Name .. " | " .. tostring(LastFPS) .. " fps | " .. tostring(Ping) .. "ms | " .. os.date("%H:%M")
+    end)
+    Library.WatermarkObj = Watermark
+    return Watermark
+end
+
+-- ============================================================
+-- Feature 2: TargetHUD
+-- ============================================================
+Library.TargetHUD = function(Self, Params)
+    Params = Params or {}
+    local TargetHUD = { Target = nil, Visible = false, Items = {} }
+    local Items = {} do
+        Items["Main"] = Library:Create("Frame", { Name = "\0", Parent = Library.Holder.Instance, AnchorPoint = Vector2.new(0.5,0), Position = UDim2.new(0.5,0,0,10), Size = UDim2.new(0,220,0,60), BorderSizePixel = 0, Visible = false, BackgroundColor3 = Library.Theme["Background"] }):AddToTheme({BackgroundColor3 = 'Background'})
+        Items["Main"]:MakeDraggable()
+        Library:Create("UIStroke", { Name = "\0", Parent = Items["Main"].Instance, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, LineJoinMode = Enum.LineJoinMode.Miter, Color = Library.Theme["Outline 1"] }):AddToTheme({Color = 'Outline 1'})
+        Library:Create("Frame", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,0,0,0), Size = UDim2.new(1,0,0,2), BorderSizePixel = 0, BackgroundColor3 = Library.Theme["Accent"] }):AddToTheme({BackgroundColor3 = 'Accent'})
+        Items["Avatar"] = Library:Create("ImageLabel", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,6,0,8), Size = UDim2.new(0,44,0,44), BorderSizePixel = 0, BackgroundColor3 = Library.Theme["Inline"], Image = "" }):AddToTheme({BackgroundColor3 = 'Inline'})
+        Library:Create("UICorner", { Name = "\0", Parent = Items["Avatar"].Instance, CornerRadius = UDim.new(1,0) })
+        Items["DisplayName"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.BoldFont, TextSize = Library.FontSize, Parent = Items["Main"].Instance, TextColor3 = Library.Theme["Text"], Text = "", TextXAlignment = Enum.TextXAlignment.Left, Size = UDim2.new(0,140,0,14), BackgroundTransparency = 1, Position = UDim2.new(0,56,0,8) }):AddToTheme({TextColor3 = 'Text'})
+        Items["Username"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = Library.FontSize, Parent = Items["Main"].Instance, TextColor3 = Library.Theme["Inactive Text"], Text = "", TextXAlignment = Enum.TextXAlignment.Left, Size = UDim2.new(0,140,0,14), BackgroundTransparency = 1, Position = UDim2.new(0,56,0,22) }):AddToTheme({TextColor3 = 'Inactive Text'})
+        Items["HPBar"] = Library:Create("Frame", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,56,0,42), Size = UDim2.new(0,152,0,8), BorderSizePixel = 0, BackgroundColor3 = Library.Theme["Inline"] }):AddToTheme({BackgroundColor3 = 'Inline'})
+        Items["HPFill"] = Library:Create("Frame", { Name = "\0", Parent = Items["HPBar"].Instance, Size = UDim2.new(1,0,1,0), BorderSizePixel = 0, BackgroundColor3 = Color3.fromRGB(0,255,0) })
+        Items["HPText"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = 10, Parent = Items["HPBar"].Instance, TextColor3 = Library.Theme["Text"], Text = "100/100", Size = UDim2.new(1,0,1,0), BackgroundTransparency = 1, ZIndex = 2 }):AddToTheme({TextColor3 = 'Text'})
+        TargetHUD.Items = Items
+    end
+    function TargetHUD:SetVisibility(Bool) TargetHUD.Visible = Bool; if not Bool then Items["Main"].Instance.Visible = false end end
+    function TargetHUD:SetTarget(Player)
+        TargetHUD.Target = Player
+        if not Player then Items["Main"].Instance.Visible = false; return end
+        if not TargetHUD.Visible then return end
+        Items["Main"].Instance.Visible = true
+        Items["DisplayName"].Instance.Text = Player.DisplayName
+        Items["Username"].Instance.Text = "@" .. Player.Name
+        pcall(function() Items["Avatar"].Instance.Image = game:GetService("Players"):GetUserThumbnailAsync(Player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100) end)
+    end
+    Library:Connect(RunService.RenderStepped, function()
+        if not TargetHUD.Visible or not TargetHUD.Target then Items["Main"].Instance.Visible = false; return end
+        local Char = TargetHUD.Target.Character; if not Char then Items["Main"].Instance.Visible = false; return end
+        local Hum = Char:FindFirstChildOfClass("Humanoid"); if not Hum then Items["Main"].Instance.Visible = false; return end
+        Items["Main"].Instance.Visible = true
+        local Ratio = math.clamp(Hum.Health / Hum.MaxHealth, 0, 1)
+        Items["HPFill"].Instance.Size = UDim2.new(Ratio, 0, 1, 0)
+        Items["HPFill"].Instance.BackgroundColor3 = Color3.fromRGB(255*(1-Ratio), 255*Ratio, 0)
+        Items["HPText"].Instance.Text = math.floor(Hum.Health) .. "/" .. math.floor(Hum.MaxHealth)
+    end)
+    Library.TargetHUDObj = TargetHUD
+    return TargetHUD
+end
+
+-- ============================================================
+-- Feature 3: ESP Preview (ViewportFrame with spinning avatar)
+-- ============================================================
+Library.ESPPreview = function(Self, Params)
+    Params = Params or {}
+    local ESPPreview = { Visible = false, Items = {} }
+    local DummyModel
+    local Items = {} do
+        Items["Main"] = Library:Create("Frame", { Name = "\0", Parent = Library.Holder.Instance, AnchorPoint = Vector2.new(1,0.5), Position = UDim2.new(1,-10,0.5,0), Size = UDim2.new(0,180,0,250), BorderSizePixel = 0, Visible = false, BackgroundColor3 = Library.Theme["Background"] }):AddToTheme({BackgroundColor3 = 'Background'})
+        Items["Main"]:MakeDraggable()
+        Library:Create("UIStroke", { Name = "\0", Parent = Items["Main"].Instance, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, LineJoinMode = Enum.LineJoinMode.Miter, Color = Library.Theme["Outline 1"] }):AddToTheme({Color = 'Outline 1'})
+        Library:Create("Frame", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,0,0,0), Size = UDim2.new(1,0,0,2), BorderSizePixel = 0, BackgroundColor3 = Library.Theme["Accent"] }):AddToTheme({BackgroundColor3 = 'Accent'})
+        Items["Viewport"] = Library:Create("ViewportFrame", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,8,0,10), Size = UDim2.new(1,-16,1,-18), BorderSizePixel = 0, BackgroundColor3 = Library.Theme["Inline"], BackgroundTransparency = 0, Ambient = Color3.fromRGB(200,200,200), LightColor = Color3.new(1,1,1), LightDirection = Vector3.new(-1,-1,-1) }):AddToTheme({BackgroundColor3 = 'Inline'})
+        pcall(function() local Objs = game:GetObjects("rbxassetid://4720776970"); if Objs and Objs[1] then DummyModel = Objs[1]; DummyModel.Parent = Items["Viewport"].Instance; if DummyModel:FindFirstChild("HumanoidRootPart") then DummyModel:SetPrimaryPartCFrame(CFrame.new(0,0,0)) end end end)
+        local Cam = Instance.new("Camera"); Cam.CFrame = CFrame.new(Vector3.new(0,2,-6), Vector3.new(0,2,0)); Cam.Parent = Items["Viewport"].Instance; Items["Viewport"].Instance.CurrentCamera = Cam
+        -- ESP overlay
+        local OL = Library:Create("Frame", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,8,0,10), Size = UDim2.new(1,-16,1,-18), BackgroundTransparency = 1, ZIndex = 3, BorderSizePixel = 0 })
+        local BX, BY, BW, BH = 45, 15, 80, 180
+        Library:Create("Frame", { Name = "\0", Parent = OL.Instance, Position = UDim2.new(0,BX,0,BY), Size = UDim2.new(0,BW,0,1), BorderSizePixel = 0, BackgroundColor3 = Color3.new(1,1,1), ZIndex = 4 })
+        Library:Create("Frame", { Name = "\0", Parent = OL.Instance, Position = UDim2.new(0,BX,0,BY+BH), Size = UDim2.new(0,BW,0,1), BorderSizePixel = 0, BackgroundColor3 = Color3.new(1,1,1), ZIndex = 4 })
+        Library:Create("Frame", { Name = "\0", Parent = OL.Instance, Position = UDim2.new(0,BX,0,BY), Size = UDim2.new(0,1,0,BH), BorderSizePixel = 0, BackgroundColor3 = Color3.new(1,1,1), ZIndex = 4 })
+        Library:Create("Frame", { Name = "\0", Parent = OL.Instance, Position = UDim2.new(0,BX+BW,0,BY), Size = UDim2.new(0,1,0,BH), BorderSizePixel = 0, BackgroundColor3 = Color3.new(1,1,1), ZIndex = 4 })
+        Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = 11, Parent = OL.Instance, TextColor3 = Color3.new(1,1,1), Text = "Player", Size = UDim2.new(0,BW,0,14), Position = UDim2.new(0,BX,0,BY-16), BackgroundTransparency = 1, ZIndex = 4 })
+        Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = 11, Parent = OL.Instance, TextColor3 = Color3.new(1,1,1), Text = "42st", Size = UDim2.new(0,BW,0,14), Position = UDim2.new(0,BX,0,BY+BH+2), BackgroundTransparency = 1, ZIndex = 4 })
+        Library:Create("Frame", { Name = "\0", Parent = OL.Instance, Position = UDim2.new(0,BX-5,0,BY), Size = UDim2.new(0,2,0,BH), BorderSizePixel = 0, BackgroundColor3 = Color3.fromRGB(30,30,30), ZIndex = 4 })
+        Library:Create("Frame", { Name = "\0", Parent = OL.Instance, AnchorPoint = Vector2.new(0,1), Position = UDim2.new(0,BX-5,0,BY+BH), Size = UDim2.new(0,2,0,BH*0.85), BorderSizePixel = 0, BackgroundColor3 = Color3.fromRGB(0,255,0), ZIndex = 5 })
+        ESPPreview.Items = Items
+    end
+    local SpinAngle = 0
+    Library:Connect(RunService.RenderStepped, function(dt)
+        if not ESPPreview.Visible then return end
+        SpinAngle = SpinAngle + dt * 30
+        if DummyModel and DummyModel.PrimaryPart then pcall(function() DummyModel:SetPrimaryPartCFrame(CFrame.new(0,0,0) * CFrame.Angles(0, math.rad(SpinAngle), 0)) end) end
+    end)
+    function ESPPreview:SetVisibility(Bool) ESPPreview.Visible = Bool; Items["Main"].Instance.Visible = Bool end
+    Library.ESPPreviewObj = ESPPreview
+    return ESPPreview
+end
+
 end 
 
 getgenv().Library = Library
