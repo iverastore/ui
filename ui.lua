@@ -5505,17 +5505,21 @@ end
 -- ============================================================
 Library.ESPPreview = function(Self, Params)
     Params = Params or {}
-    local ESPPreview = { Visible = false, Items = {} }
-    local DummyModel
+    local ESPPreview = { Visible = false, Items = {}, RenderObjects = {} }
+    local PreviewModel = nil
+    local OFFSET = CFrame.new(0, 2.5, -8.5)
     local Items = {} do
         Items["Main"] = Library:Create("Frame", { Name = "\0", Parent = Library.Holder.Instance, AnchorPoint = Vector2.new(1,0.5), Position = UDim2.new(1,-10,0.5,0), Size = UDim2.new(0,180,0,250), BorderSizePixel = 0, Visible = false, BackgroundColor3 = Library.Theme["Background"] }):AddToTheme({BackgroundColor3 = 'Background'})
         Items["Main"]:MakeDraggable()
         Library:Create("UIStroke", { Name = "\0", Parent = Items["Main"].Instance, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, LineJoinMode = Enum.LineJoinMode.Miter, Color = Library.Theme["Outline 1"] }):AddToTheme({Color = 'Outline 1'})
         Library:Create("Frame", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,0,0,0), Size = UDim2.new(1,0,0,2), BorderSizePixel = 0, BackgroundColor3 = Library.Theme["Accent"] }):AddToTheme({BackgroundColor3 = 'Accent'})
         Items["Viewport"] = Library:Create("ViewportFrame", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,8,0,10), Size = UDim2.new(1,-16,1,-18), BorderSizePixel = 0, BackgroundColor3 = Library.Theme["Inline"], BackgroundTransparency = 0, Ambient = Color3.fromRGB(200,200,200), LightColor = Color3.new(1,1,1), LightDirection = Vector3.new(-1,-1,-1) }):AddToTheme({BackgroundColor3 = 'Inline'})
-        pcall(function() local Objs = game:GetObjects("rbxassetid://4720776970"); if Objs and Objs[1] then DummyModel = Objs[1]; DummyModel.Parent = Items["Viewport"].Instance; if DummyModel:FindFirstChild("HumanoidRootPart") then DummyModel:SetPrimaryPartCFrame(CFrame.new(0,0,0)) end end end)
-        local Cam = Instance.new("Camera"); Cam.CFrame = CFrame.new(Vector3.new(0,2,-6), Vector3.new(0,2,0)); Cam.Parent = Items["Viewport"].Instance; Items["Viewport"].Instance.CurrentCamera = Cam
-        -- ESP overlay
+        -- Camera
+        local ViewportCamera = Instance.new("Camera")
+        ViewportCamera.CFrame = CFrame.new(0,0,0)
+        ViewportCamera.Parent = Items["Viewport"].Instance
+        Items["Viewport"].Instance.CurrentCamera = ViewportCamera
+        -- ESP overlay (box, name, distance, health bar)
         local OL = Library:Create("Frame", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,8,0,10), Size = UDim2.new(1,-16,1,-18), BackgroundTransparency = 1, ZIndex = 3, BorderSizePixel = 0 })
         local BX, BY, BW, BH = 45, 15, 80, 180
         Library:Create("Frame", { Name = "\0", Parent = OL.Instance, Position = UDim2.new(0,BX,0,BY), Size = UDim2.new(0,BW,0,1), BorderSizePixel = 0, BackgroundColor3 = Color3.new(1,1,1), ZIndex = 4 })
@@ -5528,12 +5532,83 @@ Library.ESPPreview = function(Self, Params)
         Library:Create("Frame", { Name = "\0", Parent = OL.Instance, AnchorPoint = Vector2.new(0,1), Position = UDim2.new(0,BX-5,0,BY+BH), Size = UDim2.new(0,2,0,BH*0.85), BorderSizePixel = 0, BackgroundColor3 = Color3.fromRGB(0,255,0), ZIndex = 5 })
         ESPPreview.Items = Items
     end
-    local SpinAngle = 0
-    Library:Connect(RunService.RenderStepped, function(dt)
-        if not ESPPreview.Visible then return end
-        SpinAngle = SpinAngle + dt * 30
-        if DummyModel and DummyModel.PrimaryPart then pcall(function() DummyModel:SetPrimaryPartCFrame(CFrame.new(0,0,0) * CFrame.Angles(0, math.rad(SpinAngle), 0)) end) end
+
+    local ValidClasses = { MeshPart = true, Part = true, Accoutrement = true, Pants = true, Shirt = true, Humanoid = true }
+
+    local function AddObject(Object)
+        if not Object or not ValidClasses[Object.ClassName] then return nil end
+        local IsArchivable = Object.Archivable
+        Object.Archivable = true
+        local Clone = Object:Clone()
+        Object.Archivable = IsArchivable
+        if Object:IsA("BasePart") then
+            ESPPreview.RenderObjects[Object] = Clone
+        elseif Object:IsA("Accoutrement") then
+            if Object:FindFirstChild("Handle") and Clone:FindFirstChild("Handle") then
+                ESPPreview.RenderObjects[Object.Handle] = Clone.Handle
+            end
+        elseif Object:IsA("Humanoid") then
+            Clone.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+        end
+        return Clone
+    end
+
+    local function RemoveObject(Object)
+        local Clone = ESPPreview.RenderObjects[Object]
+        if not Clone then return end
+        ESPPreview.RenderObjects[Object] = nil
+        if Clone.Parent and Clone.Parent:IsA("Accoutrement") then Clone.Parent:Destroy() else Clone:Destroy() end
+    end
+
+    local function BuildFromModel(Model)
+        -- Clear old
+        for _, Child in ipairs(Items["Viewport"].Instance:GetChildren()) do
+            if not Child:IsA("Camera") then Child:Destroy() end
+        end
+        table.clear(ESPPreview.RenderObjects)
+        PreviewModel = Model
+        if not Model then return end
+        local Viewmodel = Instance.new("Model"); Viewmodel.Name = "Viewmodel"; Viewmodel.Parent = Items["Viewport"].Instance
+        for _, Object in ipairs(Model:GetDescendants()) do
+            local Clone = AddObject(Object)
+            if Clone then Clone.Parent = Viewmodel end
+        end
+        -- Connect live updates
+        Model.DescendantAdded:Connect(function(Object)
+            local Clone = AddObject(Object)
+            if Clone then Clone.Parent = Viewmodel end
+        end)
+        Model.DescendantRemoving:Connect(function(Object)
+            RemoveObject(Object)
+        end)
+    end
+
+    -- Heartbeat: sync CFrames + update camera
+    Library:Connect(RunService.Heartbeat, function()
+        if not ESPPreview.Visible or not PreviewModel then return end
+        local Root = PreviewModel:FindFirstChild("HumanoidRootPart")
+        if not Root then return end
+        local ViewportCamera = Items["Viewport"].Instance.CurrentCamera
+        ViewportCamera.CFrame = CFrame.new(Root.CFrame:ToWorldSpace(OFFSET).Position, Root.Position)
+        for Original, Clone in pairs(ESPPreview.RenderObjects) do
+            if Original and Original.Parent then
+                Clone.CFrame = Original.CFrame
+            else
+                RemoveObject(Original)
+            end
+        end
     end)
+
+    -- Build from local player character
+    task.spawn(function()
+        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        BuildFromModel(Character)
+    end)
+    Library:Connect(LocalPlayer.CharacterAdded, function(NewCharacter)
+        task.wait(1)
+        BuildFromModel(NewCharacter)
+    end)
+
     function ESPPreview:SetVisibility(Bool) ESPPreview.Visible = Bool; Items["Main"].Instance.Visible = Bool end
     Library.ESPPreviewObj = ESPPreview
     return ESPPreview
