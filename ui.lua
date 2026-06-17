@@ -5509,7 +5509,7 @@ Library.ESPPreview = function(Self, Params)
     local PreviewModel = nil
     local OFFSET = CFrame.new(0, 2.5, -8.5)
     local Items = {} do
-        Items["Main"] = Library:Create("Frame", { Name = "\0", Parent = Library.Holder.Instance, AnchorPoint = Vector2.new(1,0.5), Position = UDim2.new(1,-10,0.5,0), Size = UDim2.new(0,180,0,250), BorderSizePixel = 0, Visible = false, BackgroundColor3 = Library.Theme["Background"] }):AddToTheme({BackgroundColor3 = 'Background'})
+        Items["Main"] = Library:Create("Frame", { Name = "\0", Parent = Library.Holder.Instance, AnchorPoint = Vector2.new(0,0), Position = UDim2.new(0.7,0,0.1,0), Size = UDim2.new(0,180,0,250), BorderSizePixel = 0, Visible = false, BackgroundColor3 = Library.Theme["Background"] }):AddToTheme({BackgroundColor3 = 'Background'})
         Items["Main"]:MakeDraggable()
         Library:Create("UIStroke", { Name = "\0", Parent = Items["Main"].Instance, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, LineJoinMode = Enum.LineJoinMode.Miter, Color = Library.Theme["Outline 1"] }):AddToTheme({Color = 'Outline 1'})
         Library:Create("Frame", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,0,0,0), Size = UDim2.new(1,0,0,2), BorderSizePixel = 0, BackgroundColor3 = Library.Theme["Accent"] }):AddToTheme({BackgroundColor3 = 'Accent'})
