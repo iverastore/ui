@@ -5519,17 +5519,19 @@ Library.ESPPreview = function(Self, Params)
         ViewportCamera.CFrame = CFrame.new(0,0,0)
         ViewportCamera.Parent = Items["Viewport"].Instance
         Items["Viewport"].Instance.CurrentCamera = ViewportCamera
-        -- ESP overlay (box, name, distance, health bar)
+        -- ESP overlay (box, name, distance, health bar) with named refs
         local OL = Library:Create("Frame", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,8,0,10), Size = UDim2.new(1,-16,1,-18), BackgroundTransparency = 1, ZIndex = 3, BorderSizePixel = 0 })
         local BX, BY, BW, BH = 45, 15, 80, 180
-        Library:Create("Frame", { Name = "\0", Parent = OL.Instance, Position = UDim2.new(0,BX,0,BY), Size = UDim2.new(0,BW,0,1), BorderSizePixel = 0, BackgroundColor3 = Color3.new(1,1,1), ZIndex = 4 })
-        Library:Create("Frame", { Name = "\0", Parent = OL.Instance, Position = UDim2.new(0,BX,0,BY+BH), Size = UDim2.new(0,BW,0,1), BorderSizePixel = 0, BackgroundColor3 = Color3.new(1,1,1), ZIndex = 4 })
-        Library:Create("Frame", { Name = "\0", Parent = OL.Instance, Position = UDim2.new(0,BX,0,BY), Size = UDim2.new(0,1,0,BH), BorderSizePixel = 0, BackgroundColor3 = Color3.new(1,1,1), ZIndex = 4 })
-        Library:Create("Frame", { Name = "\0", Parent = OL.Instance, Position = UDim2.new(0,BX+BW,0,BY), Size = UDim2.new(0,1,0,BH), BorderSizePixel = 0, BackgroundColor3 = Color3.new(1,1,1), ZIndex = 4 })
-        Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = 11, Parent = OL.Instance, TextColor3 = Color3.new(1,1,1), Text = "Player", Size = UDim2.new(0,BW,0,14), Position = UDim2.new(0,BX,0,BY-16), BackgroundTransparency = 1, ZIndex = 4 })
-        Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = 11, Parent = OL.Instance, TextColor3 = Color3.new(1,1,1), Text = "42st", Size = UDim2.new(0,BW,0,14), Position = UDim2.new(0,BX,0,BY+BH+2), BackgroundTransparency = 1, ZIndex = 4 })
-        Library:Create("Frame", { Name = "\0", Parent = OL.Instance, Position = UDim2.new(0,BX-5,0,BY), Size = UDim2.new(0,2,0,BH), BorderSizePixel = 0, BackgroundColor3 = Color3.fromRGB(30,30,30), ZIndex = 4 })
-        Library:Create("Frame", { Name = "\0", Parent = OL.Instance, AnchorPoint = Vector2.new(0,1), Position = UDim2.new(0,BX-5,0,BY+BH), Size = UDim2.new(0,2,0,BH*0.85), BorderSizePixel = 0, BackgroundColor3 = Color3.fromRGB(0,255,0), ZIndex = 5 })
+        Items["BoxOverlay"] = {}
+        table.insert(Items["BoxOverlay"], Library:Create("Frame", { Name = "\0", Parent = OL.Instance, Position = UDim2.new(0,BX,0,BY), Size = UDim2.new(0,BW,0,1), BorderSizePixel = 0, BackgroundColor3 = Color3.new(1,1,1), ZIndex = 4 }))
+        table.insert(Items["BoxOverlay"], Library:Create("Frame", { Name = "\0", Parent = OL.Instance, Position = UDim2.new(0,BX,0,BY+BH), Size = UDim2.new(0,BW,0,1), BorderSizePixel = 0, BackgroundColor3 = Color3.new(1,1,1), ZIndex = 4 }))
+        table.insert(Items["BoxOverlay"], Library:Create("Frame", { Name = "\0", Parent = OL.Instance, Position = UDim2.new(0,BX,0,BY), Size = UDim2.new(0,1,0,BH), BorderSizePixel = 0, BackgroundColor3 = Color3.new(1,1,1), ZIndex = 4 }))
+        table.insert(Items["BoxOverlay"], Library:Create("Frame", { Name = "\0", Parent = OL.Instance, Position = UDim2.new(0,BX+BW,0,BY), Size = UDim2.new(0,1,0,BH), BorderSizePixel = 0, BackgroundColor3 = Color3.new(1,1,1), ZIndex = 4 }))
+        Items["NameLabel"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = 11, Parent = OL.Instance, TextColor3 = Color3.new(1,1,1), Text = "Player", Size = UDim2.new(0,BW,0,14), Position = UDim2.new(0,BX,0,BY-16), BackgroundTransparency = 1, ZIndex = 4 })
+        Items["DistLabel"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = 11, Parent = OL.Instance, TextColor3 = Color3.new(1,1,1), Text = "42st", Size = UDim2.new(0,BW,0,14), Position = UDim2.new(0,BX,0,BY+BH+2), BackgroundTransparency = 1, ZIndex = 4 })
+        Items["HealthOverlay"] = {}
+        table.insert(Items["HealthOverlay"], Library:Create("Frame", { Name = "\0", Parent = OL.Instance, Position = UDim2.new(0,BX-5,0,BY), Size = UDim2.new(0,2,0,BH), BorderSizePixel = 0, BackgroundColor3 = Color3.fromRGB(30,30,30), ZIndex = 4 }))
+        table.insert(Items["HealthOverlay"], Library:Create("Frame", { Name = "\0", Parent = OL.Instance, AnchorPoint = Vector2.new(0,1), Position = UDim2.new(0,BX-5,0,BY+BH), Size = UDim2.new(0,2,0,BH*0.85), BorderSizePixel = 0, BackgroundColor3 = Color3.fromRGB(0,255,0), ZIndex = 5 }))
         ESPPreview.Items = Items
     end
 
