@@ -3159,6 +3159,7 @@ do --// UI Source
                         Name = "\0",
                         Parent = Items["Pages"].Instance,
                         FillDirection = Enum.FillDirection.Horizontal,
+                        HorizontalFlex = Enum.UIFlexAlignment.Fill,
                         Padding = UDim.new(0, 3),
                         SortOrder = Enum.SortOrder.LayoutOrder
                     })
@@ -3360,6 +3361,7 @@ do --// UI Source
                         Text = "",
                         AutoButtonColor = false,
                         AutomaticSize = Enum.AutomaticSize.X,
+                        LayoutOrder = Params.LayoutOrder or (#Page.Window.Pages + 1),
                         Size = UDim2.new(0, 0, 1, 1),
                         BorderSizePixel = 0,
                         ZIndex = 2,
