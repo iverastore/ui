@@ -3152,6 +3152,7 @@ do --// UI Source
                         Name = "\0",
                         Parent = Items["Pages"].Instance,
                         FillDirection = Enum.FillDirection.Horizontal,
+                        HorizontalAlignment = Enum.HorizontalAlignment.Center,
                         Padding = UDim.new(0, 3),
                         SortOrder = Enum.SortOrder.LayoutOrder
                     })
