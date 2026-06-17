@@ -4072,239 +4072,19 @@ do
 
 	local hovering = nil
 
-	-- > ( menu effects: blur + stars )
+	-- > ( menu effects: blur with fade )
 	do
 		local blur_effect = Instance.new("BlurEffect")
 		blur_effect.Size = 0
 		blur_effect.Parent = game:GetService("Lighting")
 		blur_effect.Name = "_ivera_blur"
 
-		local star_drawings = {}
-		local star_count = 35
-		local star_visible = false
-
-		for i = 1, star_count do
-			local s = drawing_proxy["new"]("Square", {
-				["Size"] = udim2_new(0, math.random(1, 3), 0, math.random(1, 3)),
-				["Position"] = udim2_new(0, math.random(0, camera["ViewportSize"]["X"]), 0, math.random(0, camera["ViewportSize"]["Y"])),
-				["Color"] = menu["colors"]["accent"],
-				["Filled"] = true,
-				["Transparency"] = 0,
-				["ZIndex"] = 2,
-				["Visible"] = false,
-			})
-			star_drawings[i] = {obj = s, speed = math.random(5, 20) / 10, base_y = math.random(0, math.floor(camera["ViewportSize"]["Y"]))}
-		end
-
 		menu["_show_effects"] = function()
-			blur_effect.Size = 12
-			star_visible = true
-			for i = 1, star_count do
-				star_drawings[i].obj["Visible"] = true
-				tween(star_drawings[i].obj, { Transparency = math.random(3, 8) / 10 }, circular, out, 0.3)
-			end
+			tween_service:Create(blur_effect, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = 12}):Play()
 		end
 
 		menu["_hide_effects"] = function()
-			blur_effect.Size = 0
-			star_visible = false
-			for i = 1, star_count do
-				tween(star_drawings[i].obj, { Transparency = 0 }, circular, out, 0.2)
-				delay(0.2, function()
-					if not star_visible then
-						star_drawings[i].obj["Visible"] = false
-					end
-				end)
-			end
-		end
-
-		-- animate stars floating
-		heartbeat[#heartbeat + 1] = function()
-			if not star_visible then return end
-			for i = 1, star_count do
-				local s = star_drawings[i]
-				local pos = s.obj["position"]
-				local new_y = pos["Y"]["Offset"] - s.speed
-				if new_y < -5 then
-					new_y = camera["ViewportSize"]["Y"] + 5
-				end
-				s.obj["Position"] = udim2_new(0, pos["X"]["Offset"], 0, new_y)
-			end
-		end
-	end
-
-	-- > ( target hud )
-	do
-		local thud_frame = drawing_proxy["new"]("Image", {
-			["Position"] = udim2_new(0, camera["ViewportSize"]["X"] / 2 - 100, 0, camera["ViewportSize"]["Y"] / 2 + 150),
-			["Size"] = udim2_new(0, 200, 0, 60),
-			["Color"] = menu["colors"]["border"],
-			["Transparency"] = 0,
-			["Rounding"] = 3,
-			["Data"] = pixel_image_data,
-			["ZIndex"] = 10,
-			["Visible"] = false,
-		})
-
-		hud_frames["target_hud_position"] = thud_frame
-
-		local thud_shadow = drawing_proxy["new"]("Image", {
-			["Parent"] = thud_frame,
-			["Data"] = shadow_image_data,
-			["Rounding"] = 7,
-			["Color"] = menu["colors"]["shadow"],
-			["Transparency"] = 0,
-			["Size"] = udim2_new(1, 6, 1, 4),
-			["ZIndex"] = 9,
-			["Visible"] = true,
-			["Position"] = udim2_new(0, -3, 0, -2),
-		})
-
-		local thud_inside = drawing_proxy["new"]("Image", {
-			["Position"] = udim2_new(0, 1, 0, 1),
-			["Size"] = udim2_new(1, -2, 1, -2),
-			["Color"] = color3_fromrgb(10, 10, 10),
-			["Transparency"] = 0,
-			["Rounding"] = 3,
-			["Data"] = pixel_image_data,
-			["Parent"] = thud_frame,
-			["ZIndex"] = 11,
-			["Visible"] = true,
-		})
-
-		-- avatar placeholder (accent colored square)
-		local thud_avatar = drawing_proxy["new"]("Image", {
-			["Position"] = udim2_new(0, 6, 0, 6),
-			["Size"] = udim2_new(0, 46, 0, 46),
-			["Color"] = menu["colors"]["accent"],
-			["Rounding"] = 3,
-			["Data"] = pixel_image_data,
-			["Transparency"] = 0,
-			["Parent"] = thud_inside,
-			["ZIndex"] = 12,
-			["Visible"] = true,
-		})
-
-		local thud_name = drawing_proxy["new"]("Text", {
-			["Color"] = color3_fromrgb(255, 255, 255),
-			["Text"] = "Player",
-			["Size"] = 13,
-			["Font"] = 1,
-			["Transparency"] = 0,
-			["Visible"] = true,
-			["Parent"] = thud_inside,
-			["Position"] = udim2_new(0, 58, 0, 5),
-			["ZIndex"] = 12,
-		})
-
-		local thud_info = drawing_proxy["new"]("Text", {
-			["Color"] = color3_fromrgb(160, 160, 160),
-			["Text"] = "100 HP | 0 st",
-			["Size"] = 12,
-			["Font"] = 1,
-			["Transparency"] = 0,
-			["Visible"] = true,
-			["Parent"] = thud_inside,
-			["Position"] = udim2_new(0, 58, 0, 20),
-			["ZIndex"] = 12,
-		})
-
-		-- health bar background
-		local thud_hp_bg = drawing_proxy["new"]("Image", {
-			["Position"] = udim2_new(0, 58, 0, 38),
-			["Size"] = udim2_new(0, 130, 0, 8),
-			["Color"] = color3_fromrgb(30, 30, 30),
-			["Rounding"] = 2,
-			["Data"] = pixel_image_data,
-			["Transparency"] = 0,
-			["Parent"] = thud_inside,
-			["ZIndex"] = 12,
-			["Visible"] = true,
-		})
-
-		-- health bar fill
-		local thud_hp_fill = drawing_proxy["new"]("Image", {
-			["Position"] = udim2_new(0, 1, 0, 1),
-			["Size"] = udim2_new(1, -2, 1, -2),
-			["Color"] = color3_fromrgb(0, 255, 100),
-			["Rounding"] = 2,
-			["Data"] = pixel_image_data,
-			["Transparency"] = 0,
-			["Parent"] = thud_hp_bg,
-			["ZIndex"] = 13,
-			["Visible"] = true,
-		})
-
-		local thud_visible = false
-
-		menu["show_target_hud"] = function()
-			thud_visible = true
-			thud_frame["Visible"] = true
-			tween(thud_frame, { Transparency = 0.7 }, circular, out, 0.15)
-			tween(thud_inside, show_transparency, circular, out, 0.15)
-			tween(thud_shadow, { Transparency = 0.16 }, circular, out, 0.15)
-			tween(thud_avatar, half_transparency, circular, out, 0.15)
-			tween(thud_name, show_transparency, circular, out, 0.15)
-			tween(thud_info, { Transparency = 0.8 }, circular, out, 0.15)
-			tween(thud_hp_bg, half_transparency, circular, out, 0.15)
-			tween(thud_hp_fill, show_transparency, circular, out, 0.15)
-		end
-
-		menu["hide_target_hud"] = function()
-			thud_visible = false
-			tween(thud_frame, hide_transparency, circular, out, 0.15)
-			tween(thud_inside, hide_transparency, circular, out, 0.15)
-			tween(thud_shadow, hide_transparency, circular, out, 0.15)
-			tween(thud_avatar, hide_transparency, circular, out, 0.15)
-			tween(thud_name, hide_transparency, circular, out, 0.15)
-			tween(thud_info, hide_transparency, circular, out, 0.15)
-			tween(thud_hp_bg, hide_transparency, circular, out, 0.15)
-			tween(thud_hp_fill, hide_transparency, circular, out, 0.15)
-			delay(0.15, function()
-				if not thud_visible then
-					thud_frame["Visible"] = false
-				end
-			end)
-		end
-
-		menu["update_target_hud"] = function(target, flags_ref)
-			if not target or not target.Character then
-				if not menu_open then
-					menu["hide_target_hud"]()
-				end
-				return
-			end
-			if not thud_visible then
-				menu["show_target_hud"]()
-			end
-			local char = target.Character
-			local hum = char:FindFirstChildOfClass("Humanoid")
-			local hp = hum and math.floor(hum.Health) or 0
-			local max_hp = hum and math.floor(hum.MaxHealth) or 100
-			local pct = max_hp > 0 and (hp / max_hp) or 0
-			local dist = 0
-			pcall(function()
-				local lp = players_service["LocalPlayer"]
-				if lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") and char:FindFirstChild("HumanoidRootPart") then
-					dist = math.floor((lp.Character.HumanoidRootPart.Position - char.HumanoidRootPart.Position).Magnitude)
-				end
-			end)
-			thud_name["Text"] = target.DisplayName or target.Name
-			thud_info["Text"] = hp .. "/" .. max_hp .. " HP | " .. dist .. " st"
-			thud_hp_fill["Size"] = udim2_new(pct, -2, 1, -2)
-			thud_hp_fill["Color"] = color3_fromrgb(255 * (1 - pct), 255 * pct, 0)
-		end
-
-		-- preview mode: show local player template when menu is open
-		menu["_thud_preview"] = function()
-			if not thud_visible then
-				menu["show_target_hud"]()
-			end
-			local lp = players_service["LocalPlayer"]
-			thud_name["Text"] = lp.DisplayName or lp.Name
-			thud_info["Text"] = "100/100 HP | 0 st (preview)"
-			thud_hp_fill["Size"] = udim2_new(1, -2, 1, -2)
-			thud_hp_fill["Color"] = color3_fromrgb(0, 255, 100)
+			tween_service:Create(blur_effect, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = 0}):Play()
 		end
 	end
 
@@ -4370,13 +4150,11 @@ do
 
 		menu_open = not menu_open
 
-		-- menu effects (blur + stars + target hud preview)
+		-- menu effects (blur)
 		if menu_open then
 			if menu["_show_effects"] then menu["_show_effects"]() end
-			if menu["_thud_preview"] then menu["_thud_preview"]() end
 		else
 			if menu["_hide_effects"] then menu["_hide_effects"]() end
-			if menu["hide_target_hud"] then menu["hide_target_hud"]() end
 		end
 
 		local half_transparency = menu_open and half_transparency or hide_transparency
@@ -9114,6 +8892,7 @@ do
 end
 
 
+menu["update_target_hud"] = function() end
 menu["set_special_circle"] = function() end
 
 
