@@ -4678,6 +4678,15 @@ do
 			return nil
 		end
 
+		-- Auto-stack: track sections per tab and auto-calculate y_position
+		if not tab["_section_heights"] then tab["_section_heights"] = {[1] = 0, [2] = 0} end
+		local col = side
+		if col ~= 1 and col ~= 2 then col = 1 end
+		local auto_y = tab["_section_heights"][col]
+		y_position = auto_y
+		-- Calculate this section's height contribution (size param)
+		tab["_section_heights"][col] = tab["_section_heights"][col] + size
+
 		local new_section = setmetatable({
 			["tab"] = tab,
 			["name"] = name,
