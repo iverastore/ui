@@ -202,15 +202,8 @@ do --// UI Source
                 return Font.new(getcustomasset(FontPath))
             end
 
-            Library.Font = CustomFont:New("WindowsXPTAHOMA", 400, "Regular", {
-                Id = "WindowsXPTAHOMA",
-                Url = "https://github.com/sametexe001/luas/raw/refs/heads/main/fonts/windows-xp-tahoma.ttf"
-            })
-
-            Library.BoldFont = CustomFont:New("Tahoma8PTBOLD", 400, "Regular", {
-                Id = "Tahoma8PTBOLD",
-                Url = "https://github.com/sametexe001/luas/raw/refs/heads/main/fonts/TAHOMA-8PT-BOLD-WINDOWS-XP.TTF"
-            })
+            Library.Font = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Regular)
+            Library.BoldFont = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold)
         end
 
         Library.Exit = function(Self)
@@ -3159,7 +3152,6 @@ do --// UI Source
                         Name = "\0",
                         Parent = Items["Pages"].Instance,
                         FillDirection = Enum.FillDirection.Horizontal,
-                        HorizontalFlex = Enum.UIFlexAlignment.Fill,
                         Padding = UDim.new(0, 3),
                         SortOrder = Enum.SortOrder.LayoutOrder
                     })
