@@ -1311,31 +1311,35 @@ do
 		end
 	end
 
+	local _wm_last_tick = clock()
+	local _wm_fps = 60
+
 	menu["update_watermark"] = function()
 		if not wm_visible then return end
-		local fps_val = math.floor(1 / (run_service.RenderStepped:Wait() + 0.0001))
+		local now = clock()
+		local dt = now - _wm_last_tick
+		if dt > 0 then
+			_wm_fps = math.floor(1 / dt)
+		end
+		_wm_last_tick = now
 		local game_name = "unknown"
 		pcall(function()
 			game_name = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
 		end)
-		local txt = "ivera.priv | fps: " .. tostring(fps_val) .. " | game: " .. game_name .. " | /getivera"
+		local txt = "ivera.priv | fps: " .. tostring(_wm_fps) .. " | game: " .. game_name .. " | /getivera"
 		wm_text["Text"] = txt
-		-- auto resize frame to fit text
 		local text_width = wm_text["object"]["TextBounds"] and wm_text["object"]["TextBounds"]["X"] or 250
 		local new_width = text_width + 36
 		if new_width < 140 then new_width = 140 end
 		wm_frame["Size"] = udim2_new(0, new_width, 0, 26)
 	end
 
-	-- watermark update loop
-	spawn(function()
-		while true do
-			if wm_visible then
-				pcall(menu["update_watermark"])
-			end
-			wait(1)
+	-- watermark update via heartbeat
+	heartbeat[#heartbeat + 1] = function()
+		if wm_visible then
+			pcall(menu["update_watermark"])
 		end
-	end)
+	end
 
 	function menu:load_theme(theme)
 		if theme then
