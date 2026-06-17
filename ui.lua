@@ -1981,6 +1981,7 @@ do --// UI Source
                         Position = UDim2.new(1, 8, 0, 0),
                         Size = UDim2.new(0, 156, 0, 0),
                         BorderSizePixel = 0,
+                        Visible = false,
                         AutomaticSize = Enum.AutomaticSize.Y,
                         BackgroundColor3 = Library.Theme["Background"]
                     }):AddToTheme({BackgroundColor3 = 'Background'})
@@ -3215,6 +3216,7 @@ do --// UI Source
                         Size = UDim2.new(0, 0, 0, 21),
                         ZIndex = -1,
                         AutomaticSize = Enum.AutomaticSize.X,
+                        Visible = false,
                         BackgroundColor3 = Library.Theme["Inline"]
                     }):AddToTheme({BackgroundColor3 = 'Inline'})
 
