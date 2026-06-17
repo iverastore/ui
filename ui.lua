@@ -35,7 +35,7 @@ do --// UI Source
             Configs = "/Configs"
         },
 
-        FontSize = 16,
+        FontSize = 12,
 
         Animation = {
             Time = 0.3,
@@ -202,14 +202,14 @@ do --// UI Source
                 return Font.new(getcustomasset(FontPath))
             end
 
-            Library.Font = CustomFont:New("SmallestPixel7", 400, "Regular", {
-                Id = "SmallestPixel7",
-                Url = "https://github.com/sametexe001/luas/raw/refs/heads/main/smallest_pixel-7.ttf"
+            Library.Font = CustomFont:New("FigtreeSemiBold", 400, "Regular", {
+                Id = "FigtreeSemiBold",
+                Url = "https://github.com/sametexe001/luas/raw/refs/heads/main/fonts/Figtree-SemiBold.ttf"
             })
 
-            Library.BoldFont = CustomFont:New("SmallestPixel7Bold", 400, "Regular", {
-                Id = "SmallestPixel7",
-                Url = "https://github.com/sametexe001/luas/raw/refs/heads/main/smallest_pixel-7.ttf"
+            Library.BoldFont = CustomFont:New("FigtreeSemiBoldB", 400, "Regular", {
+                Id = "FigtreeSemiBold",
+                Url = "https://github.com/sametexe001/luas/raw/refs/heads/main/fonts/Figtree-SemiBold.ttf"
             })
         end
 
