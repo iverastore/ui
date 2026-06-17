@@ -1211,133 +1211,133 @@ do
 
 	-- > ( watermark )
 
-	local wm_frame = drawing_proxy["new"]("Image", {
-		["Position"] = udim2_new(0, 15, 0, 15),
-		["Size"] = udim2_new(0, 280, 0, 26),
-		["Color"] = menu["colors"]["border"],
-		["Transparency"] = 0,
-		["Rounding"] = 3,
-		["Data"] = pixel_image_data,
-		["ZIndex"] = 10,
-		["Visible"] = false,
-	})
+	do
+		local wm_frame = drawing_proxy["new"]("Image", {
+			["Position"] = udim2_new(0, 15, 0, 15),
+			["Size"] = udim2_new(0, 280, 0, 26),
+			["Color"] = menu["colors"]["border"],
+			["Transparency"] = 0,
+			["Rounding"] = 3,
+			["Data"] = pixel_image_data,
+			["ZIndex"] = 10,
+			["Visible"] = false,
+		})
 
-	hud_frames["watermark_position"] = wm_frame
+		hud_frames["watermark_position"] = wm_frame
 
-	local wm_shadow = drawing_proxy["new"]("Image", {
-		["Parent"] = wm_frame,
-		["Data"] = shadow_image_data,
-		["Rounding"] = 7,
-		["Color"] = menu["colors"]["shadow"],
-		["Transparency"] = 0,
-		["Size"] = udim2_new(1, 6, 1, 4),
-		["ZIndex"] = 9,
-		["Visible"] = true,
-		["Position"] = udim2_new(0, -3, 0, -2),
-	})
+		local wm_shadow = drawing_proxy["new"]("Image", {
+			["Parent"] = wm_frame,
+			["Data"] = shadow_image_data,
+			["Rounding"] = 7,
+			["Color"] = menu["colors"]["shadow"],
+			["Transparency"] = 0,
+			["Size"] = udim2_new(1, 6, 1, 4),
+			["ZIndex"] = 9,
+			["Visible"] = true,
+			["Position"] = udim2_new(0, -3, 0, -2),
+		})
 
-	local wm_inside = drawing_proxy["new"]("Image", {
-		["Position"] = udim2_new(0, 1, 0, 1),
-		["Size"] = udim2_new(1, -2, 0, 24),
-		["Color"] = color3_fromrgb(10, 10, 10),
-		["Transparency"] = 0,
-		["Rounding"] = 3,
-		["Data"] = pixel_image_data,
-		["Parent"] = wm_frame,
-		["ZIndex"] = 11,
-		["Visible"] = true,
-	})
+		local wm_inside = drawing_proxy["new"]("Image", {
+			["Position"] = udim2_new(0, 1, 0, 1),
+			["Size"] = udim2_new(1, -2, 0, 24),
+			["Color"] = color3_fromrgb(10, 10, 10),
+			["Transparency"] = 0,
+			["Rounding"] = 3,
+			["Data"] = pixel_image_data,
+			["Parent"] = wm_frame,
+			["ZIndex"] = 11,
+			["Visible"] = true,
+		})
 
-	local wm_icon = drawing_proxy["new"]("Image", {
-		["Color"] = menu["colors"]["accent"],
-		["Data"] = base64_decode(
-			"iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAMAAAC67D+PAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAGUExURf///wAAAFXC034AAAACdFJOU/8A5bcwSgAAAAlwSFlzAAAOwwAADsMBx2+oZAAAABh0RVh0U29mdHdhcmUAUGFpbnQuTkVUIDUuMS4y+7wDtgAAALZlWElmSUkqAAgAAAAFABoBBQABAAAASgAAABsBBQABAAAAUgAAACgBAwABAAAAAgAAADEBAgAQAAAAWgAAAGmHBAABAAAAagAAAAAAAABgAAAAAQAAAGAAAAABAAAAUGFpbnQuTkVUIDUuMS4yAAMAAJAHAAQAAAAwMjMwAaADAAEAAAABAAAABaAEAAEAAACUAAAAAAAAAAIAAQACAAQAAABSOTgAAgAHAAQAAAAwMTAwAAAAAOnV9jjK2mx6AAAAKklEQVQYV2NghANkJhCAKCgGUUAazIUCiBiIAVEAFoLwIQgsCgZwJiMjABBLAEmFjHpsAAAAAElFTkSuQmCC"
-		),
-		["Transparency"] = 0,
-		["Position"] = udim2_new(0, 4, 0, 4),
-		["Parent"] = wm_inside,
-		["Size"] = udim2_new(0, 10, 0, 10),
-		["ZIndex"] = 12,
-		["Visible"] = true,
-	})
+		local wm_icon = drawing_proxy["new"]("Image", {
+			["Color"] = menu["colors"]["accent"],
+			["Data"] = base64_decode(
+				"iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAMAAAC67D+PAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAGUExURf///wAAAFXC034AAAACdFJOU/8A5bcwSgAAAAlwSFlzAAAOwwAADsMBx2+oZAAAABh0RVh0U29mdHdhcmUAUGFpbnQuTkVUIDUuMS4y+7wDtgAAALZlWElmSUkqAAgAAAAFABoBBQABAAAASgAAABsBBQABAAAAUgAAACgBAwABAAAAAgAAADEBAgAQAAAAWgAAAGmHBAABAAAAagAAAAAAAABgAAAAAQAAAGAAAAABAAAAUGFpbnQuTkVUIDUuMS4yAAMAAJAHAAQAAAAwMjMwAaADAAEAAAABAAAABaAEAAEAAACUAAAAAAAAAAIAAQACAAQAAABSOTgAAgAHAAQAAAAwMTAwAAAAAOnV9jjK2mx6AAAAKklEQVQYV2NghANkJhCAKCgGUUAazIUCiBiIAVEAFoLwIQgsCgZwJiMjABBLAEmFjHpsAAAAAElFTkSuQmCC"
+			),
+			["Transparency"] = 0,
+			["Position"] = udim2_new(0, 4, 0, 4),
+			["Parent"] = wm_inside,
+			["Size"] = udim2_new(0, 10, 0, 10),
+			["ZIndex"] = 12,
+			["Visible"] = true,
+		})
 
-	local wm_divider = drawing_proxy["new"]("Square", {
-		["Position"] = udim2_new(0, 20, 0, 4),
-		["Size"] = udim2_new(0, 1, 0, 10),
-		["Color"] = menu["colors"]["accent"],
-		["Transparency"] = 0,
-		["Filled"] = true,
-		["Parent"] = wm_inside,
-		["ZIndex"] = 12,
-		["Visible"] = true,
-	})
+		local wm_divider = drawing_proxy["new"]("Square", {
+			["Position"] = udim2_new(0, 20, 0, 4),
+			["Size"] = udim2_new(0, 1, 0, 10),
+			["Color"] = menu["colors"]["accent"],
+			["Transparency"] = 0,
+			["Filled"] = true,
+			["Parent"] = wm_inside,
+			["ZIndex"] = 12,
+			["Visible"] = true,
+		})
 
-	local wm_text = drawing_proxy["new"]("Text", {
-		["Color"] = color3_fromrgb(255, 255, 255),
-		["Text"] = "ivera.priv | fps: 0 | game: unknown | /getivera",
-		["Size"] = 12,
-		["Font"] = 1,
-		["Transparency"] = 0,
-		["Visible"] = true,
-		["Parent"] = wm_inside,
-		["Position"] = udim2_new(0, 26, 0, identifyexecutor() == "AWP" and 2 or 3),
-		["ZIndex"] = 12,
-	})
+		local wm_text = drawing_proxy["new"]("Text", {
+			["Color"] = color3_fromrgb(255, 255, 255),
+			["Text"] = "ivera.priv | fps: 0 | game: unknown | /getivera",
+			["Size"] = 12,
+			["Font"] = 1,
+			["Transparency"] = 0,
+			["Visible"] = true,
+			["Parent"] = wm_inside,
+			["Position"] = udim2_new(0, 26, 0, identifyexecutor() == "AWP" and 2 or 3),
+			["ZIndex"] = 12,
+		})
 
-	local wm_visible = false
+		local wm_visible = false
+		local _wm_last_tick = clock()
+		local _wm_fps = 60
 
-	menu["set_watermark"] = function(enabled)
-		wm_visible = enabled
-		if enabled then
-			wm_frame["Visible"] = true
-			tween(wm_frame, { Transparency = 0.7 }, circular, out, 0.15)
-			tween(wm_inside, show_transparency, circular, out, 0.15)
-			tween(wm_shadow, { Transparency = 0.16 }, circular, out, 0.15)
-			tween(wm_icon, half_transparency, circular, out, 0.15)
-			tween(wm_divider, half_transparency, circular, out, 0.15)
-			tween(wm_text, show_transparency, circular, out, 0.15)
-		else
-			tween(wm_frame, hide_transparency, circular, out, 0.15)
-			tween(wm_inside, hide_transparency, circular, out, 0.15)
-			tween(wm_shadow, hide_transparency, circular, out, 0.15)
-			tween(wm_icon, hide_transparency, circular, out, 0.15)
-			tween(wm_divider, hide_transparency, circular, out, 0.15)
-			tween(wm_text, hide_transparency, circular, out, 0.15)
-			delay(0.15, function()
-				if not wm_visible then
-					wm_frame["Visible"] = false
-				end
+		menu["set_watermark"] = function(enabled)
+			wm_visible = enabled
+			if enabled then
+				wm_frame["Visible"] = true
+				tween(wm_frame, { Transparency = 0.7 }, circular, out, 0.15)
+				tween(wm_inside, show_transparency, circular, out, 0.15)
+				tween(wm_shadow, { Transparency = 0.16 }, circular, out, 0.15)
+				tween(wm_icon, half_transparency, circular, out, 0.15)
+				tween(wm_divider, half_transparency, circular, out, 0.15)
+				tween(wm_text, show_transparency, circular, out, 0.15)
+			else
+				tween(wm_frame, hide_transparency, circular, out, 0.15)
+				tween(wm_inside, hide_transparency, circular, out, 0.15)
+				tween(wm_shadow, hide_transparency, circular, out, 0.15)
+				tween(wm_icon, hide_transparency, circular, out, 0.15)
+				tween(wm_divider, hide_transparency, circular, out, 0.15)
+				tween(wm_text, hide_transparency, circular, out, 0.15)
+				delay(0.15, function()
+					if not wm_visible then
+						wm_frame["Visible"] = false
+					end
+				end)
+			end
+		end
+
+		menu["update_watermark"] = function()
+			if not wm_visible then return end
+			local now = clock()
+			local dt = now - _wm_last_tick
+			if dt > 0 then
+				_wm_fps = math.floor(1 / dt)
+			end
+			_wm_last_tick = now
+			local game_name = "unknown"
+			pcall(function()
+				game_name = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
 			end)
+			local txt = "ivera.priv | fps: " .. tostring(_wm_fps) .. " | game: " .. game_name .. " | /getivera"
+			wm_text["Text"] = txt
+			local text_width = wm_text["object"]["TextBounds"] and wm_text["object"]["TextBounds"]["X"] or 250
+			local new_width = text_width + 36
+			if new_width < 140 then new_width = 140 end
+			wm_frame["Size"] = udim2_new(0, new_width, 0, 26)
 		end
-	end
 
-	local _wm_last_tick = clock()
-	local _wm_fps = 60
-
-	menu["update_watermark"] = function()
-		if not wm_visible then return end
-		local now = clock()
-		local dt = now - _wm_last_tick
-		if dt > 0 then
-			_wm_fps = math.floor(1 / dt)
-		end
-		_wm_last_tick = now
-		local game_name = "unknown"
-		pcall(function()
-			game_name = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
-		end)
-		local txt = "ivera.priv | fps: " .. tostring(_wm_fps) .. " | game: " .. game_name .. " | /getivera"
-		wm_text["Text"] = txt
-		local text_width = wm_text["object"]["TextBounds"] and wm_text["object"]["TextBounds"]["X"] or 250
-		local new_width = text_width + 36
-		if new_width < 140 then new_width = 140 end
-		wm_frame["Size"] = udim2_new(0, new_width, 0, 26)
-	end
-
-	-- watermark update via heartbeat
-	heartbeat[#heartbeat + 1] = function()
-		if wm_visible then
-			pcall(menu["update_watermark"])
+		heartbeat[#heartbeat + 1] = function()
+			if wm_visible then
+				pcall(menu["update_watermark"])
+			end
 		end
 	end
 
