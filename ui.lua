@@ -5454,17 +5454,81 @@ Library.Watermark = function(Self, Params)
     local defaultText = wmName .. " | " .. playerName
     local Watermark = { Name = wmName, Visible = true, Items = {} }
     local Items = {} do
-        Items["Main"] = Library:Create("Frame", { Name = "\0", Parent = Library.Holder.Instance, Position = UDim2.new(0, 10, 0, 10), Size = UDim2.new(0, 0, 0, 22), BorderSizePixel = 0, Visible = true, AutomaticSize = Enum.AutomaticSize.X, BackgroundColor3 = Library.Theme["Background"], ZIndex = 100 }):AddToTheme({BackgroundColor3 = 'Background'})
+        -- Main frame
+        local mainFrame = Instance.new("Frame")
+        mainFrame.Name = "\0"
+        mainFrame.Parent = Library.Holder.Instance
+        mainFrame.Position = UDim2.new(0, 10, 0, 10)
+        mainFrame.Size = UDim2.new(0, 0, 0, 22)
+        mainFrame.BorderSizePixel = 0
+        mainFrame.Visible = true
+        mainFrame.AutomaticSize = Enum.AutomaticSize.X
+        mainFrame.BackgroundColor3 = Library.Theme["Background"]
+        mainFrame.ZIndex = 100
+        Items["Main"] = setmetatable({ Instance = mainFrame, Class = "Frame", Properties = {} }, Library)
+        Items["Main"]:AddToTheme({BackgroundColor3 = 'Background'})
         Items["Main"]:MakeDraggable()
-        Library:Create("UIStroke", { Name = "\0", Parent = Items["Main"].Instance, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, LineJoinMode = Enum.LineJoinMode.Miter, Color = Library.Theme["Outline 1"] }):AddToTheme({Color = 'Outline 1'})
-        Library:Create("Frame", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,0,0,0), Size = UDim2.new(1,0,0,2), BorderSizePixel = 0, BackgroundColor3 = Library.Theme["Accent"] }):AddToTheme({BackgroundColor3 = 'Accent'})
-        Library:Create("UIPadding", { Name = "\0", Parent = Items["Main"].Instance, PaddingTop = UDim.new(0,4), PaddingRight = UDim.new(0,8), PaddingLeft = UDim.new(0,8) })
-        Items["Text"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = Library.FontSize, Parent = Items["Main"].Instance, TextColor3 = Library.Theme["Text"], Text = defaultText, Size = UDim2.new(0,0,0,15), BackgroundTransparency = 1, Position = UDim2.new(0,0,0,2), AutomaticSize = Enum.AutomaticSize.X }):AddToTheme({TextColor3 = 'Text'})
-        Library:Create("UIStroke", { Name = "\0", Parent = Items["Text"].Instance, Color = Color3.new(0,0,0), Thickness = 1, Transparency = 0.5 })
+
+        -- Stroke
+        local stroke = Instance.new("UIStroke")
+        stroke.Parent = mainFrame
+        stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+        stroke.LineJoinMode = Enum.LineJoinMode.Miter
+        stroke.Color = Library.Theme["Outline 1"]
+
+        -- Accent bar
+        local accentBar = Instance.new("Frame")
+        accentBar.Name = "\0"
+        accentBar.Parent = mainFrame
+        accentBar.Position = UDim2.new(0,0,0,0)
+        accentBar.Size = UDim2.new(1,0,0,2)
+        accentBar.BorderSizePixel = 0
+        accentBar.BackgroundColor3 = Library.Theme["Accent"]
+
+        -- Padding
+        local pad = Instance.new("UIPadding")
+        pad.Parent = mainFrame
+        pad.PaddingTop = UDim.new(0,4)
+        pad.PaddingRight = UDim.new(0,8)
+        pad.PaddingLeft = UDim.new(0,8)
+
+        -- Text label
+        local textLabel = Instance.new("TextLabel")
+        textLabel.Name = "\0"
+        textLabel.Parent = mainFrame
+        textLabel.Text = defaultText
+        textLabel.TextColor3 = Library.Theme["Text"]
+        textLabel.BackgroundTransparency = 1
+        textLabel.Size = UDim2.new(0, 0, 0, 15)
+        textLabel.Position = UDim2.new(0, 0, 0, 2)
+        textLabel.AutomaticSize = Enum.AutomaticSize.X
+        textLabel.TextSize = Library.FontSize or 12
+        textLabel.BorderSizePixel = 0
+        textLabel.ZIndex = 100
+        textLabel.TextXAlignment = Enum.TextXAlignment.Left
+        -- Apply font with fallback
+        pcall(function()
+            if Library.Font then
+                textLabel.FontFace = Library.Font
+            else
+                textLabel.Font = Enum.Font.Gotham
+            end
+        end)
+        if textLabel.FontFace == nil and textLabel.Font == nil then
+            textLabel.Font = Enum.Font.Gotham
+        end
+        Items["Text"] = setmetatable({ Instance = textLabel, Class = "TextLabel", Properties = {} }, Library)
+        Items["Text"]:AddToTheme({TextColor3 = 'Text'})
+
+        -- Text stroke for readability
+        local tStroke = Instance.new("UIStroke")
+        tStroke.Parent = textLabel
+        tStroke.Color = Color3.new(0,0,0)
+        tStroke.Thickness = 1
+        tStroke.Transparency = 0.5
+
         Watermark.Items = Items
     end
-    -- Force text immediately in case Create didn't apply it
-    Items["Text"].Instance.Text = defaultText
     function Watermark:SetVisibility(Bool) Items["Main"].Instance.Visible = Bool; Watermark.Visible = Bool end
     local LastFPS, FrameCount, LastTime = 0, 0, tick()
     Library:Connect(RunService.RenderStepped, function()
@@ -5644,23 +5708,91 @@ end
 -- ============================================================
 Library.KeybindList = function(Self, Params)
     Params = Params or {}
-    local KeybindList = { Name = "keybinds:", Visible = false, Items = {}, Entries = {} }
+    local KeybindList = { Name = "keybinds:", Visible = true, Items = {}, Entries = {} }
     Library.KeyList = KeybindList
     local Items = {} do
-        Items["Main"] = Library:Create("Frame", { Name = "\0", Parent = Library.Holder.Instance, AnchorPoint = Vector2.new(1,0), Position = UDim2.new(1, -10, 0, 10), Size = UDim2.new(0, 160, 0, 0), BorderSizePixel = 0, Visible = false, AutomaticSize = Enum.AutomaticSize.Y, BackgroundColor3 = Library.Theme["Background"], ZIndex = 100 }):AddToTheme({BackgroundColor3 = 'Background'})
+        -- Main frame - starts visible
+        local mainFrame = Instance.new("Frame")
+        mainFrame.Name = "\0"
+        mainFrame.Parent = Library.Holder.Instance
+        mainFrame.AnchorPoint = Vector2.new(1,0)
+        mainFrame.Position = UDim2.new(1, -10, 0, 10)
+        mainFrame.Size = UDim2.new(0, 160, 0, 0)
+        mainFrame.BorderSizePixel = 0
+        mainFrame.Visible = true
+        mainFrame.AutomaticSize = Enum.AutomaticSize.Y
+        mainFrame.BackgroundColor3 = Library.Theme["Background"]
+        mainFrame.ZIndex = 100
+        Items["Main"] = setmetatable({ Instance = mainFrame, Class = "Frame", Properties = {} }, Library)
+        Items["Main"]:AddToTheme({BackgroundColor3 = 'Background'})
         Items["Main"]:MakeDraggable()
-        Library:Create("UIStroke", { Name = "\0", Parent = Items["Main"].Instance, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, LineJoinMode = Enum.LineJoinMode.Miter, Color = Library.Theme["Outline 1"] }):AddToTheme({Color = 'Outline 1'})
+
+        -- Stroke
+        local stroke = Instance.new("UIStroke")
+        stroke.Parent = mainFrame
+        stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+        stroke.LineJoinMode = Enum.LineJoinMode.Miter
+        stroke.Color = Library.Theme["Outline 1"]
+
         -- Full accent top bar
-        Library:Create("Frame", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,0,0,0), Size = UDim2.new(1,0,0,2), BorderSizePixel = 0, BackgroundColor3 = Library.Theme["Accent"], ZIndex = 101 }):AddToTheme({BackgroundColor3 = 'Accent'})
+        local accentBar = Instance.new("Frame")
+        accentBar.Name = "\0"
+        accentBar.Parent = mainFrame
+        accentBar.Position = UDim2.new(0,0,0,0)
+        accentBar.Size = UDim2.new(1,0,0,2)
+        accentBar.BorderSizePixel = 0
+        accentBar.BackgroundColor3 = Library.Theme["Accent"]
+        accentBar.ZIndex = 101
+
         -- Title text
-        Items["Title"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.BoldFont, TextSize = Library.FontSize, Parent = Items["Main"].Instance, TextColor3 = Library.Theme["Text"], Text = "keybinds:", Size = UDim2.new(1,0,0,18), BackgroundTransparency = 1, Position = UDim2.new(0,0,0,3), TextXAlignment = Enum.TextXAlignment.Center, ZIndex = 101 }):AddToTheme({TextColor3 = 'Text'})
-        Library:Create("UIStroke", { Name = "\0", Parent = Items["Title"].Instance, Color = Color3.new(0,0,0), Thickness = 1, Transparency = 0.5 })
-        -- Content area for keybind entries
-        Items["Content"] = Library:Create("Frame", { Name = "\0", Parent = Items["Main"].Instance, BackgroundTransparency = 1, Position = UDim2.new(0,0,0,22), Size = UDim2.new(1,0,0,0), BorderSizePixel = 0, AutomaticSize = Enum.AutomaticSize.Y, ZIndex = 100 })
-        Library:Create("UIListLayout", { Name = "\0", Parent = Items["Content"].Instance, Padding = UDim.new(0,2), SortOrder = Enum.SortOrder.LayoutOrder })
-        Library:Create("UIPadding", { Name = "\0", Parent = Items["Content"].Instance, PaddingLeft = UDim.new(0,8), PaddingRight = UDim.new(0,8), PaddingBottom = UDim.new(0,6) })
-        -- Padding for main frame
-        Library:Create("UIPadding", { Name = "\0", Parent = Items["Main"].Instance, PaddingBottom = UDim.new(0,4) })
+        local titleLabel = Instance.new("TextLabel")
+        titleLabel.Name = "\0"
+        titleLabel.Parent = mainFrame
+        titleLabel.Text = "keybinds:"
+        titleLabel.TextColor3 = Library.Theme["Text"]
+        titleLabel.BackgroundTransparency = 1
+        titleLabel.Size = UDim2.new(1,0,0,18)
+        titleLabel.Position = UDim2.new(0,0,0,3)
+        titleLabel.TextXAlignment = Enum.TextXAlignment.Center
+        titleLabel.TextSize = Library.FontSize or 12
+        titleLabel.ZIndex = 101
+        pcall(function() if Library.BoldFont then titleLabel.FontFace = Library.BoldFont else titleLabel.Font = Enum.Font.GothamBold end end)
+        Items["Title"] = setmetatable({ Instance = titleLabel, Class = "TextLabel", Properties = {} }, Library)
+        Items["Title"]:AddToTheme({TextColor3 = 'Text'})
+        local tStroke = Instance.new("UIStroke")
+        tStroke.Parent = titleLabel
+        tStroke.Color = Color3.new(0,0,0)
+        tStroke.Thickness = 1
+        tStroke.Transparency = 0.5
+
+        -- Content area
+        local content = Instance.new("Frame")
+        content.Name = "\0"
+        content.Parent = mainFrame
+        content.BackgroundTransparency = 1
+        content.Position = UDim2.new(0,0,0,22)
+        content.Size = UDim2.new(1,0,0,0)
+        content.BorderSizePixel = 0
+        content.AutomaticSize = Enum.AutomaticSize.Y
+        content.ZIndex = 100
+        Items["Content"] = setmetatable({ Instance = content, Class = "Frame", Properties = {} }, Library)
+
+        local layout = Instance.new("UIListLayout")
+        layout.Parent = content
+        layout.Padding = UDim.new(0,2)
+        layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+        local cPad = Instance.new("UIPadding")
+        cPad.Parent = content
+        cPad.PaddingLeft = UDim.new(0,8)
+        cPad.PaddingRight = UDim.new(0,8)
+        cPad.PaddingBottom = UDim.new(0,6)
+
+        -- Main frame padding
+        local mPad = Instance.new("UIPadding")
+        mPad.Parent = mainFrame
+        mPad.PaddingBottom = UDim.new(0,4)
+
         KeybindList.Items = Items
     end
     function KeybindList:SetVisibility(Bool) KeybindList.Visible = Bool; Items["Main"].Instance.Visible = Bool end
@@ -5673,12 +5805,73 @@ Library.KeybindList = function(Self, Params)
     end
     function KeybindList:Add(Name, Mode)
         local NewItems = {} do
-            NewItems["NewKey"] = Library:Create("Frame", { Name = "\0", Parent = Items["Content"].Instance, BackgroundTransparency = 1, Size = UDim2.new(1,0,0,15), BorderSizePixel = 0, ZIndex = 100 })
-            NewItems["Holder"] = Library:Create("Frame", { Name = "\0", Parent = NewItems["NewKey"].Instance, BackgroundTransparency = 1, Size = UDim2.new(1,0,1,0), BorderSizePixel = 0, ZIndex = 100 })
-            NewItems["Text"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = Library.FontSize, Parent = NewItems["Holder"].Instance, TextColor3 = Library.Theme["Text"], Text = Name or "", AnchorPoint = Vector2.new(0,0.5), Size = UDim2.new(0,0,0,15), BackgroundTransparency = 1, Position = UDim2.new(0,0,0.5,0), BorderSizePixel = 0, AutomaticSize = Enum.AutomaticSize.X, ZIndex = 100 }):AddToTheme({TextColor3 = 'Text'})
-            Library:Create("UIStroke", { Name = "\0", Parent = NewItems["Text"].Instance, Color = Color3.new(0,0,0), Thickness = 1, Transparency = 0.5 })
-            NewItems["Mode"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = Library.FontSize, Parent = NewItems["Holder"].Instance, TextColor3 = Library.Theme["Inactive Text"], Text = Mode or "always", AnchorPoint = Vector2.new(1,0.5), Size = UDim2.new(0,0,0,15), BackgroundTransparency = 1, Position = UDim2.new(1,0,0.5,0), BorderSizePixel = 0, AutomaticSize = Enum.AutomaticSize.X, ZIndex = 100 }):AddToTheme({TextColor3 = 'Inactive Text'})
-            Library:Create("UIStroke", { Name = "\0", Parent = NewItems["Mode"].Instance, Color = Color3.new(0,0,0), Thickness = 1, Transparency = 0.5 })
+            -- Entry frame
+            local entryFrame = Instance.new("Frame")
+            entryFrame.Name = "\0"
+            entryFrame.Parent = Items["Content"].Instance
+            entryFrame.BackgroundTransparency = 1
+            entryFrame.Size = UDim2.new(1,0,0,15)
+            entryFrame.BorderSizePixel = 0
+            entryFrame.Visible = false
+            entryFrame.ZIndex = 100
+            NewItems["NewKey"] = setmetatable({ Instance = entryFrame, Class = "Frame", Properties = {} }, Library)
+
+            -- Holder
+            local holder = Instance.new("Frame")
+            holder.Name = "\0"
+            holder.Parent = entryFrame
+            holder.BackgroundTransparency = 1
+            holder.Size = UDim2.new(1,0,1,0)
+            holder.BorderSizePixel = 0
+            holder.ZIndex = 100
+            NewItems["Holder"] = setmetatable({ Instance = holder, Class = "Frame", Properties = {} }, Library)
+
+            -- Text (left side)
+            local txt = Instance.new("TextLabel")
+            txt.Name = "\0"
+            txt.Parent = holder
+            txt.Text = Name or ""
+            txt.TextColor3 = Library.Theme["Text"]
+            txt.BackgroundTransparency = 1
+            txt.AnchorPoint = Vector2.new(0, 0.5)
+            txt.Size = UDim2.new(1, 0, 0, 15)
+            txt.Position = UDim2.new(0, 0, 0.5, 0)
+            txt.BorderSizePixel = 0
+            txt.TextXAlignment = Enum.TextXAlignment.Left
+            txt.TextSize = Library.FontSize or 12
+            txt.ZIndex = 100
+            txt.TextTruncate = Enum.TextTruncate.AtEnd
+            pcall(function() if Library.Font then txt.FontFace = Library.Font else txt.Font = Enum.Font.Gotham end end)
+            NewItems["Text"] = setmetatable({ Instance = txt, Class = "TextLabel", Properties = {} }, Library)
+            NewItems["Text"]:AddToTheme({TextColor3 = 'Text'})
+            local txtStroke = Instance.new("UIStroke")
+            txtStroke.Parent = txt
+            txtStroke.Color = Color3.new(0,0,0)
+            txtStroke.Thickness = 1
+            txtStroke.Transparency = 0.5
+
+            -- Mode label (right side) - kept for compatibility but set empty by Update
+            local modeLabel = Instance.new("TextLabel")
+            modeLabel.Name = "\0"
+            modeLabel.Parent = holder
+            modeLabel.Text = Mode or ""
+            modeLabel.TextColor3 = Library.Theme["Inactive Text"]
+            modeLabel.BackgroundTransparency = 1
+            modeLabel.AnchorPoint = Vector2.new(1, 0.5)
+            modeLabel.Size = UDim2.new(0, 0, 0, 15)
+            modeLabel.Position = UDim2.new(1, 0, 0.5, 0)
+            modeLabel.BorderSizePixel = 0
+            modeLabel.AutomaticSize = Enum.AutomaticSize.X
+            modeLabel.TextSize = Library.FontSize or 12
+            modeLabel.ZIndex = 100
+            pcall(function() if Library.Font then modeLabel.FontFace = Library.Font else modeLabel.Font = Enum.Font.Gotham end end)
+            NewItems["Mode"] = setmetatable({ Instance = modeLabel, Class = "TextLabel", Properties = {} }, Library)
+            NewItems["Mode"]:AddToTheme({TextColor3 = 'Inactive Text'})
+            local mStroke = Instance.new("UIStroke")
+            mStroke.Parent = modeLabel
+            mStroke.Color = Color3.new(0,0,0)
+            mStroke.Thickness = 1
+            mStroke.Transparency = 0.5
         end
         local CanBeVisible = true
         function NewItems:SetVis(Bool) CanBeVisible = Bool end
@@ -5688,19 +5881,14 @@ Library.KeybindList = function(Self, Params)
             local Current = StateId
             if not CanBeVisible then NewItems["NewKey"].Instance.Visible = false; return end
             if Bool then
+                -- Show entry immediately
                 NewItems["NewKey"].Instance.Visible = true
-                NewItems["NewKey"]:Tween({Size = UDim2.new(1,0,0,15), Position = UDim2.new(0,0,0,0)})
-                NewItems["Text"]:Tween({TextTransparency = 0})
-                NewItems["Mode"]:Tween({TextTransparency = 0})
+                NewItems["NewKey"].Instance.Size = UDim2.new(1,0,0,15)
+                NewItems["Text"].Instance.TextTransparency = 0
+                NewItems["Mode"].Instance.TextTransparency = 0
             else
-                Library:Thread(function()
-                    NewItems["NewKey"]:Tween({Size = UDim2.new(0,0,0,0), Position = UDim2.new(-1,0,0,0)})
-                    local tw = NewItems["Text"]:Tween({TextTransparency = 1})
-                    NewItems["Mode"]:Tween({TextTransparency = 1})
-                    tw.Completed:Wait()
-                    if Current ~= StateId then return end
-                    NewItems["NewKey"].Instance.Visible = false
-                end)
+                -- Hide entry immediately
+                NewItems["NewKey"].Instance.Visible = false
             end
         end
         function NewItems:Set(Name, Mode) NewItems["Text"].Instance.Text = Name end
