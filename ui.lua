@@ -1698,38 +1698,31 @@ do --// UI Source
                         Keybind:SetOpen(false)
                     end
 
+                    if GPE then return end
+                    if Keybind.Picking then return end
+
+                    -- Check if the pressed key matches this keybind
+                    local keyMatch = (tostring(Input.KeyCode) == Keybind.Key) or (tostring(Input.UserInputType) == Keybind.Key)
+                    if not keyMatch then return end
+
                     if Data.Toggle and not Data.Toggle.Value then
-                        -- If sync enabled, toggle the parent on via keybind
+                        -- Toggle is OFF, sync it ON
                         if Flags[Keybind.Flag .. "Sync"] then
                             Data.Toggle:Set(true)
                         end
                         return
                     end
 
-                    if not GPE then
-                        if tostring(Input.KeyCode) == Keybind.Key then
-                            if Keybind.Mode == "Toggle" then
-                                Keybind:Press()
-                                if Data.Toggle and Flags[Keybind.Flag .. "Sync"] then
-                                    Data.Toggle:Set(false)
-                                end
-                            elseif Keybind.Mode == "Hold" then
-                                Keybind:Press(true)
-                            elseif Keybind.Mode == "Always" then
-                                Keybind:Press(true)
-                            end
-                        elseif tostring(Input.UserInputType) == Keybind.Key then
-                            if Keybind.Mode == "Toggle" then
-                                Keybind:Press()
-                                if Data.Toggle and Flags[Keybind.Flag .. "Sync"] then
-                                    Data.Toggle:Set(false)
-                                end
-                            elseif Keybind.Mode == "Hold" then
-                                Keybind:Press(true)
-                            elseif Keybind.Mode == "Always" then
-                                Keybind:Press(true)
-                            end
+                    -- Toggle is ON, process the keybind
+                    if Keybind.Mode == "Toggle" then
+                        Keybind:Press()
+                        if Data.Toggle and Flags[Keybind.Flag .. "Sync"] then
+                            Data.Toggle:Set(false)
                         end
+                    elseif Keybind.Mode == "Hold" then
+                        Keybind:Press(true)
+                    elseif Keybind.Mode == "Always" then
+                        Keybind:Press(true)
                     end
                 end)
 
