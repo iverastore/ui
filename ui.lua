@@ -76,7 +76,7 @@ do --// UI Source
         local ConfigName
 
         local Keys = {
-            ["Unknown"]           = "Unknown",
+            ["Unknown"]           = "None",
             ["Backspace"]         = "Back",
             ["Tab"]               = "Tab",
             ["Clear"]             = "Clear",
@@ -1612,7 +1612,7 @@ do --// UI Source
                     if string.find(tostring(Key), "Enum") then
                         Keybind.Key = tostring(Key)
 
-                        Key = Key.Name == "Backspace" and "None" or Key.Name
+                        Key = (Key.Name == "Backspace" or Key.Name == "Unknown") and "None" or Key.Name
 
                         local KeyString = Keys[Keybind.Key] or string.gsub(Key, "Enum.", "") or "None"
                         local TextToDisplay = string.gsub(string.gsub(KeyString, "KeyCode.", ""), "UserInputType.", "") or "None"
@@ -1985,8 +1985,8 @@ do --// UI Source
                     Items["KeybindList"] = Library:Create("Frame", {
                         Name = "\0",
                         Parent = Library.Holder.Instance,
-                        AnchorPoint = Vector2.new(0, 0),
-                        Position = UDim2.new(1, 8, 0, 0),
+                        AnchorPoint = Vector2.new(1, 0),
+                        Position = UDim2.new(1, -10, 0, 10),
                         Size = UDim2.new(0, 156, 0, 0),
                         BorderSizePixel = 0,
                         Visible = false,
@@ -5440,23 +5440,23 @@ do --// UI Source
 -- ============================================================
 Library.Watermark = function(Self, Params)
     Params = Params or {}
-    local Watermark = { Name = Params.Name or "ivera", Visible = false, Items = {} }
+    local Watermark = { Name = Params.Name or "ivera", Visible = true, Items = {} }
     local Items = {} do
-        Items["Main"] = Library:Create("Frame", { Name = "\0", Parent = Library.Holder.Instance, Position = UDim2.new(0, 10, 0, 10), Size = UDim2.new(0, 0, 0, 22), BorderSizePixel = 0, Visible = false, AutomaticSize = Enum.AutomaticSize.X, BackgroundColor3 = Library.Theme["Background"], ZIndex = 100 }):AddToTheme({BackgroundColor3 = 'Background'})
+        Items["Main"] = Library:Create("Frame", { Name = "\0", Parent = Library.Holder.Instance, Position = UDim2.new(0, 10, 0, 10), Size = UDim2.new(0, 0, 0, 22), BorderSizePixel = 0, Visible = true, AutomaticSize = Enum.AutomaticSize.X, BackgroundColor3 = Library.Theme["Background"], ZIndex = 100 }):AddToTheme({BackgroundColor3 = 'Background'})
         Items["Main"]:MakeDraggable()
         Library:Create("UIStroke", { Name = "\0", Parent = Items["Main"].Instance, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, LineJoinMode = Enum.LineJoinMode.Miter, Color = Library.Theme["Outline 1"] }):AddToTheme({Color = 'Outline 1'})
         Library:Create("Frame", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,0,0,0), Size = UDim2.new(1,0,0,2), BorderSizePixel = 0, BackgroundColor3 = Library.Theme["Accent"] }):AddToTheme({BackgroundColor3 = 'Accent'})
         Library:Create("UIPadding", { Name = "\0", Parent = Items["Main"].Instance, PaddingTop = UDim.new(0,4), PaddingRight = UDim.new(0,8), PaddingLeft = UDim.new(0,8) })
-        Items["Text"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = Library.FontSize, Parent = Items["Main"].Instance, TextColor3 = Library.Theme["Text"], Text = Watermark.Name, Size = UDim2.new(0,0,0,15), BackgroundTransparency = 1, Position = UDim2.new(0,0,0,2), AutomaticSize = Enum.AutomaticSize.X }):AddToTheme({TextColor3 = 'Text'})
+        Items["Text"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = Library.FontSize, Parent = Items["Main"].Instance, TextColor3 = Library.Theme["Text"], Text = Watermark.Name .. " | loading...", Size = UDim2.new(0,0,0,15), BackgroundTransparency = 1, Position = UDim2.new(0,0,0,2), AutomaticSize = Enum.AutomaticSize.X }):AddToTheme({TextColor3 = 'Text'})
         Library:Create("UIStroke", { Name = "\0", Parent = Items["Text"].Instance })
         Watermark.Items = Items
     end
     function Watermark:SetVisibility(Bool) Items["Main"].Instance.Visible = Bool; Watermark.Visible = Bool end
     local LastFPS, FrameCount, LastTime = 0, 0, tick()
     Library:Connect(RunService.RenderStepped, function()
-        if not Watermark.Visible then return end
         FrameCount = FrameCount + 1
         if tick() - LastTime >= 1 then LastFPS = FrameCount; FrameCount = 0; LastTime = tick() end
+        if not Watermark.Visible then return end
         local Ping = 0; pcall(function() Ping = math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()) end)
         Items["Text"].Instance.Text = Watermark.Name .. " | " .. LocalPlayer.Name .. " | " .. tostring(LastFPS) .. " fps | " .. tostring(Ping) .. "ms | " .. os.date("%H:%M")
     end)
