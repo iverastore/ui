@@ -5447,8 +5447,8 @@ Library.Watermark = function(Self, Params)
         Library:Create("UIStroke", { Name = "\0", Parent = Items["Main"].Instance, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, LineJoinMode = Enum.LineJoinMode.Miter, Color = Library.Theme["Outline 1"] }):AddToTheme({Color = 'Outline 1'})
         Library:Create("Frame", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,0,0,0), Size = UDim2.new(1,0,0,2), BorderSizePixel = 0, BackgroundColor3 = Library.Theme["Accent"] }):AddToTheme({BackgroundColor3 = 'Accent'})
         Library:Create("UIPadding", { Name = "\0", Parent = Items["Main"].Instance, PaddingTop = UDim.new(0,4), PaddingRight = UDim.new(0,8), PaddingLeft = UDim.new(0,8) })
-        Items["Text"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = Library.FontSize, Parent = Items["Main"].Instance, TextColor3 = Library.Theme["Text"], Text = Watermark.Name .. " | loading...", Size = UDim2.new(0,0,0,15), BackgroundTransparency = 1, Position = UDim2.new(0,0,0,2), AutomaticSize = Enum.AutomaticSize.X }):AddToTheme({TextColor3 = 'Text'})
-        Library:Create("UIStroke", { Name = "\0", Parent = Items["Text"].Instance })
+        Items["Text"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = Library.FontSize, Parent = Items["Main"].Instance, TextColor3 = Library.Theme["Text"], Text = Watermark.Name .. " | " .. game:GetService("Players").LocalPlayer.Name, Size = UDim2.new(0,0,0,15), BackgroundTransparency = 1, Position = UDim2.new(0,0,0,2), AutomaticSize = Enum.AutomaticSize.X }):AddToTheme({TextColor3 = 'Text'})
+        Library:Create("UIStroke", { Name = "\0", Parent = Items["Text"].Instance, Color = Color3.new(0,0,0), Thickness = 1, Transparency = 0.5 })
         Watermark.Items = Items
     end
     function Watermark:SetVisibility(Bool) Items["Main"].Instance.Visible = Bool; Watermark.Visible = Bool end
@@ -5458,7 +5458,8 @@ Library.Watermark = function(Self, Params)
         if tick() - LastTime >= 1 then LastFPS = FrameCount; FrameCount = 0; LastTime = tick() end
         if not Watermark.Visible then return end
         local Ping = 0; pcall(function() Ping = math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()) end)
-        Items["Text"].Instance.Text = Watermark.Name .. " | " .. LocalPlayer.Name .. " | " .. tostring(LastFPS) .. " fps | " .. tostring(Ping) .. "ms | " .. os.date("%H:%M")
+        local playerName = ""; pcall(function() playerName = game:GetService("Players").LocalPlayer.Name end)
+        Items["Text"].Instance.Text = Watermark.Name .. " | " .. playerName .. " | " .. tostring(LastFPS) .. " fps | " .. tostring(Ping) .. "ms | " .. os.date("%H:%M")
     end)
     Library.WatermarkObj = Watermark
     return Watermark
