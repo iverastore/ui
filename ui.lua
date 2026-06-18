@@ -1700,10 +1700,12 @@ do --// UI Source
 
                     if GPE then return end
                     if Keybind.Picking then return end
+                    if not Keybind.Key or Keybind.Key == "" or Keybind.Key == "Enum.KeyCode.Unknown" then return end
 
                     -- Check if the pressed key matches this keybind
-                    local keyMatch = (tostring(Input.KeyCode) == Keybind.Key) or (tostring(Input.UserInputType) == Keybind.Key)
-                    if not keyMatch then return end
+                    local inputStr = tostring(Input.KeyCode)
+                    local inputTypeStr = tostring(Input.UserInputType)
+                    if inputStr ~= Keybind.Key and inputTypeStr ~= Keybind.Key then return end
 
                     if Data.Toggle and not Data.Toggle.Value then
                         -- Toggle is OFF, sync it ON
