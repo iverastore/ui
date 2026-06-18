@@ -1520,16 +1520,18 @@ do --// UI Source
 
                 local Update = function()
                     if KeybindObject then
-                        KeybindObject:Set(Data.Name, Keybind.Mode)
-                        KeybindObject:SetStatus(Keybind.Toggled)
-
+                        local keyDisplay = Keybind.Value or "None"
+                        local modeDisplay = ""
                         if Keybind.Mode == "Hold" then
-                            KeybindObject:SetMode(Keybind.Toggled and "holding" or "off")
+                            modeDisplay = Keybind.Toggled and "[holding]" or "[hold]"
                         elseif Keybind.Mode == "Always" then
-                            KeybindObject:SetMode("always on")
+                            modeDisplay = "[always]"
                         else
-                            KeybindObject:SetMode(Keybind.Toggled and "toggled" or "off")
+                            modeDisplay = Keybind.Toggled and "[toggled]" or "[toggle]"
                         end
+                        KeybindObject:Set(Data.Name .. " [" .. keyDisplay .. "] " .. modeDisplay)
+                        KeybindObject:SetMode("")
+                        KeybindObject:SetStatus(Keybind.Toggled)
                     end
                 end
 
@@ -1711,6 +1713,12 @@ do --// UI Source
                         -- Toggle is OFF, sync it ON
                         if Flags[Keybind.Flag .. "Sync"] then
                             Data.Toggle:Set(true)
+                        end
+                        -- Also activate the keybind for Hold/Always modes
+                        if Keybind.Mode == "Hold" then
+                            Keybind:Press(true)
+                        elseif Keybind.Mode == "Always" then
+                            Keybind:Press(true)
                         end
                         return
                     end
