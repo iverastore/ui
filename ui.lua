@@ -634,33 +634,6 @@ do --// UI Source
             return math.floor(Number * Multiplier + 0.5) / Multiplier
         end
 
-        -- Helper: Make elements visible/hidden based on a flag value
-        -- Usage: Library:DependsOn("FlagName", {element1, element2, ...})
-        -- Call AFTER creating all dependent elements and the toggle
-        Library.DependsOn = function(Self, Flag, Elements)
-            local function update(val)
-                local visible = val and true or false
-                for _, el in ipairs(Elements) do
-                    if el and el.SetVisibility then
-                        el:SetVisibility(visible)
-                    end
-                end
-            end
-            -- Initial state
-            update(Library.Flags[Flag])
-            -- Watch for changes via a RenderStepped check (simple but reliable)
-            local lastVal = Library.Flags[Flag]
-            local conn
-            conn = RunService.Heartbeat:Connect(function()
-                local cur = Library.Flags[Flag]
-                if cur ~= lastVal then
-                    lastVal = cur
-                    update(cur)
-                end
-            end)
-            table.insert(Library.Connections, conn)
-        end
-
         Library.GetConfig = function(Self)
             local Config = { }
 
