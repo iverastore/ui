@@ -1699,6 +1699,10 @@ do --// UI Source
                     end
 
                     if Data.Toggle and not Data.Toggle.Value then
+                        -- If sync is enabled, allow keybind to toggle the parent toggle
+                        if Flags[Keybind.Flag .. "Sync"] then
+                            Data.Toggle:Set(not Data.Toggle.Value)
+                        end
                         return
                     end
 
@@ -1706,6 +1710,9 @@ do --// UI Source
                         if tostring(Input.KeyCode) == Keybind.Key then
                             if Keybind.Mode == "Toggle" then
                                 Keybind:Press()
+                                if Data.Toggle and Flags[Keybind.Flag .. "Sync"] then
+                                    Data.Toggle:Set(not Data.Toggle.Value)
+                                end
                             elseif Keybind.Mode == "Hold" then
                                 Keybind:Press(true)
                             elseif Keybind.Mode == "Always" then
@@ -1714,6 +1721,9 @@ do --// UI Source
                         elseif tostring(Input.UserInputType) == Keybind.Key then
                             if Keybind.Mode == "Toggle" then
                                 Keybind:Press()
+                                if Data.Toggle and Flags[Keybind.Flag .. "Sync"] then
+                                    Data.Toggle:Set(not Data.Toggle.Value)
+                                end
                             elseif Keybind.Mode == "Hold" then
                                 Keybind:Press(true)
                             elseif Keybind.Mode == "Always" then
@@ -5437,7 +5447,7 @@ Library.Watermark = function(Self, Params)
     Params = Params or {}
     local Watermark = { Name = Params.Name or "ivera", Visible = false, Items = {} }
     local Items = {} do
-        Items["Main"] = Library:Create("Frame", { Name = "\0", Parent = Library.Holder.Instance, Position = UDim2.new(0, 10, 0, 10), Size = UDim2.new(0, 0, 0, 22), BorderSizePixel = 0, Visible = false, AutomaticSize = Enum.AutomaticSize.X, BackgroundColor3 = Library.Theme["Background"] }):AddToTheme({BackgroundColor3 = 'Background'})
+        Items["Main"] = Library:Create("Frame", { Name = "\0", Parent = Library.Holder.Instance, Position = UDim2.new(0, 10, 0, 10), Size = UDim2.new(0, 0, 0, 22), BorderSizePixel = 0, Visible = false, AutomaticSize = Enum.AutomaticSize.X, BackgroundColor3 = Library.Theme["Background"], ZIndex = 100 }):AddToTheme({BackgroundColor3 = 'Background'})
         Items["Main"]:MakeDraggable()
         Library:Create("UIStroke", { Name = "\0", Parent = Items["Main"].Instance, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, LineJoinMode = Enum.LineJoinMode.Miter, Color = Library.Theme["Outline 1"] }):AddToTheme({Color = 'Outline 1'})
         Library:Create("Frame", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,0,0,0), Size = UDim2.new(1,0,0,2), BorderSizePixel = 0, BackgroundColor3 = Library.Theme["Accent"] }):AddToTheme({BackgroundColor3 = 'Accent'})
