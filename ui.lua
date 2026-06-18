@@ -5440,17 +5440,23 @@ do --// UI Source
 -- ============================================================
 Library.Watermark = function(Self, Params)
     Params = Params or {}
-    local Watermark = { Name = Params.Name or "ivera", Visible = true, Items = {} }
+    local wmName = Params.Name or Params.name or "ivera"
+    local playerName = ""
+    pcall(function() playerName = game:GetService("Players").LocalPlayer.Name end)
+    local defaultText = wmName .. " | " .. playerName
+    local Watermark = { Name = wmName, Visible = true, Items = {} }
     local Items = {} do
         Items["Main"] = Library:Create("Frame", { Name = "\0", Parent = Library.Holder.Instance, Position = UDim2.new(0, 10, 0, 10), Size = UDim2.new(0, 0, 0, 22), BorderSizePixel = 0, Visible = true, AutomaticSize = Enum.AutomaticSize.X, BackgroundColor3 = Library.Theme["Background"], ZIndex = 100 }):AddToTheme({BackgroundColor3 = 'Background'})
         Items["Main"]:MakeDraggable()
         Library:Create("UIStroke", { Name = "\0", Parent = Items["Main"].Instance, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, LineJoinMode = Enum.LineJoinMode.Miter, Color = Library.Theme["Outline 1"] }):AddToTheme({Color = 'Outline 1'})
         Library:Create("Frame", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,0,0,0), Size = UDim2.new(1,0,0,2), BorderSizePixel = 0, BackgroundColor3 = Library.Theme["Accent"] }):AddToTheme({BackgroundColor3 = 'Accent'})
         Library:Create("UIPadding", { Name = "\0", Parent = Items["Main"].Instance, PaddingTop = UDim.new(0,4), PaddingRight = UDim.new(0,8), PaddingLeft = UDim.new(0,8) })
-        Items["Text"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = Library.FontSize, Parent = Items["Main"].Instance, TextColor3 = Library.Theme["Text"], Text = Watermark.Name .. " | " .. game:GetService("Players").LocalPlayer.Name, Size = UDim2.new(0,0,0,15), BackgroundTransparency = 1, Position = UDim2.new(0,0,0,2), AutomaticSize = Enum.AutomaticSize.X }):AddToTheme({TextColor3 = 'Text'})
+        Items["Text"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = Library.FontSize, Parent = Items["Main"].Instance, TextColor3 = Library.Theme["Text"], Text = defaultText, Size = UDim2.new(0,0,0,15), BackgroundTransparency = 1, Position = UDim2.new(0,0,0,2), AutomaticSize = Enum.AutomaticSize.X }):AddToTheme({TextColor3 = 'Text'})
         Library:Create("UIStroke", { Name = "\0", Parent = Items["Text"].Instance, Color = Color3.new(0,0,0), Thickness = 1, Transparency = 0.5 })
         Watermark.Items = Items
     end
+    -- Force text immediately in case Create didn't apply it
+    Items["Text"].Instance.Text = defaultText
     function Watermark:SetVisibility(Bool) Items["Main"].Instance.Visible = Bool; Watermark.Visible = Bool end
     local LastFPS, FrameCount, LastTime = 0, 0, tick()
     Library:Connect(RunService.RenderStepped, function()
@@ -5458,8 +5464,8 @@ Library.Watermark = function(Self, Params)
         if tick() - LastTime >= 1 then LastFPS = FrameCount; FrameCount = 0; LastTime = tick() end
         if not Watermark.Visible then return end
         local Ping = 0; pcall(function() Ping = math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()) end)
-        local playerName = ""; pcall(function() playerName = game:GetService("Players").LocalPlayer.Name end)
-        Items["Text"].Instance.Text = Watermark.Name .. " | " .. playerName .. " | " .. tostring(LastFPS) .. " fps | " .. tostring(Ping) .. "ms | " .. os.date("%H:%M")
+        local pName = ""; pcall(function() pName = game:GetService("Players").LocalPlayer.Name end)
+        Items["Text"].Instance.Text = Watermark.Name .. " | " .. pName .. " | " .. tostring(LastFPS) .. " fps | " .. tostring(Ping) .. "ms | " .. os.date("%H:%M")
     end)
     Library.WatermarkObj = Watermark
     return Watermark
@@ -5623,6 +5629,78 @@ Library.ESPPreview = function(Self, Params)
     function ESPPreview:SetVisibility(Bool) ESPPreview.Visible = Bool; Items["Main"].Instance.Visible = Bool end
     Library.ESPPreviewObj = ESPPreview
     return ESPPreview
+end
+
+-- ============================================================
+-- Feature 4: KeybindList (Clean full topbar style)
+-- ============================================================
+Library.KeybindList = function(Self, Params)
+    Params = Params or {}
+    local KeybindList = { Name = "keybinds:", Visible = false, Items = {}, Entries = {} }
+    Library.KeyList = KeybindList
+    local Items = {} do
+        Items["Main"] = Library:Create("Frame", { Name = "\0", Parent = Library.Holder.Instance, AnchorPoint = Vector2.new(1,0), Position = UDim2.new(1, -10, 0, 10), Size = UDim2.new(0, 160, 0, 0), BorderSizePixel = 0, Visible = false, AutomaticSize = Enum.AutomaticSize.Y, BackgroundColor3 = Library.Theme["Background"], ZIndex = 100 }):AddToTheme({BackgroundColor3 = 'Background'})
+        Items["Main"]:MakeDraggable()
+        Library:Create("UIStroke", { Name = "\0", Parent = Items["Main"].Instance, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, LineJoinMode = Enum.LineJoinMode.Miter, Color = Library.Theme["Outline 1"] }):AddToTheme({Color = 'Outline 1'})
+        -- Full accent top bar
+        Library:Create("Frame", { Name = "\0", Parent = Items["Main"].Instance, Position = UDim2.new(0,0,0,0), Size = UDim2.new(1,0,0,2), BorderSizePixel = 0, BackgroundColor3 = Library.Theme["Accent"], ZIndex = 101 }):AddToTheme({BackgroundColor3 = 'Accent'})
+        -- Title text
+        Items["Title"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.BoldFont, TextSize = Library.FontSize, Parent = Items["Main"].Instance, TextColor3 = Library.Theme["Text"], Text = "keybinds:", Size = UDim2.new(1,0,0,18), BackgroundTransparency = 1, Position = UDim2.new(0,0,0,3), TextXAlignment = Enum.TextXAlignment.Center, ZIndex = 101 }):AddToTheme({TextColor3 = 'Text'})
+        Library:Create("UIStroke", { Name = "\0", Parent = Items["Title"].Instance, Color = Color3.new(0,0,0), Thickness = 1, Transparency = 0.5 })
+        -- Content area for keybind entries
+        Items["Content"] = Library:Create("Frame", { Name = "\0", Parent = Items["Main"].Instance, BackgroundTransparency = 1, Position = UDim2.new(0,0,0,22), Size = UDim2.new(1,0,0,0), BorderSizePixel = 0, AutomaticSize = Enum.AutomaticSize.Y, ZIndex = 100 })
+        Library:Create("UIListLayout", { Name = "\0", Parent = Items["Content"].Instance, Padding = UDim.new(0,2), SortOrder = Enum.SortOrder.LayoutOrder })
+        Library:Create("UIPadding", { Name = "\0", Parent = Items["Content"].Instance, PaddingLeft = UDim.new(0,8), PaddingRight = UDim.new(0,8), PaddingBottom = UDim.new(0,6) })
+        -- Padding for main frame
+        Library:Create("UIPadding", { Name = "\0", Parent = Items["Main"].Instance, PaddingBottom = UDim.new(0,4) })
+        KeybindList.Items = Items
+    end
+    function KeybindList:SetVisibility(Bool) KeybindList.Visible = Bool; Items["Main"].Instance.Visible = Bool end
+    function KeybindList:SetText(Text) Items["Title"].Instance.Text = tostring(Text) end
+    function KeybindList:Center()
+        local AbsPos = Items["Main"].Instance.AbsolutePosition
+        Items["Main"].Instance.AnchorPoint = Vector2.new(0,0)
+        task.wait()
+        Items["Main"].Instance.Position = UDim2.new(0, AbsPos.X, 0, AbsPos.Y + GuiInset)
+    end
+    function KeybindList:Add(Name, Mode)
+        local NewItems = {} do
+            NewItems["NewKey"] = Library:Create("Frame", { Name = "\0", Parent = Items["Content"].Instance, BackgroundTransparency = 1, Size = UDim2.new(1,0,0,15), BorderSizePixel = 0, ZIndex = 100 })
+            NewItems["Holder"] = Library:Create("Frame", { Name = "\0", Parent = NewItems["NewKey"].Instance, BackgroundTransparency = 1, Size = UDim2.new(1,0,1,0), BorderSizePixel = 0, ZIndex = 100 })
+            NewItems["Text"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = Library.FontSize, Parent = NewItems["Holder"].Instance, TextColor3 = Library.Theme["Text"], Text = Name or "", AnchorPoint = Vector2.new(0,0.5), Size = UDim2.new(0,0,0,15), BackgroundTransparency = 1, Position = UDim2.new(0,0,0.5,0), BorderSizePixel = 0, AutomaticSize = Enum.AutomaticSize.X, ZIndex = 100 }):AddToTheme({TextColor3 = 'Text'})
+            Library:Create("UIStroke", { Name = "\0", Parent = NewItems["Text"].Instance, Color = Color3.new(0,0,0), Thickness = 1, Transparency = 0.5 })
+            NewItems["Mode"] = Library:Create("TextLabel", { Name = "\0", FontFace = Library.Font, TextSize = Library.FontSize, Parent = NewItems["Holder"].Instance, TextColor3 = Library.Theme["Inactive Text"], Text = Mode or "always", AnchorPoint = Vector2.new(1,0.5), Size = UDim2.new(0,0,0,15), BackgroundTransparency = 1, Position = UDim2.new(1,0,0.5,0), BorderSizePixel = 0, AutomaticSize = Enum.AutomaticSize.X, ZIndex = 100 }):AddToTheme({TextColor3 = 'Inactive Text'})
+            Library:Create("UIStroke", { Name = "\0", Parent = NewItems["Mode"].Instance, Color = Color3.new(0,0,0), Thickness = 1, Transparency = 0.5 })
+        end
+        local CanBeVisible = true
+        function NewItems:SetVis(Bool) CanBeVisible = Bool end
+        local StateId = 0
+        function NewItems:SetStatus(Bool)
+            StateId = StateId + 1
+            local Current = StateId
+            if not CanBeVisible then NewItems["NewKey"].Instance.Visible = false; return end
+            if Bool then
+                NewItems["NewKey"].Instance.Visible = true
+                NewItems["NewKey"]:Tween({Size = UDim2.new(1,0,0,15), Position = UDim2.new(0,0,0,0)})
+                NewItems["Text"]:Tween({TextTransparency = 0})
+                NewItems["Mode"]:Tween({TextTransparency = 0})
+            else
+                Library:Thread(function()
+                    NewItems["NewKey"]:Tween({Size = UDim2.new(0,0,0,0), Position = UDim2.new(-1,0,0,0)})
+                    local tw = NewItems["Text"]:Tween({TextTransparency = 1})
+                    NewItems["Mode"]:Tween({TextTransparency = 1})
+                    tw.Completed:Wait()
+                    if Current ~= StateId then return end
+                    NewItems["NewKey"].Instance.Visible = false
+                end)
+            end
+        end
+        function NewItems:Set(Name, Mode) NewItems["Text"].Instance.Text = Name end
+        function NewItems:SetMode(Mode) NewItems["Mode"].Instance.Text = Mode end
+        return NewItems
+    end
+    KeybindList:Center()
+    return setmetatable(KeybindList, Library)
 end
 
 end 
