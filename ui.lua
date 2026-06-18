@@ -1699,9 +1699,9 @@ do --// UI Source
                     end
 
                     if Data.Toggle and not Data.Toggle.Value then
-                        -- If sync is enabled, allow keybind to toggle the parent toggle
+                        -- If sync enabled, toggle the parent on via keybind
                         if Flags[Keybind.Flag .. "Sync"] then
-                            Data.Toggle:Set(not Data.Toggle.Value)
+                            Data.Toggle:Set(true)
                         end
                         return
                     end
@@ -1711,7 +1711,7 @@ do --// UI Source
                             if Keybind.Mode == "Toggle" then
                                 Keybind:Press()
                                 if Data.Toggle and Flags[Keybind.Flag .. "Sync"] then
-                                    Data.Toggle:Set(not Data.Toggle.Value)
+                                    Data.Toggle:Set(false)
                                 end
                             elseif Keybind.Mode == "Hold" then
                                 Keybind:Press(true)
@@ -1722,7 +1722,7 @@ do --// UI Source
                             if Keybind.Mode == "Toggle" then
                                 Keybind:Press()
                                 if Data.Toggle and Flags[Keybind.Flag .. "Sync"] then
-                                    Data.Toggle:Set(not Data.Toggle.Value)
+                                    Data.Toggle:Set(false)
                                 end
                             elseif Keybind.Mode == "Hold" then
                                 Keybind:Press(true)
