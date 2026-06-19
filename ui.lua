@@ -5459,10 +5459,11 @@ Library.Watermark = function(Self, Params)
         mainFrame.Name = "\0"
         mainFrame.Parent = Library.Holder.Instance
         mainFrame.Position = UDim2.new(0, 10, 0, 10)
-        mainFrame.Size = UDim2.new(0, 0, 0, 22)
+        mainFrame.Size = UDim2.new(0, 0, 0, 26)
         mainFrame.BorderSizePixel = 0
         mainFrame.Visible = true
         mainFrame.AutomaticSize = Enum.AutomaticSize.X
+        mainFrame.ClipDescendants = true
         mainFrame.BackgroundColor3 = Library.Theme["Background"]
         mainFrame.ZIndex = 100
         Items["Main"] = setmetatable({ Instance = mainFrame, Class = "Frame", Properties = {} }, Library)
@@ -5476,7 +5477,7 @@ Library.Watermark = function(Self, Params)
         stroke.LineJoinMode = Enum.LineJoinMode.Miter
         stroke.Color = Library.Theme["Outline 1"]
 
-        -- Top accent/glow bar (matches UI accent color)
+        -- Top accent/glow bar (matches UI outline color)
         local accentBar = Instance.new("Frame")
         accentBar.Name = "\0"
         accentBar.Parent = mainFrame
