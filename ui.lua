@@ -5484,6 +5484,13 @@ Library.Watermark = function(Self, Params)
         accentBar.Size = UDim2.new(1,0,0,2)
         accentBar.BorderSizePixel = 0
         accentBar.BackgroundColor3 = Library.Theme["Accent"]
+        local wmGrad = Instance.new("UIGradient")
+        wmGrad.Parent = accentBar
+        wmGrad.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Library.Theme["Accent"]),
+            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(180, 130, 255)),
+            ColorSequenceKeypoint.new(1, Library.Theme["Accent"]),
+        })
 
         -- Padding
         local pad = Instance.new("UIPadding")
@@ -5734,7 +5741,7 @@ Library.KeybindList = function(Self, Params)
         stroke.LineJoinMode = Enum.LineJoinMode.Miter
         stroke.Color = Library.Theme["Outline 1"]
 
-        -- Full accent top bar
+        -- Gradient accent top bar
         local accentBar = Instance.new("Frame")
         accentBar.Name = "\0"
         accentBar.Parent = mainFrame
@@ -5743,6 +5750,14 @@ Library.KeybindList = function(Self, Params)
         accentBar.BorderSizePixel = 0
         accentBar.BackgroundColor3 = Library.Theme["Accent"]
         accentBar.ZIndex = 101
+        local wmGrad = Instance.new("UIGradient")
+        wmGrad.Parent = accentBar
+        wmGrad.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Library.Theme["Accent"]),
+            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(180, 130, 255)),
+            ColorSequenceKeypoint.new(1, Library.Theme["Accent"]),
+        })
+        wmGrad.Rotation = 0
 
         -- Title text
         local titleLabel = Instance.new("TextLabel")
