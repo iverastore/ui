@@ -5469,35 +5469,59 @@ Library.Watermark = function(Self, Params)
         Items["Main"]:AddToTheme({BackgroundColor3 = 'Background'})
         Items["Main"]:MakeDraggable()
 
-        -- Stroke
+        -- Stroke (border)
         local stroke = Instance.new("UIStroke")
         stroke.Parent = mainFrame
         stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
         stroke.LineJoinMode = Enum.LineJoinMode.Miter
         stroke.Color = Library.Theme["Outline 1"]
 
-        -- Accent bar
+        -- Top accent/glow bar (matches UI accent color)
         local accentBar = Instance.new("Frame")
         accentBar.Name = "\0"
         accentBar.Parent = mainFrame
-        accentBar.Position = UDim2.new(0,0,0,0)
-        accentBar.Size = UDim2.new(1,0,0,2)
+        accentBar.Position = UDim2.new(0, 0, 0, 0)
+        accentBar.Size = UDim2.new(1, 0, 0, 1)
         accentBar.BorderSizePixel = 0
         accentBar.BackgroundColor3 = Library.Theme["Accent"]
-        local wmGrad = Instance.new("UIGradient")
-        wmGrad.Parent = accentBar
-        wmGrad.Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Library.Theme["Accent"]),
-            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(180, 130, 255)),
-            ColorSequenceKeypoint.new(1, Library.Theme["Accent"]),
+        accentBar.ZIndex = 101
+
+        -- Glow effect below accent bar (soft gradient fade)
+        local glowTop = Instance.new("Frame")
+        glowTop.Name = "\0"
+        glowTop.Parent = mainFrame
+        glowTop.Position = UDim2.new(0, 0, 0, 1)
+        glowTop.Size = UDim2.new(1, 0, 0, 4)
+        glowTop.BorderSizePixel = 0
+        glowTop.BackgroundColor3 = Library.Theme["Accent"]
+        glowTop.BackgroundTransparency = 0.6
+        glowTop.ZIndex = 101
+        local glowGrad = Instance.new("UIGradient")
+        glowGrad.Parent = glowTop
+        glowGrad.Transparency = NumberSequence.new({
+            NumberSequenceKeypoint.new(0, 0),
+            NumberSequenceKeypoint.new(1, 1),
         })
+        glowGrad.Rotation = 90
+
+        -- Bottom glow line (accent color, mirrored)
+        local glowBot = Instance.new("Frame")
+        glowBot.Name = "\0"
+        glowBot.Parent = mainFrame
+        glowBot.Position = UDim2.new(0, 0, 1, -1)
+        glowBot.Size = UDim2.new(1, 0, 0, 1)
+        glowBot.BorderSizePixel = 0
+        glowBot.BackgroundColor3 = Library.Theme["Accent"]
+        glowBot.BackgroundTransparency = 0.5
+        glowBot.ZIndex = 101
 
         -- Padding
         local pad = Instance.new("UIPadding")
         pad.Parent = mainFrame
-        pad.PaddingTop = UDim.new(0,4)
-        pad.PaddingRight = UDim.new(0,8)
-        pad.PaddingLeft = UDim.new(0,8)
+        pad.PaddingTop = UDim.new(0, 6)
+        pad.PaddingBottom = UDim.new(0, 2)
+        pad.PaddingRight = UDim.new(0, 10)
+        pad.PaddingLeft = UDim.new(0, 10)
 
         -- Text label
         local textLabel = Instance.new("TextLabel")
@@ -5511,9 +5535,8 @@ Library.Watermark = function(Self, Params)
         textLabel.AutomaticSize = Enum.AutomaticSize.X
         textLabel.TextSize = Library.FontSize or 12
         textLabel.BorderSizePixel = 0
-        textLabel.ZIndex = 100
+        textLabel.ZIndex = 102
         textLabel.TextXAlignment = Enum.TextXAlignment.Left
-        -- Apply font with fallback
         pcall(function()
             if Library.Font then
                 textLabel.FontFace = Library.Font
@@ -5530,9 +5553,17 @@ Library.Watermark = function(Self, Params)
         -- Text stroke for readability
         local tStroke = Instance.new("UIStroke")
         tStroke.Parent = textLabel
-        tStroke.Color = Color3.new(0,0,0)
+        tStroke.Color = Color3.new(0, 0, 0)
         tStroke.Thickness = 1
         tStroke.Transparency = 0.5
+
+        -- Store glow refs for theme updates
+        Items["AccentBar"] = setmetatable({ Instance = accentBar, Class = "Frame", Properties = {} }, Library)
+        Items["AccentBar"]:AddToTheme({BackgroundColor3 = 'Accent'})
+        Items["GlowTop"] = setmetatable({ Instance = glowTop, Class = "Frame", Properties = {} }, Library)
+        Items["GlowTop"]:AddToTheme({BackgroundColor3 = 'Accent'})
+        Items["GlowBot"] = setmetatable({ Instance = glowBot, Class = "Frame", Properties = {} }, Library)
+        Items["GlowBot"]:AddToTheme({BackgroundColor3 = 'Accent'})
 
         Watermark.Items = Items
     end
