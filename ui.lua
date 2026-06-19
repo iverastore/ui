@@ -29,7 +29,7 @@ do --// UI Source
         Flags = { },
         MenuKeybind = tostring(Enum.KeyCode.X),
 
-        Directory = "ivera",
+        Directory = "aetheris",
         Folders = {
             Assets = "/Assets",
             Configs = "/Configs"
