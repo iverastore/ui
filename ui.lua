@@ -5463,7 +5463,6 @@ Library.Watermark = function(Self, Params)
         mainFrame.BorderSizePixel = 0
         mainFrame.Visible = true
         mainFrame.AutomaticSize = Enum.AutomaticSize.X
-        mainFrame.ClipDescendants = true
         mainFrame.BackgroundColor3 = Library.Theme["Background"]
         mainFrame.ZIndex = 100
         Items["Main"] = setmetatable({ Instance = mainFrame, Class = "Frame", Properties = {} }, Library)
