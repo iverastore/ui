@@ -3982,8 +3982,12 @@ local Library do
 
             local Update = function()
                 if KeylistItem then
-                    KeylistItem:SetText(Keybind.Value, Data.Name, Keybind.Mode)
-                    KeylistItem:SetStatus(Keybind.Toggled)
+                    if Keybind.Value == "None" or Keybind.Value == "Unknown" then
+                        KeylistItem:SetStatus(false)
+                    else
+                        KeylistItem:SetText(Keybind.Value, Data.Name, Keybind.Mode)
+                        KeylistItem:SetStatus(Keybind.Toggled)
+                    end
                 end
             end
 
@@ -3996,9 +4000,11 @@ local Library do
                     Keybind.Key = tostring(Key)
 
                     Key = Key.Name == "Backspace" and "None" or Key.Name
+                    if Key == "Unknown" then Key = "None" end
 
                     local KeyString = Keys[Keybind.Key] or StringGSub(Key, "Enum.", "") or "None"
                     local TextToDisplay = StringGSub(StringGSub(KeyString, "KeyCode.", ""), "UserInputType.", "") or "None"
+                    if TextToDisplay == "Unknown" then TextToDisplay = "None" end
 
                     Keybind.Value = TextToDisplay
                     Items["KeyButton"].Instance.Text = TextToDisplay
@@ -4030,6 +4036,7 @@ local Library do
                     local TextToDisplay = KeyString and StringGSub(StringGSub(KeyString, "KeyCode.", ""), "UserInputType.", "") or "None"
 
                     TextToDisplay = StringGSub(StringGSub(KeyString, "KeyCode.", ""), "UserInputType.", "")
+                    if TextToDisplay == "Unknown" then TextToDisplay = "None" end
 
                     Keybind.Value = TextToDisplay
                     Items["KeyButton"].Instance.Text = TextToDisplay
@@ -4208,7 +4215,7 @@ local Library do
             end)
 
             Library:Connect(UserInputService.InputBegan, function(Input)
-                if Keybind.Value == "None" then
+                if Keybind.Value == "None" or Keybind.Value == "Unknown" then
                     return
                 end
 
@@ -4244,7 +4251,7 @@ local Library do
             end)
 
             Library:Connect(UserInputService.InputEnded, function(Input)
-                if Keybind.Value == "None" then
+                if Keybind.Value == "None" or Keybind.Value == "Unknown" then
                     return
                 end
 
@@ -4848,9 +4855,37 @@ local Library do
             })  Items["Liner"]:AddToTheme({BackgroundColor3 = "Accent"})
         end
 
+        function Watermark:SetText(Text)
+            Items["Text"].Instance.Text = Text
+        end
+
         function Watermark:SetVisibility(Bool)
             Items["Watermark"].Instance.Visible = Bool
         end
+
+        -- Auto-update watermark with FPS and ping
+        local _wmName = Name
+        local _wmFps = 0
+        local _wmFrameCount = 0
+        local _wmLastTime = os.clock()
+
+        Library:Connect(RunService.RenderStepped, function()
+            _wmFrameCount = _wmFrameCount + 1
+            local now = os.clock()
+            if now - _wmLastTime >= 1 then
+                _wmFps = MathFloor(_wmFrameCount / (now - _wmLastTime))
+                _wmFrameCount = 0
+                _wmLastTime = now
+
+                local ping = 0
+                pcall(function()
+                    ping = MathFloor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue())
+                end)
+
+                local user = LocalPlayer and LocalPlayer.Name or "?"
+                Items["Text"].Instance.Text = _wmName .. " | " .. user .. " | " .. tostring(_wmFps) .. " fps | " .. tostring(ping) .. "ms"
+            end
+        end)
 
         return Watermark
     end
@@ -4867,6 +4902,7 @@ local Library do
                 Position = UDim2New(0, 12, 0.5, 55),
                 BorderColor3 = FromRGB(12, 12, 12),
                 Size = UDim2New(0, 116, 0, 32),
+                AutomaticSize = Enum.AutomaticSize.Y,
                 BorderSizePixel = 2,
                 BackgroundColor3 = FromRGB(14, 17, 15)
             })  Items["KeybindList"]:AddToTheme({BackgroundColor3 = "Background", BorderColor3 = "Border"})
