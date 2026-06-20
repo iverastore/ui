@@ -76,7 +76,7 @@ local Library do
             Direction = Enum.EasingDirection.Out
         },
 
-        FadeSpeed = 0.2,
+        FadeSpeed = 0,
 
         Folders = {
             Directory = "scoot",
