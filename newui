@@ -1870,6 +1870,14 @@
                     BorderSizePixel = 0,
                     BackgroundColor3 = rgb(12, 12, 12)
                 })
+
+                if self.fill then
+                    library:create("UIFlexItem", {
+                        Parent = outline,
+                        Name = "",
+                        FlexMode = Enum.UIFlexMode.Fill,
+                    })
+                end
                 
                 local inline = library:create("Frame", {
                     Parent = outline,
@@ -3135,8 +3143,28 @@
                 flags[cfg.flag] = {} 
 
                 -- Instances
-                    local outline = library:create("TextButton", {
+                    -- Wrapper so the keybind + mode indicator sit side by side
+                    local wrapper = library:create("Frame", {
                         Parent = self.right_components,
+                        Name = "",
+                        BackgroundTransparency = 1,
+                        BorderSizePixel = 0,
+                        Size = dim2(0, 0, 0, 9),
+                        AutomaticSize = Enum.AutomaticSize.X,
+                        BackgroundColor3 = rgb(255, 255, 255),
+                    })
+
+                    library:create("UIListLayout", {
+                        Parent = wrapper,
+                        Name = "",
+                        FillDirection = Enum.FillDirection.Horizontal,
+                        VerticalAlignment = Enum.VerticalAlignment.Center,
+                        SortOrder = Enum.SortOrder.LayoutOrder,
+                        Padding = dim(0, 2),
+                    })
+
+                    local outline = library:create("TextButton", {
+                        Parent = wrapper,
                         Name = "",
                         Text = "", 
                         AutoButtonColor = false, 
@@ -3146,7 +3174,8 @@
                         Size = dim2(0, 0, 0, 9),
                         BorderSizePixel = 0,
                         AutomaticSize = Enum.AutomaticSize.X,
-                        BackgroundColor3 = rgb(255, 255, 255)
+                        BackgroundColor3 = rgb(255, 255, 255),
+                        LayoutOrder = 1,
                     })
                     
                     local text_label = library:create("TextLabel", {
@@ -3163,15 +3192,126 @@
                         BorderSizePixel = 0,
                         AutomaticSize = Enum.AutomaticSize.X,
                         TextSize = 12,
-                        BackgroundColor3 = rgb(255, 255, 255)
+                        BackgroundColor3 = rgb(255, 255, 255),
                     })
-                    
+
+                    -- Mode indicator dot (right-click to open mode menu)
+                    local mode_btn = library:create("TextButton", {
+                        Parent = wrapper,
+                        Name = "",
+                        Text = "▸",
+                        AutoButtonColor = false,
+                        FontFace = library.font,
+                        TextSize = 9,
+                        TextColor3 = rgb(120, 120, 120),
+                        BorderColor3 = rgb(0, 0, 0),
+                        BackgroundTransparency = 1,
+                        Size = dim2(0, 8, 0, 9),
+                        BorderSizePixel = 0,
+                        BackgroundColor3 = rgb(255, 255, 255),
+                        LayoutOrder = 2,
+                    })
+
+                    -- Mode popup (hidden by default, shown on right-click or mode_btn click)
+                    local mode_popup = library:create("Frame", {
+                        Parent = library.gui,
+                        Name = "",
+                        Visible = false,
+                        Size = dim2(0, 70, 0, 0),
+                        AutomaticSize = Enum.AutomaticSize.Y,
+                        BorderColor3 = rgb(0, 0, 0),
+                        BorderSizePixel = 0,
+                        BackgroundColor3 = rgb(0, 0, 0),
+                        ZIndex = 9999,
+                    })
+
+                    local mode_inline = library:create("Frame", {
+                        Parent = mode_popup,
+                        Name = "",
+                        Position = dim2(0, 1, 0, 1),
+                        Size = dim2(1, -2, 1, -2),
+                        BorderSizePixel = 0,
+                        BackgroundColor3 = rgb(45, 45, 45),
+                        ZIndex = 9999,
+                    })
+
+                    local mode_bg = library:create("Frame", {
+                        Parent = mode_inline,
+                        Name = "",
+                        Position = dim2(0, 1, 0, 1),
+                        Size = dim2(1, -2, 1, -2),
+                        BorderSizePixel = 0,
+                        BackgroundColor3 = rgb(19, 19, 19),
+                        AutomaticSize = Enum.AutomaticSize.Y,
+                        ZIndex = 9999,
+                    })
+
+                    library:create("UIListLayout", {
+                        Parent = mode_bg,
+                        Name = "",
+                        SortOrder = Enum.SortOrder.LayoutOrder,
+                        Padding = dim(0, 1),
+                    })
+
+                    library:create("UIPadding", {
+                        Parent = mode_bg,
+                        Name = "",
+                        PaddingTop = dim(0, 4),
+                        PaddingBottom = dim(0, 4),
+                        PaddingLeft = dim(0, 6),
+                        PaddingRight = dim(0, 6),
+                    })
+
+                    local function makePopupOption(label)
+                        local btn = library:create("TextButton", {
+                            Parent = mode_bg,
+                            Name = "",
+                            Text = label,
+                            AutoButtonColor = false,
+                            FontFace = library.font,
+                            TextSize = 11,
+                            TextColor3 = rgb(160, 160, 160),
+                            TextXAlignment = Enum.TextXAlignment.Left,
+                            BackgroundTransparency = 1,
+                            BorderSizePixel = 0,
+                            Size = dim2(1, 0, 0, 13),
+                            BackgroundColor3 = rgb(255, 255, 255),
+                            ZIndex = 9999,
+                        })
+                        btn.MouseEnter:Connect(function()
+                            btn.TextColor3 = themes.preset.accent
+                        end)
+                        btn.MouseLeave:Connect(function()
+                            btn.TextColor3 = rgb(160, 160, 160)
+                        end)
+                        return btn
+                    end
+
+                    local opt_toggle  = makePopupOption("toggle")
+                    local opt_hold    = makePopupOption("hold")
+                    local opt_always  = makePopupOption("always")
+
+                    local popup_open = false
+                    local function openPopup()
+                        local pos = mode_btn.AbsolutePosition
+                        mode_popup.Position = UDim2.fromOffset(pos.X, pos.Y + 12)
+                        mode_popup.Visible = true
+                        popup_open = true
+                    end
+                    local function closePopup()
+                        mode_popup.Visible = false
+                        popup_open = false
+                    end
                 
                 -- 
 
                 -- Functions 
                     function cfg.set_mode(mode) 
                         cfg.mode = mode 
+
+                        -- Update indicator color/text
+                        local modeColors = {toggle = rgb(120,120,120), hold = rgb(170,85,235), always = rgb(100,200,100)}
+                        mode_btn.TextColor3 = modeColors[mode] or rgb(120,120,120)
 
                         if mode == "always" then
                             cfg.set(true)
@@ -3229,22 +3369,11 @@
                         local __text = text and (tostring(text):gsub("KeyCode.", ""):gsub("UserInputType.", ""))
                         
                         text_label.Text = "[" .. string.lower(__text) .. "]"
-
-                        -- KEYBIND LIST
-                        -- if cfg.name then 
-                        --     KEYBIND_ELEMENT.Visible = cfg.active
-                        -- end 
-
-                        -- local text = tostring(cfg.key) ~= "Enums" and (keys[cfg.key] or tostring(cfg.key):gsub("Enum.", "")) or nil
-                        -- local __text = text and (tostring(text):gsub("KeyCode.", ""):gsub("UserInputType.", ""))
-
-                        -- if cfg.name then 
-                        --     KEYBIND_ELEMENT.Text = "[ " .. string.upper(string.sub(cfg.mode, 1, 1)) .. string.sub(cfg.mode, 2) .. " ] " .. cfg.name .. " - " .. __text
-                        -- end 
                     end
                 -- 
                 
                 -- Connections 
+                    -- Left click = rebind
                     outline.MouseButton1Down:Connect(function()
                         task.wait()
                         text_label.Text = "[ ... ]"	
@@ -3255,6 +3384,35 @@
                             cfg.binding:Disconnect() 
                             cfg.binding = nil
                         end)
+                    end)
+
+                    -- Right click on the keybind text = open mode popup
+                    outline.MouseButton2Down:Connect(function()
+                        if popup_open then closePopup() else openPopup() end
+                    end)
+
+                    -- Mode btn click = open mode popup
+                    mode_btn.MouseButton1Down:Connect(function()
+                        if popup_open then closePopup() else openPopup() end
+                    end)
+
+                    -- Popup options
+                    opt_toggle.MouseButton1Click:Connect(function()
+                        cfg.set_mode("toggle"); closePopup()
+                    end)
+                    opt_hold.MouseButton1Click:Connect(function()
+                        cfg.set_mode("hold"); closePopup()
+                    end)
+                    opt_always.MouseButton1Click:Connect(function()
+                        cfg.set_mode("always"); closePopup()
+                    end)
+
+                    -- Close popup when clicking elsewhere
+                    library:connection(uis.InputBegan, function(input)
+                        if popup_open and input.UserInputType == Enum.UserInputType.MouseButton1 then
+                            task.wait()
+                            closePopup()
+                        end
                     end)
 
                     library:connection(uis.InputBegan, function(input, game_event) 
