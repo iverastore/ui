@@ -5318,6 +5318,7 @@ local Library do
                 Size = UDim2New(0, 16, 0, 16),
                 BorderSizePixel = 0,
                 ZIndex = 9999,
+                Visible = false,
                 BackgroundColor3 = FromRGB(255, 255, 255)
             })
 
@@ -5340,7 +5341,7 @@ local Library do
                 Color = RGBSequence{RGBSequenceKeypoint(0, FromRGB(255, 255, 255)), RGBSequenceKeypoint(1, FromRGB(99, 108, 117))}
             })
 
-            UserInputService.MouseIconEnabled = false
+            UserInputService.MouseIconEnabled = true
 
             Window.Items = Items
         end
@@ -5424,8 +5425,8 @@ local Library do
                 Debounce = false 
                 Items["Window"].Instance.Visible = Window.IsOpen
                 if Window.IsOpen then
-                    Items["MouseBackground"].Instance.Visible = true
-                    UserInputService.MouseIconEnabled = false
+                    Items["MouseBackground"].Instance.Visible = false
+                    UserInputService.MouseIconEnabled = true
                 else
                     Items["MouseBackground"].Instance.Visible = false
                     UserInputService.MouseIconEnabled = true
