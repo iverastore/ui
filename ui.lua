@@ -3317,19 +3317,22 @@ do --// UI Source
                 local Debounce = false
 
                 function Window:SetOpen(Bool)
+                    if Window.IsOpen == Bool then
+                        return
+                    end
                     if Debounce then
                         return
                     end
-
                     Debounce = true
-
                     Window.IsOpen = Bool
                     Items["MainFrame"]:FadeDescendants(Bool, function()
                         Debounce = false
                     end)
-
                     for Index, Value in Library.OpenFrames do
                         Value:SetOpen(false)
+                    end
+                    if Library.MenuToggle and Library.MenuToggle.Value ~= Bool then
+                        Library.MenuToggle:Set(Bool)
                     end
                 end
 
@@ -5404,9 +5407,23 @@ do --// UI Source
                             end
                         })
 
-                        OtherSection:Label({Name = "ui bind"}):Keybind({Flag = "uibind", Mode = "Toggle", Default = Enum.KeyCode.RightShift, Callback = function(Value)
-                            Library.MenuKeybind = Flags["uibind"].Key
-                        end})
+                        local menuToggle = OtherSection:Toggle({
+                            Name = "toggle ui",
+                            Flag = "toggle_ui",
+                            Default = true,
+                            Callback = function(Value)
+                                Window:SetOpen(Value)
+                            end
+                        })
+                        Library.MenuToggle = menuToggle
+                        menuToggle:Keybind({
+                            Flag = "uibind",
+                            Default = Enum.KeyCode.RightShift,
+                            Callback = function()
+                                Library.MenuKeybind = Flags["uibind"].Key
+                            end
+                        })
+                        Library.MenuKeybind = tostring(Enum.KeyCode.RightShift)
 
                         OtherSection:Dropdown({
                             Name = "animation style",
