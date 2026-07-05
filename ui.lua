@@ -2593,10 +2593,10 @@
 			end
 
 			function cfg.set_element_visible(bool)
-				slider_REAL.Visible = bool 
+				slider_REAL.Visible = true
 
 				if TEXT_LABEL then 
-					TEXT_LABEL.Visible = bool 
+					TEXT_LABEL.Visible = true
 				end 
 			end
 
@@ -2809,7 +2809,7 @@
 			end
 
 			function cfg.set_element_visible(bool)
-				toggle_holder.Visible = bool 
+				toggle_holder.Visible = true
 			end 
 		
 			library:connection(toggle_holder.MouseButton1Click, function()
@@ -4179,10 +4179,10 @@
 			-- 
 				
 			function cfg.set_element_visible(bool)
-				dropdown_REAL.Visible = bool 
+				dropdown_REAL.Visible = true
 
 				if main_text then 
-					main_text.Visible = bool
+					main_text.Visible = true
 				end 
 			end 
 
@@ -4477,7 +4477,7 @@
 			end 
 
 			function cfg.set_element_visible(bool)
-				list_holder.Visible = bool 
+				list_holder.Visible = true
 			end
 
 			function cfg.refresh_options(options) 
@@ -4687,7 +4687,7 @@
 			-- 
 
 			function cfg.set_element_visible(bool)
-				textbox_holder.Visible = bool 
+				textbox_holder.Visible = true
 			end
 
 			function cfg.set(text) 
@@ -4751,7 +4751,7 @@
 			-- 
 			
 			function cfg.set_element_visible(bool)
-				button_holder.Visible = bool 
+				button_holder.Visible = true
 			end
 
 			cfg.set_element_visible(cfg.visible)
