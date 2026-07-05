@@ -5205,8 +5205,20 @@
 					BackgroundColor3 = themes.preset.outline
 				}) library:apply_theme(main_holder, "outline", "BackgroundColor3") 
 				
-				local UIListLayout = library:create("UIListLayout", {
+				-- Dedicated holder for action buttons on the right side of the row
+				local buttons_holder = library:create("Frame", {
 					Parent = TextButton,
+					Name = "buttons_holder",
+					AnchorPoint = vec2(1, 0),
+					Position = dim2(1, -2, 0, 2),
+					Size = dim2(0, 220, 0, 14),
+					BorderSizePixel = 0,
+					BackgroundTransparency = 1,
+					BackgroundColor3 = rgb(255, 255, 255)
+				})
+
+				local buttonsLayout = library:create("UIListLayout", {
+					Parent = buttons_holder,
 					Name = "",
 					FillDirection = Enum.FillDirection.Horizontal,
 					HorizontalAlignment = Enum.HorizontalAlignment.Right,
@@ -5228,6 +5240,7 @@
 						BackgroundColor3 = themes.preset.outline,
 						Text = "",
 						LayoutOrder = 100,
+						ZIndex = 3,
 					})
 					library:hoverify(btn, btn)
 					library:apply_theme(btn, "outline", "BackgroundColor3")
@@ -5235,7 +5248,7 @@
 					local inline = library:create("Frame", {
 						Parent = btn,
 						Name = "",
-						ZIndex = 2,
+						ZIndex = 3,
 						Position = dim2(0, 1, 0, 1),
 						BorderColor3 = rgb(0, 0, 0),
 						Size = dim2(1, -2, 1, -2),
@@ -5247,7 +5260,7 @@
 					local background = library:create("Frame", {
 						Parent = inline,
 						Name = "",
-						ZIndex = 2,
+						ZIndex = 3,
 						Position = dim2(0, 1, 0, 1),
 						BorderColor3 = rgb(0, 0, 0),
 						Size = dim2(1, -2, 1, -2),
@@ -5270,7 +5283,7 @@
 					local contrast = library:create("Frame", {
 						Parent = background,
 						Name = "",
-						ZIndex = 2,
+						ZIndex = 3,
 						BorderColor3 = rgb(0, 0, 0),
 						Size = dim2(1, 0, 1, 0),
 						BorderSizePixel = 0,
@@ -5291,7 +5304,7 @@
 					local text = library:create("TextLabel", {
 						Parent = contrast,
 						Name = "",
-						ZIndex = 2,
+						ZIndex = 4,
 						TextWrapped = true,
 						TextColor3 = themes.preset.text,
 						BorderColor3 = rgb(0, 0, 0),
@@ -5315,7 +5328,7 @@
 				end
 
 				-- Whitelist button
-				createActionButton(TextButton, "Whitelist", function()
+				createActionButton(buttons_holder, "Whitelist", function()
 					local p = players:FindFirstChild(tostring(player))
 					if p and p ~= lp then
 						if library.playerlist_data[tostring(player)] then
@@ -5330,7 +5343,7 @@
 				end)
 				
 				-- Spectate button
-				createActionButton(TextButton, "Spectate", function()
+				createActionButton(buttons_holder, "Spectate", function()
 					local p = players:FindFirstChild(tostring(player))
 					if p and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
 						workspace.CurrentCamera.CameraSubject = p.Character:FindFirstChildOfClass("Humanoid") or p.Character.HumanoidRootPart
@@ -5338,7 +5351,7 @@
 				end)
 				
 				-- Teleport button
-				createActionButton(TextButton, "Teleport", function()
+				createActionButton(buttons_holder, "Teleport", function()
 					local p = players:FindFirstChild(tostring(player))
 					if p and p.Character and p.Character:FindFirstChild("HumanoidRootPart") and lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
 						lp.Character.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
@@ -5711,16 +5724,24 @@
 
 		local toolClone = nil
 		local spinAngle = 0
+		local function clearToolPreview()
+			if toolClone then
+				toolClone:Destroy()
+				toolClone = nil
+			end
+			if cfg._spinConn then
+				cfg._spinConn:Disconnect()
+				cfg._spinConn = nil
+			end
+			spinAngle = 0
+		end
 
 		-- SetVisibility
 		function cfg:SetVisibility(bool)
 			cfg._visible = bool
 			container.Visible = bool
 			if not bool then
-				if cfg._spinConn then
-					cfg._spinConn:Disconnect()
-					cfg._spinConn = nil
-				end
+				clearToolPreview()
 			end
 		end
 
@@ -5792,61 +5813,55 @@
 					local lastTool = cfg._lastToolName
 					if toolName ~= lastTool then
 						cfg._lastToolName = toolName
+						clearToolPreview()
 						if tool then
-							if toolClone then
-								toolClone:Destroy()
-								toolClone = nil
-							end
 							pcall(function()
+								-- Clone full tool and strip scripts
 								toolClone = tool:Clone()
-								-- Strip scripts
-								for _, desc in next, toolClone:GetDescendants() do
-									if desc:IsA("BaseScript") or desc:IsA("LocalScript") then
-										desc:Destroy()
+								for _, obj in ipairs(toolClone:GetDescendants()) do
+									if obj:IsA("Script") or obj:IsA("LocalScript") or obj:IsA("ModuleScript") then
+										obj:Destroy()
 									end
 								end
 								toolClone.Parent = viewport
 
-								-- Calculate bounding box for camera
-								local cf, size = toolClone:GetBoundingBox()
-								local maxDim = max(size.X, size.Y, size.Z)
-								vpCamera.CFrame = cfr(cf.Position + vec3(0, 0, maxDim * 1.8), cf.Position)
-
-								-- Spinning
-								if cfg._spinConn then
-									cfg._spinConn:Disconnect()
+								-- Ensure primary part exists
+								local handle = toolClone:FindFirstChild("Handle")
+								if not handle then
+									for _, part in ipairs(toolClone:GetDescendants()) do
+										if part:IsA("BasePart") then
+											handle = part
+											break
+										end
+									end
 								end
+								if not handle then return end
+								toolClone.PrimaryPart = handle
+
+								-- Center and face forward
+								toolClone:PivotTo(CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(180), 0))
+
+								-- Calculate size and place camera
+								local size = toolClone:GetExtentsSize()
+								local biggest = max(size.X, size.Y, size.Z)
+								vpCamera.CFrame = CFrame.new(Vector3.new(0, 0, biggest * 2), Vector3.new(0, 0, 0))
+
+								-- Spin the tool model
 								spinAngle = 0
 								cfg._spinConn = run.RenderStepped:Connect(function(dt)
 									if not toolClone or not toolClone.Parent then
-										if cfg._spinConn then
-											cfg._spinConn:Disconnect()
-											cfg._spinConn = nil
-										end
+										clearToolPreview()
 										return
 									end
 									pcall(function()
-										spinAngle = spinAngle + dt * 2
-										local bCf, bSize = toolClone:GetBoundingBox()
-										local center = bCf.Position
-										local mDim = max(bSize.X, bSize.Y, bSize.Z)
-										local camDist = mDim * 1.8
-										vpCamera.CFrame = cfr(
-											center + vec3(cos(spinAngle) * camDist, mDim * 0.3, sin(spinAngle) * camDist),
-											center
+										spinAngle = spinAngle + dt * 25
+										toolClone:PivotTo(
+											CFrame.new(0, 0, 0) *
+											CFrame.Angles(math.rad(15), math.rad(spinAngle), 0)
 										)
 									end)
 								end)
 							end)
-						else
-							if toolClone then
-								toolClone:Destroy()
-								toolClone = nil
-							end
-							if cfg._spinConn then
-								cfg._spinConn:Disconnect()
-								cfg._spinConn = nil
-							end
 						end
 					end
 				end
