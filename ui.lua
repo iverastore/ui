@@ -5208,51 +5208,189 @@
 				local UIListLayout = library:create("UIListLayout", {
 					Parent = TextButton,
 					Name = "",
+					FillDirection = Enum.FillDirection.Vertical,
+					SortOrder = Enum.SortOrder.LayoutOrder,
+					Padding = dim(0, 2)
+				})
+
+				-- Info row (player name + priority)
+				local info_row = library:create("Frame", {
+					Parent = TextButton,
+					Name = "",
+					BackgroundTransparency = 1,
+					BorderColor3 = rgb(0, 0, 0),
+					Size = dim2(1, 0, 0, 14),
+					BorderSizePixel = 0,
+					BackgroundColor3 = rgb(255, 255, 255),
+					LayoutOrder = 1
+				})
+
+				local info_layout = library:create("UIListLayout", {
+					Parent = info_row,
+					Name = "",
 					FillDirection = Enum.FillDirection.Horizontal,
 					HorizontalFlex = Enum.UIFlexAlignment.Fill,
 					SortOrder = Enum.SortOrder.LayoutOrder,
 					VerticalFlex = Enum.UIFlexAlignment.Fill
 				})
+
+				player_name.Parent = info_row
+				priority_text.Parent = info_row
+
+				-- Buttons row
+				local buttons_row = library:create("Frame", {
+					Parent = TextButton,
+					Name = "",
+					BackgroundTransparency = 1,
+					BorderColor3 = rgb(0, 0, 0),
+					Size = dim2(1, 0, 0, 20),
+					BorderSizePixel = 0,
+					BackgroundColor3 = rgb(255, 255, 255),
+					LayoutOrder = 2
+				})
+
+				local buttons_layout = library:create("UIListLayout", {
+					Parent = buttons_row,
+					Name = "",
+					FillDirection = Enum.FillDirection.Horizontal,
+					SortOrder = Enum.SortOrder.LayoutOrder,
+					Padding = dim(0, 4),
+					VerticalFlex = Enum.UIFlexAlignment.Fill
+				})
+
+				local buttons_padding = library:create("UIPadding", {
+					Parent = buttons_row,
+					Name = "",
+					PaddingRight = dim(0, 2),
+					PaddingLeft = dim(0, 2)
+				})
 				
-				-- Create action buttons for player
+				-- Create action buttons for player (styled like regular menu buttons)
 				local function createActionButton(parent, label, callback)
 					local btn = library:create("TextButton", {
 						Parent = parent,
 						Name = label,
-						FontFace = library.font,
+						BorderColor3 = rgb(0, 0, 0),
+						Size = dim2(0, 70, 1, 0),
+						BorderSizePixel = 0,
+						BackgroundColor3 = themes.preset.outline,
+						Text = "",
+						LayoutOrder = 100,
+					})
+					library:hoverify(btn, btn)
+					library:apply_theme(btn, "outline", "BackgroundColor3")
+
+					local inline = library:create("Frame", {
+						Parent = btn,
+						Name = "",
+						ZIndex = 2,
+						Position = dim2(0, 1, 0, 1),
+						BorderColor3 = rgb(0, 0, 0),
+						Size = dim2(1, -2, 1, -2),
+						BorderSizePixel = 0,
+						BackgroundColor3 = themes.preset.inline
+					})
+					library:apply_theme(inline, "inline", "BackgroundColor3")
+
+					local background = library:create("Frame", {
+						Parent = inline,
+						Name = "",
+						ZIndex = 2,
+						Position = dim2(0, 1, 0, 1),
+						BorderColor3 = rgb(0, 0, 0),
+						Size = dim2(1, -2, 1, -2),
+						BorderSizePixel = 0,
+						BackgroundColor3 = themes.preset.accent
+					})
+					library:apply_theme(background, "accent", "BackgroundColor3")
+
+					local _UIGradient = library:create("UIGradient", {
+						Parent = background,
+						Name = "",
+						Rotation = 90,
+						Color = rgbseq{
+							rgbkey(0, rgb(255, 255, 255)),
+							rgbkey(1, rgb(167, 167, 167))
+						}
+					})
+					library:apply_theme(_UIGradient, "contrast", "Color")
+
+					local contrast = library:create("Frame", {
+						Parent = background,
+						Name = "",
+						ZIndex = 2,
+						BorderColor3 = rgb(0, 0, 0),
+						Size = dim2(1, 0, 1, 0),
+						BorderSizePixel = 0,
+						BackgroundColor3 = rgb(255, 255, 255)
+					})
+
+					local UIGradient = library:create("UIGradient", {
+						Parent = contrast,
+						Name = "",
+						Rotation = 90,
+						Color = rgbseq{
+							rgbkey(0, rgb(30, 30, 30)),
+							rgbkey(1, rgb(20, 20, 20))
+						}
+					})
+					library:apply_theme(UIGradient, "contrast", "Color")
+
+					local text = library:create("TextLabel", {
+						Parent = contrast,
+						Name = "",
+						ZIndex = 2,
+						TextWrapped = true,
 						TextColor3 = themes.preset.text,
 						BorderColor3 = rgb(0, 0, 0),
-						Text = label:sub(1, 1),
-						BackgroundTransparency = 0,
-						Size = dim2(0, 16, 0, 16),
-						BorderSizePixel = 0,
-						TextSize = 10,
-						BackgroundColor3 = themes.preset.outline,
-						LayoutOrder = 100
+						Text = label,
+						Size = dim2(1, -4, 1, 0),
+						Position = dim2(0, 4, 0, -1),
+						BackgroundTransparency = 1,
+						TextTruncate = Enum.TextTruncate.AtEnd,
+						FontFace = library.font,
+						TextSize = 12,
+						BackgroundColor3 = rgb(255, 255, 255)
 					})
-					library:apply_theme(btn, "outline", "BackgroundColor3")
+
+					local UIStroke = library:create("UIStroke", {
+						Parent = text,
+						Name = "",
+						LineJoinMode = Enum.LineJoinMode.Miter
+					})
+
 					btn.MouseButton1Click:Connect(callback)
 					return btn
 				end
-				
+
 				-- Whitelist button
-				createActionButton(TextButton, "Whitelist", function()
-					if players:FindFirstChild(tostring(player)) then
-						-- Handled in main script - just a placeholder for button structure
+				createActionButton(buttons_row, "Whitelist", function()
+					local p = players:FindFirstChild(tostring(player))
+					if p and p ~= lp then
+						if library.playerlist_data[tostring(player)] then
+							local pd = library.playerlist_data[tostring(player)]
+							if pd.priority == "Friendly" then
+								library.config_flags["PLAYERLIST_DROPDOWN"]("Neutral")
+							else
+								library.config_flags["PLAYERLIST_DROPDOWN"]("Friendly")
+							end
+						end
 					end
 				end)
 				
 				-- Spectate button
-				createActionButton(TextButton, "Spectate", function()
-					if players:FindFirstChild(tostring(player)) then
-						-- Handled in main script - just a placeholder for button structure
+				createActionButton(buttons_row, "Spectate", function()
+					local p = players:FindFirstChild(tostring(player))
+					if p and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+						workspace.CurrentCamera.CameraSubject = p.Character:FindFirstChildOfClass("Humanoid") or p.Character.HumanoidRootPart
 					end
 				end)
 				
 				-- Teleport button
-				createActionButton(TextButton, "Teleport", function()
-					if players:FindFirstChild(tostring(player)) then
-						-- Handled in main script - just a placeholder for button structure
+				createActionButton(buttons_row, "Teleport", function()
+					local p = players:FindFirstChild(tostring(player))
+					if p and p.Character and p.Character:FindFirstChild("HumanoidRootPart") and lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
+						lp.Character.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
 					end
 				end)
 				
@@ -5279,7 +5417,7 @@
 				-- library.selected_player = players[tostring(player)]
 				
 				TextButton.MouseButton1Click:Connect(function()
-					if player_name == lp.Name then 
+					if player_name.Text == lp.Name then 
 						return 
 					end 
 
