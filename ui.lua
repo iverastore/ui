@@ -4722,7 +4722,7 @@
 				BorderColor3 = rgb(0, 0, 0),
 				Text = "",
 				ZIndex = 2,
-				Size = dim2(1, -8, 0, 12),
+				Size = dim2(1, -8, 0, 4),
 				BorderSizePixel = 0,
 				BackgroundTransparency = 1,
 				TextXAlignment = Enum.TextXAlignment.Left,
@@ -5572,27 +5572,22 @@
 			Color = rgbseq{rgbkey(0, rgb(255, 255, 255)), rgbkey(1, rgb(167, 167, 167))}
 		})
 
-		-- Combined preview box (avatar + tool)
-		local previewBox = library:create("Frame", {
+		-- Avatar
+		local avatarFrame = library:create("Frame", {
 			Parent = bg,
 			Name = "",
 			Position = dim2(0, 8, 0, 10),
-			Size = dim2(0, 100, 0, 100),
+			Size = dim2(0, 50, 0, 50),
 			BorderSizePixel = 0,
 			BackgroundColor3 = themes.preset.outline
 		})
-		library:apply_theme(previewBox, "outline", "BackgroundColor3")
+		library:apply_theme(avatarFrame, "outline", "BackgroundColor3")
 
-		local previewBoxCorner = Instance.new("UICorner")
-		previewBoxCorner.CornerRadius = dim(0, 4)
-		previewBoxCorner.Parent = previewBox
-
-		-- Avatar (top half of preview box)
 		local avatar = library:create("ImageLabel", {
-			Parent = previewBox,
+			Parent = avatarFrame,
 			Name = "",
 			Position = dim2(0, 1, 0, 1),
-			Size = dim2(1, -2, 0.5, -2),
+			Size = dim2(1, -2, 1, -2),
 			BorderSizePixel = 0,
 			BackgroundColor3 = rgb(30, 30, 30),
 			Image = ""
@@ -5602,31 +5597,15 @@
 		avatarCorner.CornerRadius = dim(0, 4)
 		avatarCorner.Parent = avatar
 
-		-- 3D Tool Preview (bottom half of preview box)
-		local viewport = Instance.new("ViewportFrame")
-		viewport.Parent = previewBox
-		viewport.Position = dim2(0, 1, 0.5, 1)
-		viewport.Size = dim2(1, -2, 0.5, -2)
-		viewport.BackgroundColor3 = rgb(25, 25, 25)
-		viewport.BackgroundTransparency = 0
-		viewport.BorderSizePixel = 0
-		viewport.Ambient = rgb(200, 200, 200)
-		viewport.LightColor = rgb(255, 255, 255)
-		viewport.LightDirection = vec3(-1, -1, -1)
-
-		local vpCorner2 = Instance.new("UICorner")
-		vpCorner2.CornerRadius = dim(0, 3)
-		vpCorner2.Parent = viewport
-
-		local vpCamera = Instance.new("Camera")
-		vpCamera.Parent = viewport
-		viewport.CurrentCamera = vpCamera
+		local frameCorner = Instance.new("UICorner")
+		frameCorner.CornerRadius = dim(0, 4)
+		frameCorner.Parent = avatarFrame
 
 		-- Username
 		local username = library:create("TextLabel", {
 			Parent = bg,
 			Name = "",
-			Position = dim2(0, 116, 0, 8),
+			Position = dim2(0, 66, 0, 8),
 			Size = dim2(0, 150, 0, 14),
 			BackgroundTransparency = 1,
 			Text = "Username",
@@ -5643,7 +5622,7 @@
 		local displayName = library:create("TextLabel", {
 			Parent = bg,
 			Name = "",
-			Position = dim2(0, 116, 0, 22),
+			Position = dim2(0, 66, 0, 22),
 			Size = dim2(0, 150, 0, 14),
 			BackgroundTransparency = 1,
 			Text = "DisplayName",
@@ -5659,8 +5638,8 @@
 		local healthBg = library:create("Frame", {
 			Parent = bg,
 			Name = "",
-			Position = dim2(0, 116, 0, 40),
-			Size = dim2(0, 150, 0, 12),
+			Position = dim2(0, 66, 0, 40),
+			Size = dim2(0, 200, 0, 12),
 			BorderSizePixel = 0,
 			BackgroundColor3 = rgb(20, 20, 20)
 		})
@@ -5702,8 +5681,8 @@
 		local toolLabel = library:create("TextLabel", {
 			Parent = bg,
 			Name = "",
-			Position = dim2(0, 116, 0, 56),
-			Size = dim2(0, 150, 0, 14),
+			Position = dim2(0, 66, 0, 56),
+			Size = dim2(0, 200, 0, 14),
 			BackgroundTransparency = 1,
 			Text = "Tool: None",
 			TextSize = 11,
@@ -5718,8 +5697,8 @@
 		local distLabel = library:create("TextLabel", {
 			Parent = bg,
 			Name = "",
-			Position = dim2(0, 116, 0, 70),
-			Size = dim2(0, 150, 0, 14),
+			Position = dim2(0, 66, 0, 70),
+			Size = dim2(0, 200, 0, 14),
 			BackgroundTransparency = 1,
 			Text = "Distance: 0 studs",
 			TextSize = 11,
@@ -5729,6 +5708,40 @@
 			BorderSizePixel = 0,
 			BackgroundColor3 = rgb(0, 0, 0)
 		})
+
+		-- 3D Tool Preview (ViewportFrame)
+		local vpFrame = library:create("Frame", {
+			Parent = bg,
+			Name = "",
+			Position = dim2(0, 8, 0, 64),
+			Size = dim2(0, 50, 0, 56),
+			BorderSizePixel = 0,
+			BackgroundColor3 = themes.preset.outline
+		})
+		library:apply_theme(vpFrame, "outline", "BackgroundColor3")
+
+		local vpCorner = Instance.new("UICorner")
+		vpCorner.CornerRadius = dim(0, 4)
+		vpCorner.Parent = vpFrame
+
+		local viewport = Instance.new("ViewportFrame")
+		viewport.Parent = vpFrame
+		viewport.Position = dim2(0, 1, 0, 1)
+		viewport.Size = dim2(1, -2, 1, -2)
+		viewport.BackgroundColor3 = rgb(25, 25, 25)
+		viewport.BackgroundTransparency = 0
+		viewport.BorderSizePixel = 0
+		viewport.Ambient = rgb(200, 200, 200)
+		viewport.LightColor = rgb(255, 255, 255)
+		viewport.LightDirection = vec3(-1, -1, -1)
+
+		local vpCorner2 = Instance.new("UICorner")
+		vpCorner2.CornerRadius = dim(0, 3)
+		vpCorner2.Parent = viewport
+
+		local vpCamera = Instance.new("Camera")
+		vpCamera.Parent = viewport
+		viewport.CurrentCamera = vpCamera
 
 		local toolClone = nil
 		local spinAngle = 0
