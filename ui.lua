@@ -5208,62 +5208,14 @@
 				local UIListLayout = library:create("UIListLayout", {
 					Parent = TextButton,
 					Name = "",
-					FillDirection = Enum.FillDirection.Vertical,
-					SortOrder = Enum.SortOrder.LayoutOrder,
-					Padding = dim(0, 2)
-				})
-
-				-- Info row (player name + priority)
-				local info_row = library:create("Frame", {
-					Parent = TextButton,
-					Name = "",
-					BackgroundTransparency = 1,
-					BorderColor3 = rgb(0, 0, 0),
-					Size = dim2(1, 0, 0, 14),
-					BorderSizePixel = 0,
-					BackgroundColor3 = rgb(255, 255, 255),
-					LayoutOrder = 1
-				})
-
-				local info_layout = library:create("UIListLayout", {
-					Parent = info_row,
-					Name = "",
 					FillDirection = Enum.FillDirection.Horizontal,
-					HorizontalFlex = Enum.UIFlexAlignment.Fill,
+					HorizontalAlignment = Enum.HorizontalAlignment.Right,
 					SortOrder = Enum.SortOrder.LayoutOrder,
-					VerticalFlex = Enum.UIFlexAlignment.Fill
+					Padding = dim(0, 4)
 				})
 
-				player_name.Parent = info_row
-				priority_text.Parent = info_row
-
-				-- Buttons row
-				local buttons_row = library:create("Frame", {
-					Parent = TextButton,
-					Name = "",
-					BackgroundTransparency = 1,
-					BorderColor3 = rgb(0, 0, 0),
-					Size = dim2(1, 0, 0, 20),
-					BorderSizePixel = 0,
-					BackgroundColor3 = rgb(255, 255, 255),
-					LayoutOrder = 2
-				})
-
-				local buttons_layout = library:create("UIListLayout", {
-					Parent = buttons_row,
-					Name = "",
-					FillDirection = Enum.FillDirection.Horizontal,
-					SortOrder = Enum.SortOrder.LayoutOrder,
-					Padding = dim(0, 4),
-					VerticalFlex = Enum.UIFlexAlignment.Fill
-				})
-
-				local buttons_padding = library:create("UIPadding", {
-					Parent = buttons_row,
-					Name = "",
-					PaddingRight = dim(0, 2),
-					PaddingLeft = dim(0, 2)
-				})
+				player_name.Parent = TextButton
+				priority_text.Parent = TextButton
 				
 				-- Create action buttons for player (styled like regular menu buttons)
 				local function createActionButton(parent, label, callback)
@@ -5271,7 +5223,7 @@
 						Parent = parent,
 						Name = label,
 						BorderColor3 = rgb(0, 0, 0),
-						Size = dim2(0, 70, 1, 0),
+						Size = dim2(0, 70, 0, 14),
 						BorderSizePixel = 0,
 						BackgroundColor3 = themes.preset.outline,
 						Text = "",
@@ -5347,9 +5299,8 @@
 						Size = dim2(1, -4, 1, 0),
 						Position = dim2(0, 4, 0, -1),
 						BackgroundTransparency = 1,
-						TextTruncate = Enum.TextTruncate.AtEnd,
 						FontFace = library.font,
-						TextSize = 12,
+						TextSize = 11,
 						BackgroundColor3 = rgb(255, 255, 255)
 					})
 
@@ -5364,7 +5315,7 @@
 				end
 
 				-- Whitelist button
-				createActionButton(buttons_row, "Whitelist", function()
+				createActionButton(TextButton, "Whitelist", function()
 					local p = players:FindFirstChild(tostring(player))
 					if p and p ~= lp then
 						if library.playerlist_data[tostring(player)] then
@@ -5379,7 +5330,7 @@
 				end)
 				
 				-- Spectate button
-				createActionButton(buttons_row, "Spectate", function()
+				createActionButton(TextButton, "Spectate", function()
 					local p = players:FindFirstChild(tostring(player))
 					if p and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
 						workspace.CurrentCamera.CameraSubject = p.Character:FindFirstChildOfClass("Humanoid") or p.Character.HumanoidRootPart
@@ -5387,7 +5338,7 @@
 				end)
 				
 				-- Teleport button
-				createActionButton(buttons_row, "Teleport", function()
+				createActionButton(TextButton, "Teleport", function()
 					local p = players:FindFirstChild(tostring(player))
 					if p and p.Character and p.Character:FindFirstChild("HumanoidRootPart") and lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
 						lp.Character.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
