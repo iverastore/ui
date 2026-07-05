@@ -2376,7 +2376,7 @@
 
 			library:create("UIListLayout", {
 				Parent = elements,
-				Padding = dim(0, 4),
+				Padding = dim(0, 2),
 				HorizontalAlignment = Enum.HorizontalAlignment.Center,
 				SortOrder = Enum.SortOrder.LayoutOrder
 			})
@@ -4722,7 +4722,7 @@
 				BorderColor3 = rgb(0, 0, 0),
 				Text = "",
 				ZIndex = 2,
-				Size = dim2(1, -8, 0, 4),
+				Size = dim2(1, -8, 0, 0),
 				BorderSizePixel = 0,
 				BackgroundTransparency = 1,
 				TextXAlignment = Enum.TextXAlignment.Left,
