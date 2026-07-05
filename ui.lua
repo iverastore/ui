@@ -5461,6 +5461,7 @@
 			_visible = false,
 			_toolConn = nil,
 			_spinConn = nil,
+			_lastToolName = nil,
 		}
 
 		local thud_sgui = library:create("ScreenGui", {
@@ -5469,6 +5470,14 @@
 			Name = "",
 			DisplayOrder = 999998,
 		})
+
+		-- Remove from library.guis so the target HUD doesn't hide with the menu
+		for i, gui in ipairs(library.guis) do
+			if gui == thud_sgui then
+				table.remove(library.guis, i)
+				break
+			end
+		end
 
 		-- Container
 		local container = library:create("Frame", {
@@ -5727,22 +5736,26 @@
 				container.Visible = true
 			end
 
-			-- Avatar
-			pcall(function()
-				if player:IsA("Player") then
+			-- Names (do not wrap in pcall so they always show)
+			if player:IsA("Player") then
+				username.Text = player.Name
+				displayName.Text = player.DisplayName
+				pcall(function()
 					avatar.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. player.UserId .. "&width=150&height=150&format=png"
-					username.Text = player.Name
-					displayName.Text = player.DisplayName
-				elseif player:IsA("Model") then
-					avatar.Image = ""
-					username.Text = player.Name
-					displayName.Text = player.Name
-				end
-			end)
+				end)
+			elseif player:IsA("Model") then
+				avatar.Image = ""
+				username.Text = player.Name
+				displayName.Text = player.Name
+			else
+				username.Text = tostring(player)
+				displayName.Text = ""
+			end
+
+			local char = player:IsA("Player") and player.Character or player
 
 			-- Health
 			pcall(function()
-				local char = player:IsA("Player") and player.Character or player
 				if char then
 					local hum = char:FindFirstChildOfClass("Humanoid")
 					if hum then
@@ -5757,7 +5770,6 @@
 
 			-- Distance
 			pcall(function()
-				local char = player:IsA("Player") and player.Character or player
 				local myChar = lp.Character
 				if char and myChar then
 					local tRoot = char:FindFirstChild("HumanoidRootPart")
@@ -5771,66 +5783,70 @@
 
 			-- Current Tool
 			pcall(function()
-				local char = player:IsA("Player") and player.Character or player
 				if char then
 					local tool = char:FindFirstChildOfClass("Tool")
-					toolLabel.Text = "Tool: " .. (tool and tool.Name or "None")
+					local toolName = tool and tool.Name or "None"
+					toolLabel.Text = "Tool: " .. toolName
 
-					-- 3D spinning tool preview
-					if tool then
-						if toolClone then
-							toolClone:Destroy()
-							toolClone = nil
-						end
-						pcall(function()
-							toolClone = tool:Clone()
-							-- Strip scripts
-							for _, desc in next, toolClone:GetDescendants() do
-								if desc:IsA("BaseScript") or desc:IsA("LocalScript") then
-									desc:Destroy()
-								end
+					-- 3D spinning tool preview (only rebuild when tool changes)
+					local lastTool = cfg._lastToolName
+					if toolName ~= lastTool then
+						cfg._lastToolName = toolName
+						if tool then
+							if toolClone then
+								toolClone:Destroy()
+								toolClone = nil
 							end
-							toolClone.Parent = viewport
-
-							-- Calculate bounding box for camera
-							local cf, size = toolClone:GetBoundingBox()
-							local maxDim = max(size.X, size.Y, size.Z)
-							vpCamera.CFrame = cfr(cf.Position + vec3(0, 0, maxDim * 1.8), cf.Position)
-							
-							-- Spinning
-							if cfg._spinConn then
-								cfg._spinConn:Disconnect()
-							end
-							spinAngle = 0
-							cfg._spinConn = run.RenderStepped:Connect(function(dt)
-								if not toolClone or not toolClone.Parent then
-									if cfg._spinConn then
-										cfg._spinConn:Disconnect()
-										cfg._spinConn = nil
+							pcall(function()
+								toolClone = tool:Clone()
+								-- Strip scripts
+								for _, desc in next, toolClone:GetDescendants() do
+									if desc:IsA("BaseScript") or desc:IsA("LocalScript") then
+										desc:Destroy()
 									end
-									return
 								end
-								pcall(function()
-									spinAngle = spinAngle + dt * 2
-									local bCf, bSize = toolClone:GetBoundingBox()
-									local center = bCf.Position
-									local mDim = max(bSize.X, bSize.Y, bSize.Z)
-									local camDist = mDim * 1.8
-									vpCamera.CFrame = cfr(
-										center + vec3(cos(spinAngle) * camDist, mDim * 0.3, sin(spinAngle) * camDist),
-										center
-									)
+								toolClone.Parent = viewport
+
+								-- Calculate bounding box for camera
+								local cf, size = toolClone:GetBoundingBox()
+								local maxDim = max(size.X, size.Y, size.Z)
+								vpCamera.CFrame = cfr(cf.Position + vec3(0, 0, maxDim * 1.8), cf.Position)
+
+								-- Spinning
+								if cfg._spinConn then
+									cfg._spinConn:Disconnect()
+								end
+								spinAngle = 0
+								cfg._spinConn = run.RenderStepped:Connect(function(dt)
+									if not toolClone or not toolClone.Parent then
+										if cfg._spinConn then
+											cfg._spinConn:Disconnect()
+											cfg._spinConn = nil
+										end
+										return
+									end
+									pcall(function()
+										spinAngle = spinAngle + dt * 2
+										local bCf, bSize = toolClone:GetBoundingBox()
+										local center = bCf.Position
+										local mDim = max(bSize.X, bSize.Y, bSize.Z)
+										local camDist = mDim * 1.8
+										vpCamera.CFrame = cfr(
+											center + vec3(cos(spinAngle) * camDist, mDim * 0.3, sin(spinAngle) * camDist),
+											center
+										)
+									end)
 								end)
 							end)
-						end)
-					else
-						if toolClone then
-							toolClone:Destroy()
-							toolClone = nil
-						end
-						if cfg._spinConn then
-							cfg._spinConn:Disconnect()
-							cfg._spinConn = nil
+						else
+							if toolClone then
+								toolClone:Destroy()
+								toolClone = nil
+							end
+							if cfg._spinConn then
+								cfg._spinConn:Disconnect()
+								cfg._spinConn = nil
+							end
 						end
 					end
 				end
