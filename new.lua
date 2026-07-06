@@ -2785,20 +2785,20 @@ local Library do
                     Parent = Items["MainFrame"].Instance,
                     Name = "\0",
                     BackgroundTransparency = 1,
-                    Position = UDim2New(0, 0, 0, 46),
+                    Position = UDim2New(0, 0, 0, 40),
                     BorderColor3 = FromRGB(0, 0, 0),
-                    Size = UDim2New(0, 148, 1, -71),
+                    Size = UDim2New(0, 50, 1, -65),
                     BorderSizePixel = 0,
                     BackgroundColor3 = FromRGB(255, 255, 255)
                 })
-                
+
                 Items["PageHolder"] = Instances:Create("Frame", {
                     Parent = Items["Side"].Instance,
                     Name = "\0",
                     BackgroundTransparency = 1,
-                    Position = UDim2New(0, 0, 0, 13),
+                    Position = UDim2New(0, 0, 0, 10),
                     BorderColor3 = FromRGB(0, 0, 0),
-                    Size = UDim2New(1, 0, 1, -13),
+                    Size = UDim2New(1, 0, 1, -10),
                     BorderSizePixel = 0,
                     BackgroundColor3 = FromRGB(255, 255, 255)
                 })
@@ -2931,11 +2931,59 @@ local Library do
                     Name = "\0",
                     Visible = false,
                     BackgroundTransparency = 1,
-                    Position = UDim2New(0, 149, 0, 45),
+                    Position = UDim2New(0, 55, 0, 40),
                     BorderColor3 = FromRGB(0, 0, 0),
-                    Size = UDim2New(1, -149, 1, -70),
+                    Size = UDim2New(1, -70, 1, -65),
                     BorderSizePixel = 0,
                     BackgroundColor3 = FromRGB(255, 255, 255)
+                })
+
+                Items["SubTabsContainer"] = Instances:Create("Frame", {
+                    Parent = Items["PageContent"].Instance,
+                    Name = "\0",
+                    BackgroundTransparency = 1,
+                    BorderColor3 = FromRGB(0, 0, 0),
+                    Size = UDim2New(1, 0, 0, 35),
+                    BorderSizePixel = 0,
+                    BackgroundColor3 = FromRGB(255, 255, 255)
+                })
+
+                Instances:Create("UIListLayout", {
+                    Parent = Items["SubTabsContainer"].Instance,
+                    Name = "\0",
+                    FillDirection = Enum.FillDirection.Horizontal,
+                    Padding = UDimNew(0, 5),
+                    SortOrder = Enum.SortOrder.LayoutOrder
+                })
+
+                Items["SectionsContainer"] = Instances:Create("Frame", {
+                    Parent = Items["PageContent"].Instance,
+                    Name = "\0",
+                    BackgroundTransparency = 1,
+                    BorderColor3 = FromRGB(0, 0, 0),
+                    Position = UDim2New(0, 0, 0, 35),
+                    Size = UDim2New(1, 0, 1, -35),
+                    BorderSizePixel = 0,
+                    BackgroundColor3 = FromRGB(255, 255, 255)
+                })
+
+                Instances:Create("UIPadding", {
+                    Parent = Items["SectionsContainer"].Instance,
+                    Name = "\0",
+                    PaddingTop = UDimNew(0, 15),
+                    PaddingBottom = UDimNew(0, 15),
+                    PaddingRight = UDimNew(0, 15),
+                    PaddingLeft = UDimNew(0, 15)
+                })
+
+                Instances:Create("UIListLayout", {
+                    Parent = Items["SectionsContainer"].Instance,
+                    Name = "\0",
+                    FillDirection = Enum.FillDirection.Horizontal,
+                    HorizontalFlex = Enum.UIFlexAlignment.Fill,
+                    Padding = UDimNew(0, 15),
+                    SortOrder = Enum.SortOrder.LayoutOrder,
+                    VerticalFlex = Enum.UIFlexAlignment.Fill
                 })
 
                 Items["SubPages"] = Instances:Create("Frame", {
@@ -2952,6 +3000,8 @@ local Library do
                 Instances:Create("UIListLayout", {
                     Parent = Items["SubPages"].Instance,
                     Name = "\0",
+                    FillDirection = Enum.FillDirection.Horizontal,
+                    Padding = UDimNew(0, 5),
                     SortOrder = Enum.SortOrder.LayoutOrder
                 })    
 
@@ -3044,22 +3094,22 @@ local Library do
                 Active = false
             }
 
-            -- Ensure SubPages container exists
-            if not Page.Page.Items["SubPages"] then
-                Page.Page.Items["SubPages"] = {
+            -- Ensure SubTabsContainer exists
+            if not Page.Page.Items["SubTabsContainer"] then
+                Page.Page.Items["SubTabsContainer"] = {
                     Instance = Instance.new("Frame"),
                     SubPages = {}
                 }
-                Page.Page.Items["SubPages"].Instance.Name = "SubPages"
-                Page.Page.Items["SubPages"].Instance.Parent = Page.Page.Instance
-                Page.Page.Items["SubPages"].Instance.Size = UDim2.new(1, 0, 1, 0)
-                Page.Page.Items["SubPages"].Instance.BackgroundTransparency = 1
-                Page.Page.Items["SubPages"].Instance.BorderSizePixel = 0
+                Page.Page.Items["SubTabsContainer"].Instance.Name = "SubTabsContainer"
+                Page.Page.Items["SubTabsContainer"].Instance.Parent = Page.Page.Instance
+                Page.Page.Items["SubTabsContainer"].Instance.Size = UDim2.new(1, 0, 0, 35)
+                Page.Page.Items["SubTabsContainer"].Instance.BackgroundTransparency = 1
+                Page.Page.Items["SubTabsContainer"].Instance.BorderSizePixel = 0
             end
 
             local Items = { } do
                 Items["Inactive"] = Instances:Create("TextButton", {
-                    Parent = Page.Page.Items["SubPages"].Instance,
+                    Parent = Page.Page.Items["SubTabsContainer"].Instance,
                     Name = "\0",
                     FontFace = Library.Font,
                     TextColor3 = FromRGB(0, 0, 0),
@@ -3067,10 +3117,11 @@ local Library do
                     Text = "",
                     AutoButtonColor = false,
                     BackgroundTransparency = 1,
-                    Size = UDim2New(1, 0, 0, 30),
+                    Size = UDim2New(0, 0, 1, 0),
                     BorderSizePixel = 0,
                     TextSize = 14,
-                    BackgroundColor3 = FromRGB(255, 255, 255)
+                    BackgroundColor3 = FromRGB(255, 255, 255),
+                    AutomaticSize = Enum.AutomaticSize.X
                 })
                 
                 Items["Accent1"] = Instances:Create("Frame", {
@@ -3131,7 +3182,9 @@ local Library do
                 Instances:Create("UIGradient", {
                     Parent = Items["Background"].Instance,
                     Name = "\0",
-                    Transparency = NumSequence{NumSequenceKeypoint(0, 0.956250011920929), NumSequenceKeypoint(0.06, 0.9750000238418579), NumSequenceKeypoint(0.739, 1), NumSequenceKeypoint(1, 1)}
+                    Color = RGBSequence{RGBSequenceKeypoint(0, FromRGB(26, 26, 28)), RGBSequenceKeypoint(1, FromRGB(22, 22, 24))},
+                    Rotation = 90,
+                    Transparency = NumSequence{NumSequenceKeypoint(0, 0.9), NumSequenceKeypoint(1, 0.95)}
                 })                
 
                 Items["PageContent"] = Instances:Create("Frame", {
@@ -3144,18 +3197,47 @@ local Library do
                     Visible = false,
                     BackgroundColor3 = FromRGB(255, 255, 255)
                 })
-                
-                Instances:Create("UIPadding", {
+
+                Items["SubTabsContainer"] = Instances:Create("Frame", {
                     Parent = Items["PageContent"].Instance,
+                    Name = "\0",
+                    BackgroundTransparency = 1,
+                    BorderColor3 = FromRGB(0, 0, 0),
+                    Size = UDim2New(1, 0, 0, 35),
+                    BorderSizePixel = 0,
+                    BackgroundColor3 = FromRGB(255, 255, 255)
+                })
+
+                Instances:Create("UIListLayout", {
+                    Parent = Items["SubTabsContainer"].Instance,
+                    Name = "\0",
+                    FillDirection = Enum.FillDirection.Horizontal,
+                    Padding = UDimNew(0, 5),
+                    SortOrder = Enum.SortOrder.LayoutOrder
+                })
+
+                Items["SectionsContainer"] = Instances:Create("Frame", {
+                    Parent = Items["PageContent"].Instance,
+                    Name = "\0",
+                    BackgroundTransparency = 1,
+                    BorderColor3 = FromRGB(0, 0, 0),
+                    Position = UDim2New(0, 0, 0, 35),
+                    Size = UDim2New(1, 0, 1, -35),
+                    BorderSizePixel = 0,
+                    BackgroundColor3 = FromRGB(255, 255, 255)
+                })
+
+                Instances:Create("UIPadding", {
+                    Parent = Items["SectionsContainer"].Instance,
                     Name = "\0",
                     PaddingTop = UDimNew(0, 15),
                     PaddingBottom = UDimNew(0, 15),
                     PaddingRight = UDimNew(0, 15),
                     PaddingLeft = UDimNew(0, 15)
                 })
-                
+
                 Instances:Create("UIListLayout", {
-                    Parent = Items["PageContent"].Instance,
+                    Parent = Items["SectionsContainer"].Instance,
                     Name = "\0",
                     FillDirection = Enum.FillDirection.Horizontal,
                     HorizontalFlex = Enum.UIFlexAlignment.Fill,
@@ -3180,15 +3262,15 @@ local Library do
             local Debounce = false
 
             function Page:Turn(Bool)
-                if Debounce then 
-                    return 
+                if Debounce then
+                    return
                 end
 
-                Page.Active = Bool 
-                
+                Page.Active = Bool
+
                 Debounce = true
-                Items["PageContent"].Instance.Visible = Bool 
-                Items["PageContent"].Instance.Parent = Bool and Page.Page.Items["PageContent"].Instance or Library.UnusedHolder.Instance
+                Items["PageContent"].Instance.Visible = Bool
+                Items["PageContent"].Instance.Parent = Bool and Page.Page.Items["SectionsContainer"].Instance or Library.UnusedHolder.Instance
 
                 if Page.Active then
                     Items["Text"]:ChangeItemTheme({TextColor3 = "Accent"})
@@ -3260,7 +3342,7 @@ local Library do
 
             local Items = { } do
                 Items["Outline"] = Instances:Create("Frame", {
-                    Parent = Section.Page.Items["PageContent"].Instance,
+                    Parent = Section.Page.Items["SectionsContainer"].Instance,
                     Name = "\0",
                     ClipsDescendants = true,
                     BorderColor3 = FromRGB(0, 0, 0),
