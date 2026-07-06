@@ -69,7 +69,7 @@
 
 -- library init
 	local library = {
-		directory = "Atlanta",
+		directory = "alternate.lol",
 		folders = {
 			"/fonts",
 			"/configs",
@@ -5137,74 +5137,6 @@
 					BackgroundColor3 = rgb(255, 255, 255)
 				})
 
-				local player_name = library:create("TextLabel", {
-					Parent = top_row,
-					FontFace = library.font,
-					TextColor3 = themes.preset.text,
-					BorderColor3 = rgb(0, 0, 0),
-					Text = tostring(player),
-					BorderSizePixel = 0,
-					BackgroundTransparency = 1,
-					TextXAlignment = Enum.TextXAlignment.Left,
-					TextTruncate = Enum.TextTruncate.AtEnd,
-					Size = dim2(0.6, 0, 1, 0),
-					TextSize = 12,
-					LayoutOrder = -100, 
-					BackgroundColor3 = rgb(255, 255, 255)
-				})
-				library:apply_theme(player_name, "text", "TextColor3") 
-				library:apply_theme(player_name, "accent", "TextColor3") 
-								
-				-- local TextLabel = library:create("TextLabel", {
-				--     Parent = TextButton,
-				--     Name = "",
-				--     FontFace = library.font,
-				--     TextColor3 = themes.preset.text,
-				--     BorderColor3 = rgb(0, 0, 0),
-				--     Text = "None",
-				--     BackgroundTransparency = 1,
-				--     TextXAlignment = Enum.TextXAlignment.Left,
-				--     BorderSizePixel = 0,
-				--     AutomaticSize = Enum.AutomaticSize.Y,
-				--     TextSize = 12,
-				--     BackgroundColor3 = rgb(255, 255, 255)
-				-- })
-								
-				-- local Frame = library:create("Frame", {
-				--     Parent = TextLabel,
-				--     Name = "",
-				--     Position = dim2(0, -10, 0, 0),
-				--     BorderColor3 = rgb(0, 0, 0),
-				--     Size = dim2(0, 1, 0, 12),
-				--     BorderSizePixel = 0,
-				--     BackgroundColor3 = themes.preset.outline
-				-- }) library:apply_theme(main_holder, "outline", "BackgroundColor3") 
-				
-				local priority_text = library:create("TextLabel", {
-					Parent = top_row,
-					Name = "",
-					FontFace = library.font,
-					TextColor3 = tostring(player) ~= lp.Name and themes.preset.text or rgb(0, 0, 255),
-					BorderColor3 = rgb(0, 0, 0),
-					Text = tostring(player) ~= lp.Name and "Neutral" or "LocalPlayer",
-					BackgroundTransparency = 1,
-					TextXAlignment = Enum.TextXAlignment.Left,
-					BorderSizePixel = 0,
-					Size = dim2(0.4, 0, 1, 0),
-					TextSize = 12,
-					BackgroundColor3 = rgb(255, 255, 255)
-				})
-
-				local Frame = library:create("Frame", {
-					Parent = priority_text,
-					Name = "",
-					Position = dim2(0, -10, 0, 0),
-					BorderColor3 = rgb(0, 0, 0),
-					Size = dim2(0, 1, 0, 12),
-					BorderSizePixel = 0,
-					BackgroundColor3 = themes.preset.outline
-				}) library:apply_theme(main_holder, "outline", "BackgroundColor3") 
-				
 				-- Vertical layout: name/priority on top, action buttons below in info area
 				local rowLayout = library:create("UIListLayout", {
 					Parent = TextButton,
@@ -5230,6 +5162,49 @@
 					SortOrder = Enum.SortOrder.LayoutOrder,
 					Padding = dim(0, 4)
 				})
+
+				local player_name = library:create("TextLabel", {
+					Parent = top_row,
+					FontFace = library.font,
+					TextColor3 = themes.preset.text,
+					BorderColor3 = rgb(0, 0, 0),
+					Text = tostring(player),
+					BorderSizePixel = 0,
+					BackgroundTransparency = 1,
+					TextXAlignment = Enum.TextXAlignment.Left,
+					TextTruncate = Enum.TextTruncate.AtEnd,
+					Size = dim2(0.6, 0, 1, 0),
+					TextSize = 12,
+					LayoutOrder = -100, 
+					BackgroundColor3 = rgb(255, 255, 255)
+				})
+				library:apply_theme(player_name, "text", "TextColor3") 
+				library:apply_theme(player_name, "accent", "TextColor3") 
+				
+				local priority_text = library:create("TextLabel", {
+					Parent = top_row,
+					Name = "",
+					FontFace = library.font,
+					TextColor3 = tostring(player) ~= lp.Name and themes.preset.text or rgb(0, 0, 255),
+					BorderColor3 = rgb(0, 0, 0),
+					Text = tostring(player) ~= lp.Name and "Neutral" or "LocalPlayer",
+					BackgroundTransparency = 1,
+					TextXAlignment = Enum.TextXAlignment.Left,
+					BorderSizePixel = 0,
+					Size = dim2(0.4, 0, 1, 0),
+					TextSize = 12,
+					BackgroundColor3 = rgb(255, 255, 255)
+				})
+
+				local Frame = library:create("Frame", {
+					Parent = priority_text,
+					Name = "",
+					Position = dim2(0, -10, 0, 0),
+					BorderColor3 = rgb(0, 0, 0),
+					Size = dim2(0, 1, 0, 12),
+					BorderSizePixel = 0,
+					BackgroundColor3 = themes.preset.outline
+				}) library:apply_theme(main_holder, "outline", "BackgroundColor3") 
 
 				local buttons_holder = library:create("Frame", {
 					Parent = TextButton,
