@@ -2587,18 +2587,18 @@ local Library do
                     AnchorPoint = Vector2New(0.5, 0.5),
                     Position = UDim2New(0.5, 0, 0.5, 0),
                     BorderColor3 = FromRGB(0, 0, 0),
-                    Size = UDim2New(0, 680, 0, 481),
+                    Size = UDim2New(0, 650, 0, 450),
                     BorderSizePixel = 0,
-                    BackgroundColor3 = FromRGB(20, 20, 20)
+                    BackgroundColor3 = FromRGB(18, 18, 20)
                 })
-                
+
                 Items["MainFrame"]:MakeDraggable()
-                Items["MainFrame"]:MakeResizeable(Vector2New(680, 481), Vector2New(9999, 9999))
+                Items["MainFrame"]:MakeResizeable(Vector2New(650, 450), Vector2New(9999, 9999))
 
                 Instances:Create("UICorner", {
                     Parent = Items["MainFrame"].Instance,
                     Name = "\0",
-                    CornerRadius = UDimNew(0, 0)
+                    CornerRadius = UDimNew(0, 8)
                 })
                 
                 Items["Bottom"] = Instances:Create("Frame", {
@@ -2683,15 +2683,15 @@ local Library do
                     Parent = Items["MainFrame"].Instance,
                     Name = "\0",
                     BorderColor3 = FromRGB(0, 0, 0),
-                    Size = UDim2New(1, 0, 0, 46),
+                    Size = UDim2New(1, 0, 0, 40),
                     BorderSizePixel = 0,
-                    BackgroundColor3 = FromRGB(26, 26, 26)
+                    BackgroundColor3 = FromRGB(22, 22, 24)
                 })
-                
+
                 Instances:Create("UICorner", {
                     Parent = Items["Top"].Instance,
                     Name = "\0",
-                    CornerRadius = UDimNew(0, 0)
+                    CornerRadius = UDimNew(0, 8)
                 })
                 
                 Instances:Create("Frame", {
@@ -2722,40 +2722,18 @@ local Library do
                     Transparency = NumSequence{NumSequenceKeypoint(0, 1), NumSequenceKeypoint(0.025, 0.800000011920929), NumSequenceKeypoint(0.106, 0.7250000238418579), NumSequenceKeypoint(0.22, 0.8500000238418579), NumSequenceKeypoint(1, 1)}
                 })
                 
-                Items["Logo"] = Instances:Create("TextLabel", {
+                Items["Logo"] = Instances:Create("ImageLabel", {
                     Parent = Items["Top"].Instance,
                     Name = "\0",
-                    FontFace = Library.Font,
-                    TextColor3 = FromRGB(166, 147, 243),
                     BorderColor3 = FromRGB(0, 0, 0),
                     AnchorPoint = Vector2New(0, 0.5),
-                    Text = "",
+                    Image = Window.Logo,
                     BackgroundTransparency = 1,
                     Position = UDim2New(0, 12, 0.5, 0),
-                    Size = UDim2New(0, 150, 0, 32),
+                    Size = UDim2New(0, 32, 0, 32),
                     BorderSizePixel = 0,
-                    TextXAlignment = Enum.TextXAlignment.Left,
-                    TextSize = 18,
                     BackgroundColor3 = FromRGB(255, 255, 255)
-                })  Items["Logo"]:AddToTheme({TextColor3 = "Accent"})
-
-                -- Typewriter loop for alternate.lol text
-                Library:Thread(function()
-                    local fullText = "alternate.lol"
-                    while task.wait(1.5) do
-                        -- type in
-                        for i = 1, #fullText do
-                            Items["Logo"].Instance.Text = string.sub(fullText, 1, i)
-                            task.wait(0.12)
-                        end
-                        task.wait(4.5)
-                        -- type out
-                        for i = #fullText, 0, -1 do
-                            Items["Logo"].Instance.Text = string.sub(fullText, 1, i)
-                            task.wait(0.08)
-                        end
-                    end
-                end)
+                })
                 
                 Items["Liner"] = Instances:Create("Frame", {
                     Parent = Items["Top"].Instance,
@@ -3065,6 +3043,19 @@ local Library do
                 Items = { },
                 Active = false
             }
+
+            -- Ensure SubPages container exists
+            if not Page.Page.Items["SubPages"] then
+                Page.Page.Items["SubPages"] = {
+                    Instance = Instance.new("Frame"),
+                    SubPages = {}
+                }
+                Page.Page.Items["SubPages"].Instance.Name = "SubPages"
+                Page.Page.Items["SubPages"].Instance.Parent = Page.Page.Instance
+                Page.Page.Items["SubPages"].Instance.Size = UDim2.new(1, 0, 1, 0)
+                Page.Page.Items["SubPages"].Instance.BackgroundTransparency = 1
+                Page.Page.Items["SubPages"].Instance.BorderSizePixel = 0
+            end
 
             local Items = { } do
                 Items["Inactive"] = Instances:Create("TextButton", {
