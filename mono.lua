@@ -3082,6 +3082,13 @@
 library.CreateWindow = library.window
 library.Page = library.Tab
 
+function library:SetVisibility(vis)
+    local main_gui = self.items and (self.items["object"] or self.items["button"] or self.items["gear_holder"] or self.items.text_label)
+    if main_gui then
+        main_gui.Visible = vis
+    end
+end
+
 function library:Watermark(options)
     local obj = {
         SetVisibility = function(self, bool) end
