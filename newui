@@ -2587,13 +2587,13 @@ local Library do
                     AnchorPoint = Vector2New(0.5, 0.5),
                     Position = UDim2New(0.5, 0, 0.5, 0),
                     BorderColor3 = FromRGB(0, 0, 0),
-                    Size = UDim2New(0, 786, 0, 481),
+                    Size = UDim2New(0, 680, 0, 481),
                     BorderSizePixel = 0,
                     BackgroundColor3 = FromRGB(20, 20, 20)
                 })
                 
                 Items["MainFrame"]:MakeDraggable()
-                Items["MainFrame"]:MakeResizeable(Vector2New(786, 481), Vector2New(9999, 9999))
+                Items["MainFrame"]:MakeResizeable(Vector2New(680, 481), Vector2New(9999, 9999))
 
                 Instances:Create("UICorner", {
                     Parent = Items["MainFrame"].Instance,
@@ -2722,20 +2722,40 @@ local Library do
                     Transparency = NumSequence{NumSequenceKeypoint(0, 1), NumSequenceKeypoint(0.025, 0.800000011920929), NumSequenceKeypoint(0.106, 0.7250000238418579), NumSequenceKeypoint(0.22, 0.8500000238418579), NumSequenceKeypoint(1, 1)}
                 })
                 
-                Items["Logo"] = Instances:Create("ImageLabel", {
+                Items["Logo"] = Instances:Create("TextLabel", {
                     Parent = Items["Top"].Instance,
                     Name = "\0",
-                    ImageColor3 = FromRGB(166, 147, 243),
-                    ScaleType = Enum.ScaleType.Fit,
+                    FontFace = Library.Font,
+                    TextColor3 = FromRGB(166, 147, 243),
                     BorderColor3 = FromRGB(0, 0, 0),
                     AnchorPoint = Vector2New(0, 0.5),
-                    Image = Window.Logo,
+                    Text = "",
                     BackgroundTransparency = 1,
-                    Position = UDim2New(0, 6, 0.5, 0),
-                    Size = UDim2New(0, 32, 0, 32),
+                    Position = UDim2New(0, 12, 0.5, 0),
+                    Size = UDim2New(0, 150, 0, 32),
                     BorderSizePixel = 0,
+                    TextXAlignment = Enum.TextXAlignment.Left,
+                    TextSize = 18,
                     BackgroundColor3 = FromRGB(255, 255, 255)
-                })  Items["Logo"]:AddToTheme({ImageColor3 = "Accent"})
+                })  Items["Logo"]:AddToTheme({TextColor3 = "Accent"})
+
+                -- Typewriter loop for alternate.lol text
+                Library:Thread(function()
+                    local fullText = "alternate.lol"
+                    while task.wait(1.5) do
+                        -- type in
+                        for i = 1, #fullText do
+                            Items["Logo"].Instance.Text = string.sub(fullText, 1, i)
+                            task.wait(0.12)
+                        end
+                        task.wait(4.5)
+                        -- type out
+                        for i = #fullText, 0, -1 do
+                            Items["Logo"].Instance.Text = string.sub(fullText, 1, i)
+                            task.wait(0.08)
+                        end
+                    end
+                end)
                 
                 Items["Liner"] = Instances:Create("Frame", {
                     Parent = Items["Top"].Instance,
@@ -5368,7 +5388,32 @@ local Library do
                     end
                 })
 
-                local AccentLabel = MenuSection:Label("Accent Color")
+                MenuSection:Dropdown({
+                    Name = "GUI Theme Mode",
+                    Flag = "GUIThemeMode",
+                    Items = {"Default Purple", "Vibrant Red", "Deep Blue", "Forest Green"},
+                    Default = "Default Purple",
+                    Callback = function(Value)
+                        local accentCol = FromRGB(166, 147, 243)
+                        local darkCol = FromRGB(110, 97, 161)
+                        if Value == "Vibrant Red" then
+                            accentCol = FromRGB(255, 75, 75)
+                            darkCol = FromRGB(170, 30, 30)
+                        elseif Value == "Deep Blue" then
+                            accentCol = FromRGB(75, 120, 255)
+                            darkCol = FromRGB(30, 60, 170)
+                        elseif Value == "Forest Green" then
+                            accentCol = FromRGB(75, 255, 120)
+                            darkCol = FromRGB(30, 170, 60)
+                        end
+                        Library.Theme.Accent = accentCol
+                        Library.Theme["Dark Accent"] = darkCol
+                        Library:ChangeTheme("Accent", accentCol)
+                        Library:ChangeTheme("Dark Accent", darkCol)
+                    end
+                })
+
+                local AccentLabel = MenuSection:Label("Custom Accent Color")
                 AccentLabel:Colorpicker({
                     Flag = "AccentColor",
                     Default = Library.Theme.Accent,
