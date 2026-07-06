@@ -3957,7 +3957,7 @@ local Library do
                     Name = "\0",
                     BackgroundTransparency = 1,
                     BorderColor3 = FromRGB(0, 0, 0),
-                    Size = UDim2New(1, 0, 0, 32),
+                    Size = UDim2New(1, 0, 0, 28),
                     BorderSizePixel = 0,
                     BackgroundColor3 = FromRGB(255, 255, 255)
                 })
@@ -3967,9 +3967,9 @@ local Library do
                     Text = "",
                     AutoButtonColor = false,
                     Name = "\0",
-                    Position = UDim2New(0, 17, 0, 20),
+                    Position = UDim2New(0, 17, 0, 18),
                     BorderColor3 = FromRGB(0, 0, 0),
-                    Size = UDim2New(1, -50, 0, 8),
+                    Size = UDim2New(1, -50, 0, 6),
                     BorderSizePixel = 2,
                     BackgroundColor3 = FromRGB(20, 20, 20)
                 })
@@ -4027,7 +4027,7 @@ local Library do
                     Name = "\0",
                     AnchorPoint = Vector2New(0.5, 0.5),
                     Position = UDim2New(0.5, 0, 0.5, 0),
-                    Size = UDim2New(0, 0, 0, 12),
+                    Size = UDim2New(0, 0, 0, 10),
                     BorderColor3 = FromRGB(0, 0, 0),
                     BorderSizePixel = 0,
                     BackgroundColor3 = FromRGB(20, 20, 20),
@@ -4045,8 +4045,8 @@ local Library do
                 Instances:Create("UIPadding", {
                     Parent = Items["ValueBox"].Instance,
                     Name = "\0",
-                    PaddingLeft = UDimNew(0, 3),
-                    PaddingRight = UDimNew(0, 3)
+                    PaddingLeft = UDimNew(0, 2),
+                    PaddingRight = UDimNew(0, 2)
                 })
                 
                 Items["Value"] = Instances:Create("TextLabel", {
