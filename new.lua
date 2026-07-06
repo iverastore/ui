@@ -3091,6 +3091,7 @@ local Library do
 
                 Name = Data.Name or Data.name or "SubPage",
                 Items = { },
+                SubPages = { },
                 Active = false
             }
 
