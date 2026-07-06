@@ -3107,6 +3107,11 @@ local Library do
                 Page.Page.Items["SubTabsContainer"].Instance.BorderSizePixel = 0
             end
 
+            -- Ensure SubPages table exists for storing subpage objects
+            if not Page.Page.SubPages then
+                Page.Page.SubPages = {}
+            end
+
             local Items = { } do
                 Items["Inactive"] = Instances:Create("TextButton", {
                     Parent = Page.Page.Items["SubTabsContainer"].Instance,
