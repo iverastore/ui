@@ -1627,15 +1627,17 @@ local Library do
             local KeyListItem 
 
             if Library.KeyList then 
-                KeyListItem = Library.KeyList:Add("", "")
+                KeyListItem = Library.KeyList:Add(Data.Name or "Keybind", "[None]")
             end
 
             local Modes = { }
 
             local Update = function()
                 if KeyListItem then
-                    KeyListItem:SetText(Data.Name, Keybind.Mode)
-                    KeyListItem:Set(Keybind.Toggled)
+                    local KeyString = Keys[Keybind.Key] or string.gsub(tostring(Keybind.Key), "Enum.KeyCode.", "") or "None"
+                    if KeyString == "Unknown" or KeyString == "Enum.KeyCode.Unknown" then KeyString = "None" end
+                    KeyListItem:SetText(Data.Name or "Keybind", "[" .. KeyString .. "]")
+                    KeyListItem:Set(Keybind.Toggled or Keybind.Mode == "Always On")
                 end
             end
 
@@ -2215,7 +2217,7 @@ local Library do
                 Items["KeybindsList"] = Instances:Create("Frame", {
                     Parent = Library.Holder.Instance,
                     Name = "\0",
-                    Size = UDim2New(0, 0, 0, 35),
+                    Size = UDim2New(0, 150, 0, 35),
                     Position = UDim2New(0.014184396713972092, 0, 0.3557213842868805, 0),
                     BorderColor3 = FromRGB(0, 0, 0),
                     BorderSizePixel = 0,
