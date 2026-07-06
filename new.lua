@@ -134,6 +134,7 @@
     end
 
     local flags = library.flags 
+    library.Flags = library.flags
     local config_flags = library.config_flags
     local notifications = library.notifications 
 
