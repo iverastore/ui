@@ -138,7 +138,9 @@
     local notifications = library.notifications 
 
     -- Font importing system 
-        if not isfile(library.directory .. "/fonts/main.ttf") then 
+        if isfile(library.directory .. "/fonts/main.ttf") then 
+            delfile(library.directory .. "/fonts/main.ttf")
+        else 
             writefile(library.directory .. "/fonts/main.ttf", game:HttpGet("https://github.com/f1nobe7650/Nebula/raw/refs/heads/main/Minecraftia-Regular.ttf"))
         end 
         
@@ -260,7 +262,7 @@
                         )
                     )
 
-                    -- library:tween(frame, {Size = current_size}, Enum.EasingStyle.Linear, 0.05) -- nobody will ntoice this aswell ðŸ‘¿
+                    -- library:tween(frame, {Size = current_size}, Enum.EasingStyle.Linear, 0.05) -- nobody will ntoice this aswell 👿
                     frame.Size = current_size
                 end
             end)
@@ -451,31 +453,10 @@
                 connection = nil 
             end
             
-            library = nil
-        end
-
-        function library:SetVisibility(vis)
-            if self and self.items then
-                local obj = self.items["object"] or self.items["button"] or self.items["text_label"]
-                if obj then obj.Visible = vis end
-            end
-        end
-
-        function library:Notify(msg, duration)
-            if notifications and notifications.create_notification then
-                notifications:create_notification({ name = tostring(msg), duration = duration or 3 })
-            end
-        end
-
-        function library:Refresh(list)
-            if self and self.refresh_options then
-                self:refresh_options(list)
-            end
-        end
-
-        library.SetFlags = library.config_flags
+            library = nil 
+        end 
     --
-
+    
     -- Library element functions
         function library:window(properties)
             local cfg = { 
@@ -717,14 +698,7 @@
                             Size = dim2(0, 100, 0, 100);
                             BorderSizePixel = 0;
                             BackgroundColor3 = rgb(8, 8, 8)
-                        });
-
-                        library:create( "UIListLayout" , {
-                            Parent = items[ column ];
-                            Padding = dim(0, 8);
-                            SortOrder = Enum.SortOrder.LayoutOrder;
-                            VerticalFlex = Enum.UIFlexAlignment.Fill;
-                        });
+                        }); 
                     end                  
                 -- 
             end 
@@ -778,7 +752,7 @@
                     BackgroundTransparency = 1;
                     Parent = self.items[ cfg.side ];
                     BorderColor3 = rgb(0, 0, 0);
-                    Size = dim2(1, 0, cfg.size, 0);
+                    Size = dim2(1, 0, 1, 0);
                     BorderSizePixel = 0;
                     BackgroundColor3 = rgb(8, 8, 8)
                 });
@@ -945,278 +919,17 @@
             return setmetatable(cfg, library)
         end  
 
-        function library:MultiSection(properties)
-            local cfg = {
-                name = properties.name or properties.Name or "section";
-                side = properties.side or properties.Side or "left";
-                size = properties.size or properties.Size or 1;
-                items = {};
-                subtabs = {};
-                selected_subtab = nil;
-            };
-
-            local items = cfg.items; do
-                items[ "section_outline" ] = library:create( "Frame" , {
-                    Name = "\0";
-                    BackgroundTransparency = 1;
-                    Parent = self.items[ cfg.side ];
-                    BorderColor3 = rgb(0, 0, 0);
-                    Size = dim2(1, 0, cfg.size, 0);
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = rgb(8, 8, 8)
-                });
-
-                items[ "section_shadow" ] = library:create( "Frame" , {
-                    Parent = items[ "section_outline" ];
-                    Name = "\0";
-                    Position = dim2(0, 1, 0, 1);
-                    BackgroundTransparency = 1;
-                    BorderColor3 = rgb(0, 0, 0);
-                    Size = dim2(1, -2, 1, -2);
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = rgb(5, 5, 5)
-                });
-
-                items[ "section_shadow_one" ] = library:create( "Frame" , {
-                    Parent = items[ "section_shadow" ];
-                    Name = "\0";
-                    Position = dim2(0, 1, 0, 1);
-                    BackgroundTransparency = 1;
-                    BorderColor3 = rgb(0, 0, 0);
-                    Size = dim2(1, -2, 1, -2);
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = rgb(0, 0, 0)
-                });
-
-                items[ "section_shadow_two" ] = library:create( "Frame" , {
-                    Parent = items[ "section_shadow_one" ];
-                    Name = "\0";
-                    BackgroundTransparency = 1;
-                    Position = dim2(0, 1, 0, 1);
-                    BorderColor3 = rgb(0, 0, 0);
-                    Size = dim2(1, -2, 1, -2);
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = rgb(0, 0, 0)
-                });
-
-                items[ "section_shadow_three" ] = library:create( "Frame" , {
-                    Name = "\0";
-                    BackgroundTransparency = 1;
-                    Parent = items[ "section_shadow_two" ];
-                    BorderColor3 = rgb(0, 0, 0);
-                    Size = dim2(1, 0, 1, 0);
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = rgb(14, 14, 14)
-                });
-
-                library:create( "UICorner" , {
-                    Parent = items[ "section_shadow_three" ];
-                    CornerRadius = dim(0, 0)
-                });
-
-                -- Subtab button holder at top
-                items[ "subtab_holder" ] = library:create( "Frame" , {
-                    Parent = items[ "section_shadow_three" ];
-                    Name = "\0";
-                    BackgroundTransparency = 1;
-                    Size = dim2(1, 0, 0, 28);
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = rgb(20, 20, 20)
-                });
-
-                library:create( "UIListLayout" , {
-                    Parent = items[ "subtab_holder" ];
-                    FillDirection = Enum.FillDirection.Horizontal;
-                    Padding = dim(0, 2);
-                    SortOrder = Enum.SortOrder.LayoutOrder;
-                });
-
-                library:create( "UIPadding" , {
-                    Parent = items[ "subtab_holder" ];
-                    PaddingLeft = dim(0, 4);
-                    PaddingRight = dim(0, 4);
-                    PaddingTop = dim(0, 4);
-                    PaddingBottom = dim(0, 4);
-                });
-
-                -- Content area below subtabs
-                items[ "content_area" ] = library:create( "Frame" , {
-                    Parent = items[ "section_shadow_three" ];
-                    Name = "\0";
-                    BackgroundTransparency = 1;
-                    Position = dim2(0, 0, 0, 28);
-                    Size = dim2(1, 0, 1, -28);
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = rgb(255, 255, 255)
-                });
-
-                items.text = library:create( "TextLabel" , {
-                    FontFace = library.font;
-                    TextColor3 = rgb(178, 178, 178);
-                    BorderColor3 = rgb(0, 0, 0);
-                    Text = cfg.name;
-                    Parent = items[ "section_outline" ];
-                    BackgroundTransparency = 1;
-                    Position = dim2(0, 8, 0, -15);
-                    BorderSizePixel = 0;
-                    AutomaticSize = Enum.AutomaticSize.XY;
-                    TextSize = 10;
-                    BackgroundColor3 = rgb(255, 255, 255)
-                });
-
-                library:create( "UIStroke" , {
-                    Parent = items.text;
-                });
-
-                library:create( "UICorner" , {
-                    Parent = items[ "section_outline" ];
-                    CornerRadius = dim(0, 0)
-                });
-            end
-
-            function cfg.Add(subCfg, name)
-                if type(subCfg) == "string" then name = subCfg
-                else name = name or subCfg.name or subCfg.Name or "subtab" end
-                local sub = {
-                    name = name;
-                    items = {};
-                }
-
-                local subItems = sub.items; do
-                    subItems[ "button" ] = library:create( "TextButton" , {
-                        Parent = items[ "subtab_holder" ];
-                        Name = "\0";
-                        BackgroundTransparency = 1;
-                        Text = "";
-                        Size = dim2(0, 80, 1, 0);
-                        BorderSizePixel = 0;
-                        BackgroundColor3 = rgb(255, 255, 255);
-                        AutomaticSize = Enum.AutomaticSize.X;
-                    });
-
-                    subItems[ "button_text" ] = library:create( "TextLabel" , {
-                        Parent = subItems[ "button" ];
-                        FontFace = library.font;
-                        TextColor3 = rgb(100, 100, 100);
-                        Text = name;
-                        BackgroundTransparency = 1;
-                        Size = dim2(1, 0, 1, 0);
-                        BorderSizePixel = 0;
-                        TextSize = 10;
-                        BackgroundColor3 = rgb(255, 255, 255)
-                    });
-
-                    subItems[ "button_line" ] = library:create( "Frame" , {
-                        Parent = subItems[ "button" ];
-                        Name = "\0";
-                        Position = dim2(0, 0, 1, -1);
-                        Size = dim2(1, 0, 0, 1);
-                        BorderSizePixel = 0;
-                        BackgroundColor3 = rgb(255, 255, 255);
-                        BackgroundTransparency = 1;
-                    });
-
-                    subItems[ "scrolling" ] = library:create( "ScrollingFrame" , {
-                        ScrollBarImageColor3 = rgb(0, 0, 0);
-                        Active = true;
-                        AutomaticCanvasSize = Enum.AutomaticSize.Y;
-                        ScrollBarThickness = 0;
-                        Parent = items[ "content_area" ];
-                        Name = "\0";
-                        BackgroundTransparency = 1;
-                        Size = dim2(1, 0, 1, 0);
-                        BackgroundColor3 = rgb(255, 255, 255);
-                        BorderColor3 = rgb(0, 0, 0);
-                        BorderSizePixel = 0;
-                        CanvasSize = dim2(0, 0, 0, 0);
-                        Visible = false;
-                    });
-
-                    subItems[ "elements" ] = library:create( "Frame" , {
-                        BorderColor3 = rgb(0, 0, 0);
-                        Parent = subItems[ "scrolling" ];
-                        Name = "\0";
-                        BackgroundTransparency = 1;
-                        Position = dim2(0, 12, 0, 12);
-                        Size = dim2(1, -24, 0, 0);
-                        BorderSizePixel = 0;
-                        AutomaticSize = Enum.AutomaticSize.Y;
-                        BackgroundColor3 = rgb(255, 255, 255)
-                    });
-
-                    library:create( "UIListLayout" , {
-                        Parent = subItems[ "elements" ];
-                        Padding = dim(0, 5);
-                        SortOrder = Enum.SortOrder.LayoutOrder
-                    });
-                end
-
-                function sub.set_visible(vis)
-                    subItems[ "scrolling" ].Visible = vis
-                    if vis then
-                        library:tween(subItems[ "button_text" ], {TextColor3 = rgb(255, 255, 255)})
-                        library:tween(subItems[ "button_line" ], {BackgroundTransparency = 0})
-                    else
-                        library:tween(subItems[ "button_text" ], {TextColor3 = rgb(100, 100, 100)})
-                        library:tween(subItems[ "button_line" ], {BackgroundTransparency = 1})
-                    end
-                end
-
-                subItems[ "button" ].MouseButton1Down:Connect(function()
-                    if cfg.selected_subtab then
-                        cfg.selected_subtab.set_visible(false)
-                    end
-                    cfg.selected_subtab = sub
-                    sub.set_visible(true)
-                    library:close_current_element(nil)
-                end)
-
-                if not cfg.selected_subtab then
-                    cfg.selected_subtab = sub
-                    sub.set_visible(true)
-                end
-
-                table.insert(cfg.subtabs, sub)
-                return setmetatable(sub, library)
-            end
-
-            items[ "section_outline" ].MouseEnter:Connect(function()
-                for _,instance in items[ "section_outline" ]:GetDescendants() do
-                    if instance:IsA("UICorner") then
-                        library:tween(instance, {CornerRadius = dim(0, 8)})
-                    end
-                end
-                for _,section in {"section_shadow_three", "section_shadow_two", "section_shadow_one", "section_shadow"} do
-                    library:tween(items[ section ], {BackgroundTransparency = 0})
-                end
-                library:tween(items.text, {TextColor3 = rgb(255, 255, 255)})
-            end)
-
-            items[ "section_outline" ].MouseLeave:Connect(function()
-                for _,instance in items[ "section_outline" ]:GetDescendants() do
-                    if instance:IsA("UICorner") then
-                        library:tween(instance, {CornerRadius = dim(0, 0)})
-                    end
-                end
-                for _,section in {"section_shadow_three", "section_shadow_two", "section_shadow_one", "section_shadow"} do
-                    library:tween(items[ section ], {BackgroundTransparency = 1})
-                end
-                library:tween(items.text, {TextColor3 = rgb(178, 178, 178)})
-            end)
-
-            return setmetatable(cfg, library)
-        end
-
-        function library:Toggle(options)
+        function library:Toggle(options) 
             local cfg = {
                 enabled = options.enabled or options.Enabled or nil,
                 name = options.name or options.Name or "Toggle",
-                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag ðŸ¥º",
+                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag 🥺",
                 
                 default = options.default or options.Default or false,
                 callback = options.callback or options.Callback or function() end,
 
                 items = {};
+                sub_objects = {};
             }
 
             local items = cfg.items; do 
@@ -1300,6 +1013,15 @@
                 library:tween(items[ "toggle_shading" ], {BackgroundTransparency = bool and 0 or 1})
                 library:tween(items[ "toggle_inline" ], {BackgroundColor3 = bool and rgb(255, 255, 255) or rgb(74, 74, 74)})
 
+                if cfg.sub_objects then
+                    for _, sub in ipairs(cfg.sub_objects) do
+                        local sub_gui = sub.items and (sub.items["object"] or sub.items["gear_holder"] or sub.items.text_label)
+                        if sub_gui then
+                            sub_gui.Visible = bool
+                        end
+                    end
+                end
+
                 cfg.callback(bool)
                 
                 flags[cfg.flag] = bool
@@ -1322,7 +1044,7 @@
                 -- Options
                 name = options.name or options.Name or nil;
                 suffix = options.suffix or options.Suffix or "";
-                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag ðŸ¥º";
+                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag 🥺";
                 callback = options.callback or options.Callback or function() end; 
                 show_value = options.ShowValue or options.show_value or true; 
 
@@ -1458,6 +1180,14 @@
             cfg.set(cfg.default)
             config_flags[cfg.flag] = cfg.set
 
+            if self.sub_objects then
+                table.insert(self.sub_objects, cfg)
+                local main_gui = items["object"]
+                if main_gui then
+                    main_gui.Visible = self.enabled
+                end
+            end
+
             return setmetatable(cfg, library)
         end 
 
@@ -1467,7 +1197,7 @@
 
                 -- Options
                 name = options.name or options.Name or nil;
-                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag ðŸ¥º";
+                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag 🥺";
                 options = options.items or options.Items or {"1", "2", "3"};
                 callback = options.callback or options.Callback or function() end;
                 multi = options.multi or options.Multi or false;
@@ -1747,6 +1477,14 @@
                 set:Label({name = cfg.name, padding_bottom = 2})
             end 
 
+            if self.sub_objects then
+                table.insert(self.sub_objects, cfg)
+                local main_gui = items["object"]
+                if main_gui then
+                    main_gui.Visible = self.enabled
+                end
+            end
+
             return set
         end
 
@@ -1818,7 +1556,7 @@
             local cfg = {
                 -- options
                 name = options.name or options.Name or "", 
-                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag ðŸ¥º",
+                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag 🥺",
                 color = options.color or options.Color or color(1, 1, 1), -- Default to white color if not provided
                 alpha = (options.alpha and 1 - options.alpha) or (options.Alpha and 1 - options.Alpha) or 0,
                 callback = options.callback or options.Callback or function() end,
@@ -2276,6 +2014,14 @@
             cfg.set(cfg.color, cfg.alpha)
             config_flags[cfg.flag] = cfg.set
 
+            if self.sub_objects then
+                table.insert(self.sub_objects, cfg)
+                local main_gui = items["gear_holder"]
+                if main_gui then
+                    main_gui.Visible = self.enabled
+                end
+            end
+
             return setmetatable(cfg, library)
         end 
 
@@ -2284,7 +2030,7 @@
                 name = options.name or options.Name or "TextBox",
                 placeholder = options.placeholder or options.PlaceHolder or "type here...",
                 default = options.default or options.Default or "",
-                flag = options.flag or options.name or "please set me a flag ðŸ¥º",
+                flag = options.flag or options.name or "please set me a flag 🥺",
                 callback = options.callback or options.Callback or function() end,
                 visible = options.visible or true,
                 items = {};
@@ -2402,7 +2148,7 @@
         function library:Keybind(options) 
             local cfg = {
                 -- options
-                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag ðŸ¥º",
+                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag 🥺",
                 callback = options.callback or options.Callback or function() end,
                 name = options.name or options.Name or nil, 
                 key = options.key or options.Key or nil, 
@@ -2544,7 +2290,7 @@
                 -- 
             end 
             
-            function cfg.modify_mode_color(path) -- ts so frikin tuff ðŸ’€
+            function cfg.modify_mode_color(path) -- ts so frikin tuff 💀
                 for _,v in cfg.hold_instances do 
                     v.TextColor3 = rgb(178, 178, 178)
                 end 
@@ -2679,6 +2425,14 @@
             cfg.set({mode = cfg.mode, active = cfg.active, key = cfg.key})           
             config_flags[cfg.flag] = cfg.set
 
+            if self.sub_objects then
+                table.insert(self.sub_objects, cfg)
+                local main_gui = items.text_label
+                if main_gui then
+                    main_gui.Visible = self.enabled
+                end
+            end
+
             return setmetatable(cfg, library)
         end
 
@@ -2770,7 +2524,7 @@
             local cfg = {
                 items = {};
                 options = properties.options or {"1", "2", "3"};
-                flag = properties.flag or options.name or "please set me a flag ðŸ¥º";    
+                flag = properties.flag or options.name or "please set me a flag 🥺";    
                 callback = properties.callback or function() end;
                 data_store = {};        
                 current_element;
@@ -3069,5 +2823,7 @@
 	-- 
 -- 
 
-return library, notifications
+library.CreateWindow = library.window
+library.Page = library.Tab
 
+return library, notifications
