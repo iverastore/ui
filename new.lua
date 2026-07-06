@@ -2826,4 +2826,43 @@
 library.CreateWindow = library.window
 library.Page = library.Tab
 
+function library:Watermark(options)
+    local obj = {
+        SetVisibility = function(self, bool) end
+    }
+    library.WatermarkObj = obj
+    return obj
+end
+
+function library:TargetHUD(options)
+    local obj = {
+        SetVisibility = function(self, bool) end,
+        SetTarget = function(self, target) end,
+        Items = {
+            Container = {
+                Visible = false
+            }
+        }
+    }
+    library.TargetHUDObj = obj
+    return obj
+end
+
+function library:KeybindList(options)
+    local obj = {
+        SetVisibility = function(self, bool) end
+    }
+    library.KeyList = obj
+    return obj
+end
+
+function library:PlayerList(options)
+    local obj = {
+        SetVisibility = function(self, bool) end,
+        SetWhitelisted = function(player, bool) end
+    }
+    library.PlayerListObj = obj
+    return obj
+end
+
 return library, notifications
