@@ -219,7 +219,9 @@
 	library.__index = library
 
 	for _, path in next, library.folders do 
-		makefolder(library.directory .. path)
+		pcall(function()
+			makefolder(library.directory .. path)
+		end)
 	end 
 
 	writefile("ffff.ttf", game:HttpGet("https://github.com/weasely111/beta/raw/refs/heads/main/fs-tahoma-8px.ttf"))
@@ -445,14 +447,31 @@
 			return tween
 		end 
 
+		function library:get_config_path(name)
+			if not name or name == "" then return nil end
+			return (self.directory or "alternate.lol") .. "/configs/" .. name .. ".json"
+		end
+
 		function library:config_list_update() 
 			if not library.config_holder then return end 
 		
 			local list = {}
-		
-			for idx, file in next, listfiles(library.directory .. "/configs") do
-				local name = string.sub(file:gsub(library.directory .. "/configs\\", ""):gsub(library.directory .. "\\configs\\", ""), 1, -5)
-				list[#list + 1] = name
+			local dir = (library.directory or "alternate.lol") .. "/configs"
+			local prefix = dir:gsub("\\", "/") .. "/"
+			local files = {}
+
+			pcall(function()
+				files = listfiles(dir)
+			end)
+
+			for idx, file in next, files do
+				local normalized = file:gsub("\\", "/")
+				if normalized:sub(1, #prefix) == prefix and normalized:sub(-5) == ".json" then
+					local name = normalized:sub(#prefix + 1, -6)
+					if name and name ~= "" then
+						list[#list + 1] = name
+					end
+				end
 			end
 			
 			library.config_holder:refresh_options(list)
@@ -461,7 +480,7 @@
 		function library:get_config()
 			local Config = {}
 		
-			for _, v in flags do
+			for _, v in next, flags do
 				if type(v) == "table" and v.key then
 					Config[_] = {active = v.active, mode = v.mode, key = tostring(v.key)}
 				elseif type(v) == "table" and v["Transparency"] and v["Color"] then
