@@ -138,9 +138,7 @@
     local notifications = library.notifications 
 
     -- Font importing system 
-        if isfile(library.directory .. "/fonts/main.ttf") then 
-            delfile(library.directory .. "/fonts/main.ttf")
-        else 
+        if not isfile(library.directory .. "/fonts/main.ttf") then 
             writefile(library.directory .. "/fonts/main.ttf", game:HttpGet("https://github.com/f1nobe7650/Nebula/raw/refs/heads/main/Minecraftia-Regular.ttf"))
         end 
         
@@ -262,7 +260,7 @@
                         )
                     )
 
-                    -- library:tween(frame, {Size = current_size}, Enum.EasingStyle.Linear, 0.05) -- nobody will ntoice this aswell 👿
+                    -- library:tween(frame, {Size = current_size}, Enum.EasingStyle.Linear, 0.05) -- nobody will ntoice this aswell ðŸ‘¿
                     frame.Size = current_size
                 end
             end)
@@ -1213,7 +1211,7 @@
             local cfg = {
                 enabled = options.enabled or options.Enabled or nil,
                 name = options.name or options.Name or "Toggle",
-                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag 🥺",
+                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag ðŸ¥º",
                 
                 default = options.default or options.Default or false,
                 callback = options.callback or options.Callback or function() end,
@@ -1324,7 +1322,7 @@
                 -- Options
                 name = options.name or options.Name or nil;
                 suffix = options.suffix or options.Suffix or "";
-                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag 🥺";
+                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag ðŸ¥º";
                 callback = options.callback or options.Callback or function() end; 
                 show_value = options.ShowValue or options.show_value or true; 
 
@@ -1469,7 +1467,7 @@
 
                 -- Options
                 name = options.name or options.Name or nil;
-                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag 🥺";
+                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag ðŸ¥º";
                 options = options.items or options.Items or {"1", "2", "3"};
                 callback = options.callback or options.Callback or function() end;
                 multi = options.multi or options.Multi or false;
@@ -1820,7 +1818,7 @@
             local cfg = {
                 -- options
                 name = options.name or options.Name or "", 
-                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag 🥺",
+                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag ðŸ¥º",
                 color = options.color or options.Color or color(1, 1, 1), -- Default to white color if not provided
                 alpha = (options.alpha and 1 - options.alpha) or (options.Alpha and 1 - options.Alpha) or 0,
                 callback = options.callback or options.Callback or function() end,
@@ -2286,7 +2284,7 @@
                 name = options.name or options.Name or "TextBox",
                 placeholder = options.placeholder or options.PlaceHolder or "type here...",
                 default = options.default or options.Default or "",
-                flag = options.flag or options.name or "please set me a flag 🥺",
+                flag = options.flag or options.name or "please set me a flag ðŸ¥º",
                 callback = options.callback or options.Callback or function() end,
                 visible = options.visible or true,
                 items = {};
@@ -2404,7 +2402,7 @@
         function library:Keybind(options) 
             local cfg = {
                 -- options
-                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag 🥺",
+                flag = options.flag or options.Flag or options.name or options.Name or "please set me a flag ðŸ¥º",
                 callback = options.callback or options.Callback or function() end,
                 name = options.name or options.Name or nil, 
                 key = options.key or options.Key or nil, 
@@ -2546,7 +2544,7 @@
                 -- 
             end 
             
-            function cfg.modify_mode_color(path) -- ts so frikin tuff 💀
+            function cfg.modify_mode_color(path) -- ts so frikin tuff ðŸ’€
                 for _,v in cfg.hold_instances do 
                     v.TextColor3 = rgb(178, 178, 178)
                 end 
@@ -2772,7 +2770,7 @@
             local cfg = {
                 items = {};
                 options = properties.options or {"1", "2", "3"};
-                flag = properties.flag or options.name or "please set me a flag 🥺";    
+                flag = properties.flag or options.name or "please set me a flag ðŸ¥º";    
                 callback = properties.callback or function() end;
                 data_store = {};        
                 current_element;
@@ -3072,3 +3070,4 @@
 -- 
 
 return library, notifications
+
