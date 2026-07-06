@@ -138,11 +138,11 @@
     local notifications = library.notifications 
 
     -- Font importing system 
-        if isfile(library.directory .. "/fonts/main.ttf") then 
-            delfile(library.directory .. "/fonts/main.ttf")
-        else 
-            writefile(library.directory .. "/fonts/main.ttf", game:HttpGet("https://github.com/f1nobe7650/Nebula/raw/refs/heads/main/Minecraftia-Regular.ttf"))
-        end 
+        pcall(function()
+            if not isfile(library.directory .. "/fonts/main.ttf") then 
+                writefile(library.directory .. "/fonts/main.ttf", game:HttpGet("https://github.com/f1nobe7650/Nebula/raw/refs/heads/main/Minecraftia-Regular.ttf"))
+            end 
+        end)
         
         local minecraftia = {
             name = "Minecraftia",
@@ -151,18 +151,26 @@
                     name = "Regular",
                     weight = 400,
                     style = "normal",
-                    assetId = getcustomasset(library.directory .. "/fonts/main.ttf")
+                    assetId = "rbxasset://fonts/families/SourceSansPro.json"
                 }
             }
         }
         
-        if not isfile(library.directory .. "/fonts/main_encoded.ttf") then 
-            writefile(library.directory .. "/fonts/main_encoded.ttf", http_service:JSONEncode(minecraftia))
-        end 
+        pcall(function()
+            minecraftia.faces[1].assetId = getcustomasset(library.directory .. "/fonts/main.ttf")
+        end)
         
-        library.font = Font.new(getcustomasset(library.directory .. "/fonts/main_encoded.ttf"), Enum.FontWeight.Regular)
-        -- library.font = library.font
-    -- 
+        pcall(function()
+            if not isfile(library.directory .. "/fonts/main_encoded.ttf") then 
+                writefile(library.directory .. "/fonts/main_encoded.ttf", http_service:JSONEncode(minecraftia))
+            end 
+        end)
+        
+        library.font = Font.fromEnum(Enum.Font.SourceSans)
+        pcall(function()
+            library.font = Font.new(getcustomasset(library.directory .. "/fonts/main_encoded.ttf"), Enum.FontWeight.Regular)
+        end)
+    -- █
 --
 
 -- Library functions 
