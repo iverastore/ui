@@ -3125,7 +3125,7 @@
                 local cfg = {
                     flag = options.flag or "SET ME A FLAG NOWWW!!!!",
                     callback = options.callback or (parent_set and function(bool)
-                        if self and self.enabled ~= nil then
+                        if self then
                             self.enabled = bool
                         end
                         parent_set(bool)
@@ -3267,8 +3267,8 @@
                         local current = table.find(modes, cfg.mode) or 1
                         local nextMode = modes[(current % 3) + 1]
                         cfg.set_mode(nextMode)
-                        if notifications and notifications.create_notification then
-                            notifications:create_notification({name = "Mode set to: " .. nextMode})
+                        if library.notifications and library.notifications.create_notification then
+                            library.notifications:create_notification({name = "Mode set to: " .. nextMode})
                         end
                     end)
                     
